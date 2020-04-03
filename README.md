@@ -1,6 +1,6 @@
-# Tradecloud API v2 .NET SDK
+# Tradecloud .NET SDK
 
-The .NET SDK can help you to develop a Tradecloud API v2 client in .NET and C#
+The .NET SDK can help you to develop a Tradecloud API v2 client and webhook service in .NET and C#
 
 ## Prerequisites
 
@@ -9,8 +9,8 @@ The .NET SDK can help you to develop a Tradecloud API v2 client in .NET and C#
 ## Clone
 
 ```
-➜ git clone https://github.com/tradecloud/tradecloud-api-dotnet-sdk.git
-➜ cd tradecloud-api-dotnet-sdk 
+➜ git clone https://github.com/tradecloud/tradecloud-sdk-dotnet.git
+➜ cd tradecloud-sdk-dotnet
 ```
 
 ## Update
@@ -21,5 +21,13 @@ The .NET SDK can help you to develop a Tradecloud API v2 client in .NET and C#
 ```
 
 ## Examples
+[Authentication](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/authentication)
+- authenticate
 
-[Upload document to the Tradecloud object storage](https://github.com/tradecloud/tradecloud-api-dotnet-sdk/tree/master/object-storage-upload-document)
+[Object Storage](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/object-storage)
+- upload document
+
+[Order Search](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/order-search)
+- get order by id
+
+Send a request to support if you need any new example.
