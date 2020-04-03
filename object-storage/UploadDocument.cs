@@ -5,16 +5,16 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace object_storage_upload_document
+namespace Com.Tradecloud1.SDK.Client
 {
-    class Program
+    class UploadDocument
     {   
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
-        const string loginUrl = "https://api.accp.tradecloud1.com/v2/authentication/login";
+        const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/login";
         // Fill in mandatory username
-        const string username = "";
+        const string username = "frankjan@tradecloud1.com";
         // Fill in mandatory password
-        const string password = "";
+        const string password = "SecretSecret1";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/object-storage/specs.yaml#/object-storage/uploadDocument
         const string uploadDocumentUrl = "https://api.accp.tradecloud1.com/v2/object-storage/document";
@@ -26,25 +26,9 @@ namespace object_storage_upload_document
             Console.WriteLine("Tradecloud upload document example.");
             
             HttpClient httpClient = new HttpClient();
-            var token = await Authenticate();
+            var authenticationClient = new Authentication(httpClient, authenticationUrl);
+            var token = await authenticationClient.Authenticate(username, password);
             await UploadDocument(token);
-
-            async Task<string> Authenticate()
-            {
-                var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
-
-                var response = await httpClient.GetAsync(loginUrl);
-                var content = response.Content;
-
-                Console.WriteLine("Authenticate StatusCode: " + (int)response.StatusCode);
-
-                string responseString = await content.ReadAsStringAsync();
-                Console.WriteLine("Authenticate Content: " + responseString);         
-
-                var token = response.Headers.GetValues("Set-Authorization").FirstOrDefault();
-                return token;
-            }
 
             async Task UploadDocument(string token)
             {                
