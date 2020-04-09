@@ -12,12 +12,11 @@ In the source code:
 ## Run
 
 ```
-➜  tradecloud-api-dotnet-sdk git:(master) cd object-storage-upload-document 
-➜  object-storage-upload-document git:(master) dotnet run
+➜  UploadDocument git:(master) dotnet run
 Tradecloud upload document example.
 Authenticate StatusCode: 200
 Authenticate Content: OK
 Uploading document...please wait
 UploadDocument StatusCode: 200
-UploadDocument Content: {"id":"bc107c82-76de-4c21-a7c9-b1d2faa75b1e"}
+UploadDocument Content: {"id":"67aa8ece-5d41-496f-a94c-483e360b833b"}
 ```

@@ -12,9 +12,9 @@ namespace Com.Tradecloud1.SDK.Client
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/login";
         // Fill in mandatory username
-        const string username = "frankjan@tradecloud1.com";
+        const string username = "";
         // Fill in mandatory password
-        const string password = "SecretSecret1";
+        const string password = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/object-storage/specs.yaml#/object-storage/uploadDocument
         const string uploadDocumentUrl = "https://api.accp.tradecloud1.com/v2/object-storage/document";
@@ -28,9 +28,9 @@ namespace Com.Tradecloud1.SDK.Client
             HttpClient httpClient = new HttpClient();
             var authenticationClient = new Authentication(httpClient, authenticationUrl);
             var token = await authenticationClient.Authenticate(username, password);
-            await UploadDocument(token);
+            await UploadDocumentRequest(token);
 
-            async Task UploadDocument(string token)
+            async Task UploadDocumentRequest(string token)
             {                
                 FileStream fileStream = File.OpenRead(path);
 
