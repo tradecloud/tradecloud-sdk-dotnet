@@ -27,10 +27,10 @@ namespace Com.Tradecloud1.SDK.Client
             
             HttpClient httpClient = new HttpClient();
             var authenticationClient = new Authentication(httpClient, authenticationUrl);
-            var token = await authenticationClient.Authenticate(username, password);
-            await UploadDocumentRequest(token);
+            var (accessToken, refreshToken) = await authenticationClient.Authenticate(username, password);
+            await UploadDocumentRequest(accessToken);
 
-            async Task UploadDocumentRequest(string token)
+            async Task UploadDocumentRequest(string accessToken)
             {                
                 FileStream fileStream = File.OpenRead(path);
 
@@ -42,7 +42,7 @@ namespace Com.Tradecloud1.SDK.Client
                 multipartContent.Add(streamContent, "file", Path.GetFileName(path));
 
                 Console.WriteLine("Uploading document...please wait");
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
                 var response = await httpClient.PostAsync(uploadDocumentUrl, multipartContent);
 
                 Console.WriteLine("UploadDocument StatusCode: " + (int)response.StatusCode);

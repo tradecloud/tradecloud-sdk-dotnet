@@ -26,12 +26,12 @@ namespace Com.Tradecloud1.SDK.Client
             
             HttpClient httpClient = new HttpClient();
             var authenticationClient = new Authentication(httpClient, authenticationUrl);
-            var token = await authenticationClient.Authenticate(username, password);
-            await GetOrderById(token);
+            var (accessToken, refreshToken) = await authenticationClient.Authenticate(username, password);
+            await GetOrderById(accessToken);
 
-            async Task GetOrderById(string token)
+            async Task GetOrderById(string accessToken)
             {                
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
                 var response = await httpClient.GetAsync(orderSearchUrl + orderId);
 
                 Console.WriteLine("GetOrderById StatusCode: " + (int)response.StatusCode);

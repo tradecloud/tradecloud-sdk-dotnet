@@ -14,13 +14,13 @@ namespace Com.Tradecloud1.SDK.Client
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/login";
         // Fill in mandatory username
-        const string username = "frankjan@tradecloud1.com";
+        const string username = "";
         // Fill in mandatory password
-        const string password = "SecretSecret1";
+        const string password = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/object-storage/specs.yaml#/object-storage/getDocumentMetadata
         // Fill in manadatory objectId
-        const string getDocumentMetadataUrl = "https://api.accp.tradecloud1.com/v2/object-storage/document/67aa8ece-5d41-496f-a94c-483e360b833b/metadata";
+        const string getDocumentMetadataUrl = "https://api.accp.tradecloud1.com/v2/object-storage/document/<objectId>/metadata";
 
         static async Task Main(string[] args)
         {
@@ -28,12 +28,12 @@ namespace Com.Tradecloud1.SDK.Client
             
             HttpClient httpClient = new HttpClient();
             var authenticationClient = new Authentication(httpClient, authenticationUrl);
-            var token = await authenticationClient.Authenticate(username, password);
-            await GetDocumentMetadataRequest(token);
+            var (accessToken, refreshToken)  = await authenticationClient.Authenticate(username, password);
+            await GetDocumentMetadataRequest(accessToken);
 
-            async Task GetDocumentMetadataRequest(string token)
+            async Task GetDocumentMetadataRequest(string accessToken)
             {                
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
                 var response = await httpClient.GetAsync(getDocumentMetadataUrl);
 
                 Console.WriteLine("GetDocumentMetadata StatusCode: " + (int)response.StatusCode);
