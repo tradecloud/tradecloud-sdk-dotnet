@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "object-storage-upload-docum
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "order-search", "order-search\order-search.csproj", "{298C64A5-F833-4872-B305-2DFB34532E31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api-connector", "api-connector\api-connector.csproj", "{78D55F4E-56E6-449A-8C49-058D9D7E0B91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +60,17 @@ Global
 		{298C64A5-F833-4872-B305-2DFB34532E31}.Release|x64.Build.0 = Release|Any CPU
 		{298C64A5-F833-4872-B305-2DFB34532E31}.Release|x86.ActiveCfg = Release|Any CPU
 		{298C64A5-F833-4872-B305-2DFB34532E31}.Release|x86.Build.0 = Release|Any CPU
+		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Debug|x64.Build.0 = Debug|Any CPU
+		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Debug|x86.Build.0 = Debug|Any CPU
+		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Release|x64.ActiveCfg = Release|Any CPU
+		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Release|x64.Build.0 = Release|Any CPU
+		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Release|x86.ActiveCfg = Release|Any CPU
+		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

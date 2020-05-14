@@ -9,7 +9,7 @@ namespace Com.Tradecloud1.SDK.Client
     class GetOrderById
     {   
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
-        const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/login";
+        const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
         // Fill in mandatory username
         const string username = "";
         // Fill in mandatory password
@@ -26,7 +26,7 @@ namespace Com.Tradecloud1.SDK.Client
             
             HttpClient httpClient = new HttpClient();
             var authenticationClient = new Authentication(httpClient, authenticationUrl);
-            var (accessToken, refreshToken) = await authenticationClient.Authenticate(username, password);
+            var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
             await GetOrderById(accessToken);
 
             async Task GetOrderById(string accessToken)
