@@ -24,8 +24,11 @@ namespace Com.Tradecloud1.SDK.Client
             httpClient.DefaultRequestHeaders.Clear();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
 
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             var response = await httpClient.GetAsync(authenticationUrl + "login");
-            Console.WriteLine("Login response StatusCode: " + (int)response.StatusCode);
+            watch.Stop();
+
+            Console.WriteLine("Login response StatusCode: " + (int)response.StatusCode + " ElapsedMilliseconds: " + watch.ElapsedMilliseconds);
             string responseString = await response.Content.ReadAsStringAsync();
             Console.WriteLine("Login response Content: " + responseString);         
 

@@ -182,9 +182,11 @@ namespace Com.Tradecloud1.SDK.Client
                 // future extension: var jsonContent = JsonConvert.SerializeObject(order);
                 var jsonContent = jsonContentWithSingleQuotes.Replace("`", "\"");
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                var response = await httpClient.PostAsync(sendOrderUrl, content);
 
-                Console.WriteLine("SendOrder StatusCode: " + (int)response.StatusCode);
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                var response = await httpClient.PostAsync(sendOrderUrl, content);
+                watch.Stop();
+                Console.WriteLine("SendOrder StatusCode: " + (int)response.StatusCode + " ElapsedMilliseconds: " + watch.ElapsedMilliseconds);
 
                 string responseString = await response.Content.ReadAsStringAsync();
                 Console.WriteLine("SendOrder Body: " +  responseString);  
