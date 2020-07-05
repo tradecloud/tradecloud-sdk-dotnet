@@ -1,4 +1,4 @@
-# Send Order
+# Send Order Documents
 
 This example sends an order document to Tradecloud using the API Connector
 
