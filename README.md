@@ -28,6 +28,7 @@ The .NET SDK can help you to develop a Tradecloud API v2 client and webhook serv
 
 [API Connector](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/api-connector)
 - Send order
+- Send order documents
 
 [Object Storage](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/object-storage)
 - Get document meta data
