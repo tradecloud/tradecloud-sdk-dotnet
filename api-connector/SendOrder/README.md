@@ -2,12 +2,18 @@
 
 This example sends an order to Tradecloud using the API Connector
 
+## Prerequisites
+
+A Tradecloud user with `buyer` and `integration` roles
+
 ## Configure
 
 In the source code:
-- username on Tradecloud
-- password on Tradecloud
-- order
+- amend authenticationUrl if necessary
+- fill in username on Tradecloud
+- fill in password on Tradecloud
+- amend sendOrderUrl in necessary
+- amend order/lines fields
 
 ## Run
 
