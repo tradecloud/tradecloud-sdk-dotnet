@@ -2,12 +2,18 @@
 
 This example uploads a document to the Tradecloud object storage.
 
+## Prerequisites
+
+A Tradecloud user with `buyer` or `supplier` role
+
 ## Configure
 
 In the source code:
-- username on Tradecloud
-- password on Tradecloud
-- path (for example `test.pdf`)
+- amend authenticationUrl if necessary
+- fill in username on Tradecloud
+- fill in password on Tradecloud
+- amend sendOrderUrl in necessary
+- fill in document path (for example `test.pdf`)
 
 ## Run
 

@@ -2,8 +2,6 @@
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
@@ -166,7 +164,7 @@ namespace Com.Tradecloud1.SDK.Client
                 `email`: `contact@yourcompany.com`
             }
         }";
-
+        
         static async Task Main(string[] args)
         {
             Console.WriteLine("Tradecloud send order example.");

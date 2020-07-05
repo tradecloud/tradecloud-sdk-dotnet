@@ -5,11 +5,19 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "authentication", "authentication\authentication.csproj", "{B41F053A-58FC-47BC-AB65-0ED1D456FDE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "object-storage-upload-document", "object-storage-upload-document\object-storage-upload-document.csproj", "{6129DF28-DFB2-43E4-9A1C-EE51140E69FD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetDocumentMetaData", "object-storage\GetDocumentMetaData\GetDocumentMetaData.csproj", "{6129DF28-DFB2-43E4-9A1C-EE51140E69FD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "order-search", "order-search\order-search.csproj", "{298C64A5-F833-4872-B305-2DFB34532E31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api-connector", "api-connector\api-connector.csproj", "{78D55F4E-56E6-449A-8C49-058D9D7E0B91}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendOrder", "api-connector\SendOrder\SendOrder.csproj", "{78D55F4E-56E6-449A-8C49-058D9D7E0B91}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "object-storage", "object-storage", "{E2D61440-0E64-4382-AB57-AD2D2892715B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UploadDocument", "object-storage\UploadDocument\UploadDocument.csproj", "{E0804E3C-679B-4A54-97F4-277259E4566E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "api-connector", "api-connector", "{41205343-55B2-4073-8C43-8976E2383D66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SendOrderDocuments", "api-connector\SendOrderDocuments\SendOrderDocuments.csproj", "{48410AFF-521A-45B7-B5FD-A6367EF3990F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,5 +80,33 @@ Global
 		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Release|x64.Build.0 = Release|Any CPU
 		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Release|x86.ActiveCfg = Release|Any CPU
 		{78D55F4E-56E6-449A-8C49-058D9D7E0B91}.Release|x86.Build.0 = Release|Any CPU
+		{E0804E3C-679B-4A54-97F4-277259E4566E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0804E3C-679B-4A54-97F4-277259E4566E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0804E3C-679B-4A54-97F4-277259E4566E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E0804E3C-679B-4A54-97F4-277259E4566E}.Debug|x64.Build.0 = Debug|Any CPU
+		{E0804E3C-679B-4A54-97F4-277259E4566E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E0804E3C-679B-4A54-97F4-277259E4566E}.Debug|x86.Build.0 = Debug|Any CPU
+		{E0804E3C-679B-4A54-97F4-277259E4566E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0804E3C-679B-4A54-97F4-277259E4566E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0804E3C-679B-4A54-97F4-277259E4566E}.Release|x64.ActiveCfg = Release|Any CPU
+		{E0804E3C-679B-4A54-97F4-277259E4566E}.Release|x64.Build.0 = Release|Any CPU
+		{E0804E3C-679B-4A54-97F4-277259E4566E}.Release|x86.ActiveCfg = Release|Any CPU
+		{E0804E3C-679B-4A54-97F4-277259E4566E}.Release|x86.Build.0 = Release|Any CPU
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F}.Debug|x64.Build.0 = Debug|Any CPU
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F}.Debug|x86.Build.0 = Debug|Any CPU
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F}.Release|x64.ActiveCfg = Release|Any CPU
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F}.Release|x64.Build.0 = Release|Any CPU
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F}.Release|x86.ActiveCfg = Release|Any CPU
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E0804E3C-679B-4A54-97F4-277259E4566E} = {E2D61440-0E64-4382-AB57-AD2D2892715B}
+		{48410AFF-521A-45B7-B5FD-A6367EF3990F} = {41205343-55B2-4073-8C43-8976E2383D66}
 	EndGlobalSection
 EndGlobal
