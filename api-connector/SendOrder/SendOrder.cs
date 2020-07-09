@@ -177,7 +177,6 @@ namespace Com.Tradecloud1.SDK.Client
             async Task SendOrder(string accessToken)
             {                
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-                // future extension: var jsonContent = JsonConvert.SerializeObject(order);
                 var jsonContent = jsonContentWithSingleQuotes.Replace("`", "\"");
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
