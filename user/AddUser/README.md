@@ -4,15 +4,15 @@ This example adds a user (without invite) to Tradecloud
 
 ## Prerequisites
 
-A Tradecloud super user
+Super powers
 
 ## Configure
 
 In the source code:
-- amend authenticationUrl if necessary
-- fill in super user username
-- fill in super user password
-- amend addUserUrl in necessary
+- amend authenticationUrl
+- fill in username
+- fill in password
+- add addUserUrl
 - amend user fields
 
 ## Run
