@@ -37,4 +37,7 @@ The .NET SDK can help you to develop a Tradecloud API v2 client and webhook serv
 [Order Search](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/order-search)
 - Get order by id
 
+[User](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/user)
+- Add user
+
 Send a request to support if you need any new example.
