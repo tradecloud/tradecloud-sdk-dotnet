@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class AddUser
+    class UpdateUserRoles
     {   
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
