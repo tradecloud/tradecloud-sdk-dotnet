@@ -10,47 +10,25 @@ namespace Com.Tradecloud1.SDK.Client
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://tc-4220-supplier-order-response.test.tradecloud1.com/v2/authentication/";
         // Fill in mandatory username
-        const string username = "agrifac-integration@tradecloud1.com";
+        const string username = "kramp-integration@tradecloud1.com";
         // Fill in mandatory password
         const string password = "";
 
-        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderByBuyerRoute
-        const string sendOrderUrl = "https://tc-4220-supplier-order-response.test.tradecloud1.com/v2/api-connector/order";
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/supplier-endpoints/sendOrderResponseBySupplierRoute
+        const string sendOrderResponseUrl = "https://tc-4220-supplier-order-response.test.tradecloud1.com/v2/api-connector/order-response";
 
         // Check/amend manadatory order
         const string jsonContentWithSingleQuotes = @"{
             `order`: {
-                `companyId`: `f56aa4ce-8ec8-5197-bc26-77716a58add7`,
-                `supplierAccountNumber`: `540830`,
+                `companyId`: `1f61e695-7545-5670-9384-58e8b1f263e6`,
+                `buyerAccountNumber`: `1000`,
                 `purchaseOrderNumber`: `PO-Marcel-1`,
-                `description`: `Any buyer custom text about this order`,
-                `destination`: {
-                    `code`: `001`,
-                    `names`: [
-                        `My Company Warehouse`,
-                        `Dock 12`
-                    ],
-                    `addressLines`: [
-                        `Street 123`,
-                        `Area 52`
-                    ],
-                    `postalCode`: `1234 AB`,
-                    `city`: `Rotterdam`,
-                    `countryCodeIso2`: `NL`,
-                    `countryName`: `the Netherlands`,
-                    `locationType`: `warehouse`
-                },
-                `terms`: {
-                    `incotermsCode`: `CIF`,
-                    `incoterms`: `ECT Rotterdam`,
-                    `paymentTermsCode`: `30D`,
-                    `paymentTerms`: `30 days`
-                },
+                `description`: `Any supplier custom text about this order`,                
                 `indicators`: {
-                    `noDeliveryExpected`: false,
+                    `accepted`: false,
+                    `rejected`: false,
                     `shipped`: false,
-                    `delivered`: false,
-                    `completed`: false
+                    `cancelled`: false
                 },
                 `properties`: [
                     {
@@ -58,26 +36,21 @@ namespace Com.Tradecloud1.SDK.Client
                         `value`: `red`
                     }
                 ],
+                `documents`: [],
                 `notes`: [
                     `one note`,
                     `another note`
                 ],
                 `contact`: {
-                    `email`: `frankjan@tradecloud1.com`
+                    `email`: `eric@tradecloud1.com`
                 }
             },
             `lines`: [
                 {
-                    `position`: `0001`,
-                    `description`: `Any buyer text about this line`,
-                    `item`: {
-                        `number`: `12345`,
-                        `revision`: `v2`,
-                        `name`: `Round tube ø60x45`,
-                        `description`: `Very nice round tube ø60 x 45`,
-                        `purchaseUnitOfMeasureIso`: `PCE`,
-                        `supplierItemNumber`: `67890`
-                    },
+                    `purchaseOrderLinePosition`: `0001`,
+                    `salesOrderNumber`: `SO123456789`,
+                    `salesOrderLinePosition`: `0001`,
+                    `description`: `Any supplier text about this line`,
                     `itemDetails`: {
                         `countryOfOriginCodeIso2`: `NL`,
                         `combinedNomenclatureCode`: `6406 10 10`,
@@ -126,18 +99,11 @@ namespace Com.Tradecloud1.SDK.Client
                         `priceUnitOfMeasureIso`: `PCE`,
                         `priceUnitQuantity`: 100
                     },
-                    `terms`: {
-                        `contractNumber`: `123456789`,
-                        `contractPosition`: `0001`
-                    },
-                    `projectNumber`: `PROJ12345`,
-                    `productionNumber`: `PROD12345`,
-                    `salesOrderNumber`: `SO123456789`,
                     `indicators`: {
-                        `noDeliveryExpected`: false,
+                        `accepted`: false,
+                        `rejected`: false,
                         `shipped`: false,
-                        `delivered`: false,
-                        `completed`: false
+                        `cancelled`: false
                     },
                     `properties`: [
                         {
@@ -145,44 +111,42 @@ namespace Com.Tradecloud1.SDK.Client
                         `value`: `red`
                         }
                     ],
+                    `documents`: [],
                     `notes`: [
                         `one note`,
                         `another note`
-                    ]
+                    ],  
+                    `reason`: `Out of stock.`
                 }
             ],
-            `erpIssueDateTime`: `2019-12-31T10:11:12`,
-            `erpIssuedBy`: {
-                `email`: `frankjan@tradecloud1.com`
-            },
-            `erpLastChangeDateTime`: `2019-12-31T10:11:12`,
-            `erpLastChangedBy`: {
-                `email`: `contact@yourcompany.com`
+            `erpResponseDateTime`: `2019-12-31T10:11:12`,
+            `erpRespondedBy`: {
+                `email`: `eric@tradecloud1.com`
             }
         }";
         
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud send order example.");
+            Console.WriteLine("Tradecloud send order response example.");
             
             HttpClient httpClient = new HttpClient();
             var authenticationClient = new Authentication(httpClient, authenticationUrl);
             var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
-            await SendOrder(accessToken);
+            await SendOrderResponse(accessToken);
 
-            async Task SendOrder(string accessToken)
+            async Task SendOrderResponse(string accessToken)
             {                
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
                 var jsonContent = jsonContentWithSingleQuotes.Replace("`", "\"");
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                var response = await httpClient.PostAsync(sendOrderUrl, content);
+                var response = await httpClient.PostAsync(sendOrderResponseUrl, content);
                 watch.Stop();
-                Console.WriteLine("SendOrder StatusCode: " + (int)response.StatusCode + " ElapsedMilliseconds: " + watch.ElapsedMilliseconds);
+                Console.WriteLine("SendOrderResponse StatusCode: " + (int)response.StatusCode + " ElapsedMilliseconds: " + watch.ElapsedMilliseconds);
 
                 string responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("SendOrder Body: " +  responseString);  
+                Console.WriteLine("SendOrderResponse Body: " +  responseString);  
             }
         }
     }
