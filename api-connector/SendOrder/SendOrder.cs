@@ -8,21 +8,21 @@ namespace Com.Tradecloud1.SDK.Client
     class SendOrder
     {   
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
-        const string authenticationUrl = "https://tc-4220-supplier-order-response.test.tradecloud1.com/v2/authentication/";
+        const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
         // Fill in mandatory username
-        const string username = "agrifac-integration@tradecloud1.com";
+        const string username = "";
         // Fill in mandatory password
         const string password = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderByBuyerRoute
-        const string sendOrderUrl = "https://tc-4220-supplier-order-response.test.tradecloud1.com/v2/api-connector/order";
+        const string sendOrderUrl = "https://api.accp.tradecloud1.com/v2/api-connector/order";
 
         // Check/amend manadatory order
         const string jsonContentWithSingleQuotes = @"{
             `order`: {
                 `companyId`: `f56aa4ce-8ec8-5197-bc26-77716a58add7`,
                 `supplierAccountNumber`: `540830`,
-                `purchaseOrderNumber`: `PO-Marcel-1`,
+                `purchaseOrderNumber`: `PO0123456789`,
                 `description`: `Any buyer custom text about this order`,
                 `destination`: {
                     `code`: `001`,
@@ -59,8 +59,13 @@ namespace Com.Tradecloud1.SDK.Client
                     }
                 ],
                 `notes`: [
-                    `one note`,
-                    `another note`
+                    `one order note`,
+                    `another order note`
+                ],
+                `labels`: [
+                    `one order label`,
+                    `another order label`,
+                    `third order label`
                 ],
                 `contact`: {
                     `email`: `frankjan@tradecloud1.com`
@@ -69,6 +74,7 @@ namespace Com.Tradecloud1.SDK.Client
             `lines`: [
                 {
                     `position`: `0001`,
+                    `row`: `1`,
                     `description`: `Any buyer text about this line`,
                     `item`: {
                         `number`: `12345`,
@@ -100,7 +106,7 @@ namespace Com.Tradecloud1.SDK.Client
                             `date`: `2021-02-01`,
                             `quantity`: 7890.12
                         }
-                    ],
+                    ],   
                     `prices`: {
                         `grossPrice`: {
                             `priceInTransactionCurrency`: {
@@ -125,7 +131,7 @@ namespace Com.Tradecloud1.SDK.Client
                         },
                         `priceUnitOfMeasureIso`: `PCE`,
                         `priceUnitQuantity`: 100
-                    },
+                    },                 
                     `terms`: {
                         `contractNumber`: `123456789`,
                         `contractPosition`: `0001`
@@ -146,8 +152,12 @@ namespace Com.Tradecloud1.SDK.Client
                         }
                     ],
                     `notes`: [
-                        `one note`,
-                        `another note`
+                        `one line note`,
+                        `another line note`
+                    ],
+                    `labels`: [
+                        `one line label`,
+                        `another line label`
                     ]
                 }
             ],
