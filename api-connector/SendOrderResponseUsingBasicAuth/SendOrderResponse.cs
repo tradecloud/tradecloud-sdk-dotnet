@@ -7,9 +7,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class SendOrder
     {   
-         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
-        const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
-        // Fill in mandatory username
         const string username = "";
         // Fill in mandatory password
         const string password = "";
@@ -22,11 +19,11 @@ namespace Com.Tradecloud1.SDK.Client
             `order`: {
                 `companyId`: `1f61e695-7545-5670-9384-58e8b1f263e6`,
                 `buyerAccountNumber`: `1000`,
-                `purchaseOrderNumber`: `PO-Marcel-1`,
+                `purchaseOrderNumber`: `PO0123456789`,
                 `description`: `Any supplier custom text about this order`,                
                 `indicators`: {
                     `accepted`: false,
-                    `rejected`: false,
+                    `rejected`: false,s
                     `shipped`: false,
                     `cancelled`: false
                 },
@@ -127,16 +124,15 @@ namespace Com.Tradecloud1.SDK.Client
         
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud send order response example.");
+            Console.WriteLine("Tradecloud send order response using basic authentication example.");
             
             HttpClient httpClient = new HttpClient();
-            var authenticationClient = new Authentication(httpClient, authenticationUrl);
-            var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
-            await SendOrderResponse(accessToken);
+            await SendOrderResponse();
 
-            async Task SendOrderResponse(string accessToken)
+            async Task SendOrderResponse()
             {                
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
                 var jsonContent = jsonContentWithSingleQuotes.Replace("`", "\"");
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 

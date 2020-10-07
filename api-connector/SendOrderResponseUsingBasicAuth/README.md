@@ -1,6 +1,7 @@
-# Send Order Response
+# Send Order Response using basic authentication
 
 This example sends an order response to Tradecloud using the API Connector
+Using basic authentication directly on the API Connector instead of applying an access token.
 
 ## Prerequisites
 
