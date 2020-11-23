@@ -2,10 +2,11 @@
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class SendOrder
+    class SendOrderBatch
     {   
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
@@ -18,11 +19,11 @@ namespace Com.Tradecloud1.SDK.Client
         const string sendOrderUrl = "https://api.accp.tradecloud1.com/v2/api-connector/order";
 
         // Check/amend manadatory order
-        const string jsonContentWithSingleQuotes = @"{
+        const string jsonContentTemplateWithSingleQuotes = @"{
             `order`: {
                 `companyId`: `f56aa4ce-8ec8-5197-bc26-77716a58add7`,
                 `supplierAccountNumber`: `540830`,
-                `purchaseOrderNumber`: `PO0123456789`,
+                `purchaseOrderNumber`: `<purchaseOrderNumber>`,
                 `description`: `Any buyer custom text about this order`,
                 `destination`: {
                     `code`: `001`,
@@ -99,14 +100,7 @@ namespace Com.Tradecloud1.SDK.Client
                             `date`: `2021-11-01`,
                             `quantity`: 1234.56
                         }
-                    ],
-                    `deliveryHistory`: [
-                        {
-                            `position`: `0002`,
-                            `date`: `2021-02-01`,
-                            `quantity`: 7890.12
-                        }
-                    ],   
+                    ], 
                     `prices`: {
                         `grossPrice`: {
                             `priceInTransactionCurrency`: {
@@ -170,30 +164,37 @@ namespace Com.Tradecloud1.SDK.Client
                 `email`: `contact@yourcompany.com`
             }
         }";
-        
+
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud send order example.");
-            
+            Console.WriteLine("Tradecloud send order batch.");
+            var jsonContentTemplate = jsonContentTemplateWithSingleQuotes.Replace("`", "\"");        
+            var random = new Random();
+             // 500 is the max. parallism for a single API connector instance in a test environment
+            var purchaseOrderNumbers = Enumerable.Range(1,500).Select(r => random.Next(1000, 1000000000).ToString("0000000000"));
+
             HttpClient httpClient = new HttpClient();
             var authenticationClient = new Authentication(httpClient, authenticationUrl);
             var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-            await SendOrder();
-
-            async Task SendOrder()
-            {                
-                var jsonContent = jsonContentWithSingleQuotes.Replace("`", "\"");
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
+            
+            try {                
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                var response = await httpClient.PostAsync(sendOrderUrl, content);
+                await Task.WhenAll(purchaseOrderNumbers.Select(SendOrder));
                 watch.Stop();
-                Console.WriteLine("SendOrder StatusCode: " + (int)response.StatusCode + " ElapsedMilliseconds: " + watch.ElapsedMilliseconds);
-
-                string responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("SendOrder Body: " +  responseString);  
+                Console.WriteLine("SendOrderBatch done, Count: " + purchaseOrderNumbers.Count() + " ElapsedMilliseconds: " + watch.ElapsedMilliseconds);
             }
+            catch (Exception ex) {
+                httpClient.CancelPendingRequests();
+                Console.WriteLine(ex);
+            }
+
+           async Task SendOrder(string purchaseOrderNumber)
+           {
+                var jsonContent = jsonContentTemplate.Replace("<purchaseOrderNumber>", purchaseOrderNumber);
+                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                await httpClient.PostAsync(sendOrderUrl, content);
+           }
         }
     }
 }
