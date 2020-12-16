@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class SendOrder
+    class SendOrderResponse
     {   
         const string username = "";
         // Fill in mandatory password
@@ -23,7 +23,7 @@ namespace Com.Tradecloud1.SDK.Client
                 `description`: `Any supplier custom text about this order`,                
                 `indicators`: {
                     `accepted`: false,
-                    `rejected`: false,s
+                    `rejected`: false,
                     `shipped`: false,
                     `cancelled`: false
                 },
