@@ -20,7 +20,6 @@ namespace Com.Tradecloud1.SDK.Client
         // Check/amend manadatory order
         const string jsonContentWithSingleQuotes = @"{
             `order`: {
-                `companyId`: `1f61e695-7545-5670-9384-58e8b1f263e6`,
                 `buyerAccountNumber`: `1000`,
                 `purchaseOrderNumber`: `PO-Marcel-1`,
                 `description`: `Any supplier custom text about this order`,                
@@ -140,10 +139,11 @@ namespace Com.Tradecloud1.SDK.Client
                 var jsonContent = jsonContentWithSingleQuotes.Replace("`", "\"");
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
+                var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
                 var response = await httpClient.PostAsync(sendOrderResponseUrl, content);
                 watch.Stop();
-                Console.WriteLine("SendOrderResponse StatusCode: " + (int)response.StatusCode + " ElapsedMilliseconds: " + watch.ElapsedMilliseconds);
+                Console.WriteLine("SendOrderResponse start: " + start +  " elapsed: " + watch.ElapsedMilliseconds + " StatusCode: " + (int)response.StatusCode);
 
                 string responseString = await response.Content.ReadAsStringAsync();
                 Console.WriteLine("SendOrderResponse Body: " +  responseString);  
