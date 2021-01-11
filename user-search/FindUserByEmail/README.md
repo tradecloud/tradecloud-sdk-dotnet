@@ -1,22 +1,24 @@
-# Get user based on email
-This example gets a user based on email address
+# Find user based on email
+
+This example finds a user based on email address
 
 ## Configure
 
 In the source code:
+
 - username on Tradecloud
 - password on Tradecloud
-- getDocumentMetadataUrl including email
+- user email
 
 ## Run
 
 ```
-➜  GetUserByEmail git:(master) ✗ dotnet run
+➜  FindUserByEmail git:(master) ✗ dotnet run
 Tradecloud get user by email example.
 Login response StatusCode: 200 ElapsedMilliseconds: 944
 Login response Content: ...
-GetUserByEmail StatusCode: 200
-GetUserByEmail Content: {
+FindUserByEmail StatusCode: 200
+FindUserByEmail Content: {
   "id": "...",
   "email": "...",
   "roles": [
