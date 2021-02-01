@@ -57,6 +57,16 @@ namespace Com.Tradecloud1.SDK.Client
                         `value`: `red`
                     }
                 ],
+                `documents`: [
+                    {
+                        `code`: `123456789`,
+                        `revision`: `B`,
+                        `name`: `Tradecloud API Manual`,
+                        `objectId`: `a4f73172-6ccc-4588-8a1d-550297156c9d`,
+                        `type`: `General`,
+                        `description`: `General document`
+                    }
+                ],
                 `notes`: [
                     `one order note`,
                     `another order note`
@@ -148,6 +158,16 @@ namespace Com.Tradecloud1.SDK.Client
                         {
                         `key`: `color`,
                         `value`: `red`
+                        }
+                    ],
+                    `documents`: [
+                        {
+                            `code`: `123456789`,
+                            `revision`: `B`,
+                            `name`: `Tradecloud API Manual`,
+                            `objectId`: `a4f73172-6ccc-4588-8a1d-550297156c9d`,
+                            `type`: `General`,
+                            `description`: `General document`
                         }
                     ],
                     `notes`: [
