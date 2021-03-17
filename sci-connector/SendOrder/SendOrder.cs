@@ -20,7 +20,7 @@ namespace Com.Tradecloud1.SDK.Client
             Console.WriteLine("Tradecloud send order using Isah SCI Connector example.");
             
             XmlDocument order = new XmlDocument();
-            order.Load("full-order.xml");
+            order.Load("minimal-order.xml");
             string orderXml = order.OuterXml;
 
             HttpClient httpClient = new HttpClient();
