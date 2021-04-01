@@ -10,7 +10,7 @@ namespace Com.Tradecloud1.SDK.Client
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
 
-        const string username = ";
+        const string username = "";
         // Fill in mandatory password
         const string password = "";
 

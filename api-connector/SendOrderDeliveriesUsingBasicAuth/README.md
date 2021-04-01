@@ -1,6 +1,6 @@
-# Send Order using basic authentication
+# Send Order deliveries using basic authentication
 
-This example sends an order to Tradecloud using the API Connector
+This example sends order deliveries to Tradecloud using the API Connector
 Using basic authentication directly on the API Connector instead of applying an access token.
 
 ## Prerequisites
@@ -19,10 +19,5 @@ In the source code:
 ## Run
 
 ``` shell
-➜  api-connector git:(master) ✗ dotnet run
-Tradecloud send order example.
-Login response StatusCode: 200
-Login response Content: ...
-SendOrder StatusCode: 200
-SendOrder Body: {"ok":true}
+
 ```
