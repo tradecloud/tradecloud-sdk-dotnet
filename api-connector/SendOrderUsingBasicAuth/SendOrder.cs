@@ -205,10 +205,13 @@ namespace Com.Tradecloud1.SDK.Client
                 var watch = System.Diagnostics.Stopwatch.StartNew();
                 var response = await httpClient.PostAsync(sendOrderUrl, content);
                 watch.Stop();
-                Console.WriteLine("SendOrder start: " + start +  " elapsed: " + watch.ElapsedMilliseconds + " StatusCode: " + (int)response.StatusCode);
-
+                
+                var statusCode = (int)response.StatusCode;
+                Console.WriteLine("SendOrder start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                if (statusCode == 400)
+                     Console.WriteLine("SendOrder request body=" + jsonContent); 
                 string responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("SendOrder Body: " +  responseString);  
+                Console.WriteLine("SendOrder response body=" +  responseString); 
             }
         }
     }
