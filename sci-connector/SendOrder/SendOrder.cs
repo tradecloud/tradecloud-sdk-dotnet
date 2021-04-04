@@ -31,7 +31,7 @@ namespace Com.Tradecloud1.SDK.Client
                 var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword);
                 var content = new StringContent(orderXml, Encoding.UTF8, "text/xml");
-                var start= DateTime.Now;
+                var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
                 var response = await httpClient.PutAsync(sendOrderUrl, content);
                 watch.Stop();

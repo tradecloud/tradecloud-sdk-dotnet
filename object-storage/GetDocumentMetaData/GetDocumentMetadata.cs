@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -8,6 +9,7 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class GetDocumentMetadata
     {   
+        const bool useToken = true;
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
         // Fill in mandatory username
@@ -24,19 +26,31 @@ namespace Com.Tradecloud1.SDK.Client
             Console.WriteLine("Tradecloud get document metadata example.");
             
             HttpClient httpClient = new HttpClient();
-            var authenticationClient = new Authentication(httpClient, authenticationUrl);
-            var (accessToken, refreshToken)  = await authenticationClient.Login(username, password);
-            await GetDocumentMetadataRequest(accessToken);
+            if (useToken)
+            {
+                var authenticationClient = new Authentication(httpClient, authenticationUrl);
+                var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                await GetDocumentMetadataRequest(accessToken);
+            }
+            else
+            {
+                var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
+                await GetDocumentMetadataRequest(null);
+            }
 
             async Task GetDocumentMetadataRequest(string accessToken)
-            {                
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-                var response = await httpClient.GetAsync(getDocumentMetadataUrl);
+            {                        
+                var start = DateTime.Now;
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                    var response = await httpClient.GetAsync(getDocumentMetadataUrl);
+                watch.Stop();
 
-                Console.WriteLine("GetDocumentMetadata StatusCode: " + (int)response.StatusCode);
-
+                var statusCode = (int)response.StatusCode;
+                Console.WriteLine("GetDocumentMetadata start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                 string responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("GetDocumentMetadata Content: " +  JValue.Parse(responseString).ToString(Formatting.Indented));   
+                Console.WriteLine("GetDocumentMetadata response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
             }
         }
     }
