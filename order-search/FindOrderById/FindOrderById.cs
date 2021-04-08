@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class GetOrderById
+    class FindOrderById
     {   
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
@@ -16,28 +16,34 @@ namespace Com.Tradecloud1.SDK.Client
         const string password = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order-search/specs.yaml#/order-search
-        const string orderSearchUrl = "https://api.accp.tradecloud1.com/v2/order/";
+        const string orderSearchUrl = "https://api.accp.tradecloud1.com/v2/order-search/";
         // Fill in manadatory order id
         const string orderId = "";
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud get order by id example.");
+            Console.WriteLine("Tradecloud search orders example.");
             
             HttpClient httpClient = new HttpClient();
             var authenticationClient = new Authentication(httpClient, authenticationUrl);
             var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
-            await GetOrderById(accessToken);
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+            await FindOrderById(accessToken);
 
-            async Task GetOrderById(string accessToken)
+            async Task FindOrderById(string accessToken)
             {                
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                var start = DateTime.Now;
+                var watch = System.Diagnostics.Stopwatch.StartNew();
                 var response = await httpClient.GetAsync(orderSearchUrl + orderId);
+                watch.Stop();
 
-                Console.WriteLine("GetOrderById StatusCode: " + (int)response.StatusCode);
-
+                var statusCode = (int)response.StatusCode;
+                Console.WriteLine("FindOrderById start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                 string responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("GetOrderById Content: " +  JValue.Parse(responseString).ToString(Formatting.Indented));  
+                if (statusCode == 200)
+                    Console.WriteLine("FindOrderById response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
+                else
+                    Console.WriteLine("FindOrderById response body=" +  responseString); 
             }
         }
     }
