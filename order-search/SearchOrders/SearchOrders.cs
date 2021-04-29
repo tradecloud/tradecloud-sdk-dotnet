@@ -9,6 +9,7 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class SearchOrders
     {   
+        const bool useToken = true;
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
         // Fill in mandatory username
@@ -24,38 +25,39 @@ namespace Com.Tradecloud1.SDK.Client
             'query': 'string',
             'filters': {
                 'buyerOrder': {
-                'companyId': [
-                    '3fa85f64-5717-4562-b3fc-2c963f66afa6'
-                ],
-                'contact': {
-                    'userIds': [
-                    '3fa85f64-5717-4562-b3fc-2c963f66afa6'
-                    ]
-                },
-                'destination': {
-                    'code': [
-                    'string'
-                    ]
-                }
+                    'companyId': [
+                        '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+                    ],
+                    'contact': {
+                        'userIds': [
+                        '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+                        ]
+                    },
+                    'destination': {
+                        'code': [
+                            'string'
+                        ]
+                    }
                 },
                 'supplierOrder': {
-                'companyId': [
-                    '3fa85f64-5717-4562-b3fc-2c963f66afa6'
-                ],
-                'contact': {
-                    'userIds': [
-                    '3fa85f64-5717-4562-b3fc-2c963f66afa6'
-                    ]
-                }
+                    'companyId': [
+                        '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+                    ],
+                    'contact': {
+                        'userIds': [
+                            '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+                        ]
+                    }
                 },
                 'status': {
-                'processStatus': [
-                    'Issued'
-                ],
-                'logisticsStatus': [
-                    'Open'
-                ]
-                }
+                    'processStatus': [
+                        'Issued'
+                    ],
+                    'logisticsStatus': [
+                        'Open'
+                    ]
+                },
+                'lastUpdatedSince': '2021-04-23T10:01:53.812Z'
             },
             'sort': [
                 {
@@ -72,12 +74,20 @@ namespace Com.Tradecloud1.SDK.Client
             Console.WriteLine("Tradecloud search orders example.");
             
             HttpClient httpClient = new HttpClient();
-            var authenticationClient = new Authentication(httpClient, authenticationUrl);
-            var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-            await SearchOrders(accessToken);
+            if (useToken)
+            {
+                var authenticationClient = new Authentication(httpClient, authenticationUrl);
+                var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);            
+            }
+            else
+            {
+                var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
+            }
+            await SearchOrders();
 
-            async Task SearchOrders(string accessToken)
+            async Task SearchOrders()
             {                
                 var jsonContent = jsonContentWithSingleQuotes.Replace("'", "\"");
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");

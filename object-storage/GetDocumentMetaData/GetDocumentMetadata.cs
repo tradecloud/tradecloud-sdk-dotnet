@@ -30,17 +30,16 @@ namespace Com.Tradecloud1.SDK.Client
             {
                 var authenticationClient = new Authentication(httpClient, authenticationUrl);
                 var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-                await GetDocumentMetadataRequest(accessToken);
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);                
             }
             else
             {
                 var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
-                await GetDocumentMetadataRequest(null);
             }
+            await GetDocumentMetadataRequest();
 
-            async Task GetDocumentMetadataRequest(string accessToken)
+            async Task GetDocumentMetadataRequest()
             {                        
                 var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();

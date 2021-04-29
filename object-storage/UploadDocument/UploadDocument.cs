@@ -31,16 +31,15 @@ namespace Com.Tradecloud1.SDK.Client
                 var authenticationClient = new Authentication(httpClient, authenticationUrl);
                 var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-                await UploadDocumentRequest(accessToken);
             }
             else
             {
                 var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
-                await UploadDocumentRequest(null);
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );                
             }
+            await UploadDocumentRequest();
 
-            async Task UploadDocumentRequest(string accessToken)
+            async Task UploadDocumentRequest()
             {                
                 FileStream fileStream = File.OpenRead(path);
 
