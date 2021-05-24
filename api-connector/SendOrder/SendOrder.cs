@@ -52,7 +52,9 @@ namespace Com.Tradecloud1.SDK.Client
                     'noDeliveryExpected': false,
                     'shipped': false,
                     'delivered': false,
-                    'completed': false
+                    'completed': false,
+                    'cancelled': false,
+                    'cancelLineWhenMissing': false
                 },
                 'properties': [
                     {
@@ -158,7 +160,8 @@ namespace Com.Tradecloud1.SDK.Client
                         'noDeliveryExpected': false,
                         'shipped': false,
                         'delivered': false,
-                        'completed': false
+                        'completed': false,
+                        'cancelled': false
                     },
                     'properties': [
                         {
