@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Order xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Order-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Order-2.1.xsd" xmlns="urn:oasis:names:specification:ubl:schema:xsd:Order-2">
+    <cbc:ID>2021.123</cbc:ID>
+    <cbc:IssueDate>2020-10-16</cbc:IssueDate>
+    <cbc:OrderTypeCode>New</cbc:OrderTypeCode>
+    <cbc:Note>[Free-form order note text 1]</cbc:Note>
+    <cbc:Note>[Free-form order note text 2]</cbc:Note>
+    <cac:AdditionalDocumentReference>
+        <cbc:ID>998413772</cbc:ID>
+        <cbc:DocumentType>TPD Document</cbc:DocumentType>
+        <cbc:VersionID>1.0</cbc:VersionID>
+        <cac:Attachment>
+            <cac:ExternalReference>
+                <cbc:URI>[URL where the file is available]</cbc:URI>
+                <cbc:FileName>[File name]</cbc:FileName>
+                <cbc:Description>[Description of the file]</cbc:Description>
+            </cac:ExternalReference>
+        </cac:Attachment>
+    </cac:AdditionalDocumentReference>
+    <cac:AdditionalDocumentReference>
+        <cbc:ID>998413773</cbc:ID>
+        <cbc:DocumentType>TPD Document</cbc:DocumentType>
+        <cbc:VersionID>2.0</cbc:VersionID>
+        <cac:Attachment>
+            <cac:ExternalReference>
+                <cbc:URI>[URL 2 where the file is available]</cbc:URI>
+                <cbc:FileName>[File name 2]</cbc:FileName>
+                <cbc:Description>[Description of the file 2]</cbc:Description>
+            </cac:ExternalReference>
+        </cac:Attachment>
+    </cac:AdditionalDocumentReference>
+    <cac:BuyerCustomerParty>
+        <cac:Party>
+            <cac:PartyIdentification>
+                <cbc:ID schemeID="GLN">CUSTOMER01</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>Blue sailboats Inc</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Atlantic street</cbc:StreetName>
+                <cbc:BuildingNumber>5</cbc:BuildingNumber>
+                <cbc:CityName>London</cbc:CityName>
+                <cbc:PostalZone>7795 AW</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode>GB</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PhysicalLocation>
+                <cac:Address>
+                    <cbc:StreetName>Atlantic street</cbc:StreetName>
+                    <cbc:BuildingNumber>5</cbc:BuildingNumber>
+                    <cbc:CityName>London</cbc:CityName>
+                    <cbc:PostalZone>7795 AW</cbc:PostalZone>
+                    <cac:Country>
+                        <cbc:IdentificationCode>GB</cbc:IdentificationCode>
+                    </cac:Country>
+                </cac:Address>
+            </cac:PhysicalLocation>
+            <cac:Contact>
+                <cbc:Telephone>088 1234 123</cbc:Telephone>
+                <cbc:ElectronicMail>dee@tradecloud1.com</cbc:ElectronicMail>
+                <cac:OtherCommunication>
+                    <cbc:Value>www.tradecloud1.com</cbc:Value>
+                </cac:OtherCommunication>
+            </cac:Contact>
+            <cac:Person>
+                <cbc:FirstName>Dee</cbc:FirstName>
+                <cbc:FamilyName>Caffari</cbc:FamilyName>
+                <cbc:JobTitle>Employee</cbc:JobTitle>
+                <cbc:OrganizationDepartment>Procurement</cbc:OrganizationDepartment>
+            </cac:Person>
+        </cac:Party>
+    </cac:BuyerCustomerParty>
+    <cac:SellerSupplierParty>
+        <cac:Party>
+            <cac:PartyIdentification>
+                <cbc:ID>540830</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>Sail - Hardware Store</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Main st.</cbc:StreetName>
+                <cbc:BuildingNumber>77</cbc:BuildingNumber>
+                <cbc:CityName>Amsterdam</cbc:CityName>
+                <cbc:PostalZone>1234 AB</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode>NL</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:PhysicalLocation>
+                <cac:Address>
+                    <cbc:StreetName>Main st. </cbc:StreetName>
+                    <cbc:BuildingNumber>77</cbc:BuildingNumber>
+                    <cbc:CityName>Amsterdam</cbc:CityName>
+                    <cbc:PostalZone>1234 AB</cbc:PostalZone>
+                    <cac:Country>
+                        <cbc:IdentificationCode>NL</cbc:IdentificationCode>
+                    </cac:Country>
+                </cac:Address>
+            </cac:PhysicalLocation>
+            <cac:Contact>
+                <cbc:Telephone>015-1231234</cbc:Telephone>
+                <cbc:Telefax>015-1112223</cbc:Telefax>
+            </cac:Contact>
+            <cac:Person>
+                <cbc:FamilyName>Mast</cbc:FamilyName>
+            </cac:Person>
+        </cac:Party>
+    </cac:SellerSupplierParty>
+    <cac:AccountingCustomerParty>
+        <cac:Party>
+            <cac:PartyIdentification>
+                <cbc:ID>CUSTOMER01</cbc:ID>
+            </cac:PartyIdentification>
+            <cac:PartyName>
+                <cbc:Name>Blue sailboats Inc</cbc:Name>
+            </cac:PartyName>
+            <cac:PostalAddress>
+                <cbc:StreetName>Atlantic street</cbc:StreetName>
+                <cbc:BuildingNumber>5</cbc:BuildingNumber>
+                <cbc:CityName>London</cbc:CityName>
+                <cbc:PostalZone>7795 AW</cbc:PostalZone>
+                <cac:Country>
+                    <cbc:IdentificationCode>GB</cbc:IdentificationCode>
+                </cac:Country>
+            </cac:PostalAddress>
+            <cac:Contact>
+                <cbc:Telephone>088 1234 1232</cbc:Telephone>
+                <cbc:ElectronicMail>dee@tradecloud1.com</cbc:ElectronicMail>
+                <cac:OtherCommunication>
+                    <cbc:Value>www.tradecloud1.com</cbc:Value>
+                </cac:OtherCommunication>
+            </cac:Contact>
+        </cac:Party>
+    </cac:AccountingCustomerParty>
+    <cac:DeliveryTerms>
+        <cbc:ID schemeName="INCOTERMS2010">1</cbc:ID>
+    </cac:DeliveryTerms>
+    <cac:PaymentTerms>
+        <cbc:Note>Within 30 days netto</cbc:Note>
+        <cac:SettlementPeriod>
+            <cbc:DurationMeasure unitCode="DAY">30</cbc:DurationMeasure>
+        </cac:SettlementPeriod>
+    </cac:PaymentTerms>
+    <cac:AnticipatedMonetaryTotal>
+        <cbc:PayableAmount currencyID="EUR">0.90</cbc:PayableAmount>
+    </cac:AnticipatedMonetaryTotal>
+    <cac:OrderLine>
+        <cac:LineItem>
+            <cbc:ID>01</cbc:ID>
+            <cbc:Note>Freeform text 1</cbc:Note>
+            <cbc:LineStatusCode>revised</cbc:LineStatusCode>
+            <cbc:Quantity unitCode="B41">5.000</cbc:Quantity>
+            <cbc:LineExtensionAmount currencyID="EUR">0.30</cbc:LineExtensionAmount>
+            <cac:Delivery>
+                <cbc:ID>1</cbc:ID>
+                <cbc:Quantity unitCode="B41">5.000</cbc:Quantity>
+                <cac:DeliveryLocation>
+                    <cbc:ID>5790001398644</cbc:ID>
+                    <cbc:Description>[Free-form description of the location]</cbc:Description>
+                    <cac:Address>
+                        <cbc:StreetName>Atlantic street</cbc:StreetName>
+                        <cbc:BuildingNumber>5</cbc:BuildingNumber>
+                        <cbc:CityName>London</cbc:CityName>
+                        <cbc:PostalZone>7795 AW</cbc:PostalZone>
+                        <cac:Country>
+                            <cbc:IdentificationCode>GB</cbc:IdentificationCode>
+                        </cac:Country>
+                    </cac:Address>
+                </cac:DeliveryLocation>
+                <cac:RequestedDeliveryPeriod>
+                    <cbc:EndDate>2020-10-16</cbc:EndDate>
+                </cac:RequestedDeliveryPeriod>
+            </cac:Delivery>
+            <cac:Price>
+                <cbc:PriceAmount currencyID="EUR">0.06</cbc:PriceAmount>
+                <cbc:BaseQuantity unitCode="B41">1</cbc:BaseQuantity>
+                <cbc:PriceType>gross</cbc:PriceType>
+                <cac:AllowanceCharge>
+                    <cbc:ChargeIndicator>false</cbc:ChargeIndicator>
+                    <cbc:AllowanceChargeReasonCode>[reason code]</cbc:AllowanceChargeReasonCode>
+                    <cbc:MultiplierFactorNumeric>10.00</cbc:MultiplierFactorNumeric>
+                    <cbc:Amount currencyID="EUR">0.006</cbc:Amount>
+                </cac:AllowanceCharge>
+            </cac:Price>
+            <cac:Item>
+                <cbc:Description>Bolt M3 (Original)</cbc:Description>
+                <cbc:Name>Bolt M3</cbc:Name>
+                <cac:BuyersItemIdentification>
+                    <cbc:ID>0001234</cbc:ID>
+                    <cbc:ExtendedID>000</cbc:ExtendedID>
+                </cac:BuyersItemIdentification>
+                <cac:SellersItemIdentification>
+                    <cbc:ID>BBB1234</cbc:ID>
+                </cac:SellersItemIdentification>
+            </cac:Item>
+        </cac:LineItem>
+        <cac:DocumentReference>
+            <cbc:ID>998413774</cbc:ID>
+            <cbc:DocumentType>TPD Document</cbc:DocumentType>
+            <cbc:VersionID>1.0</cbc:VersionID>
+            <cac:Attachment>
+                <cac:ExternalReference>
+                    <cbc:URI>[URL 3 where the file is available]</cbc:URI>
+                    <cbc:FileName>[File name 3]</cbc:FileName>
+                    <cbc:Description>[Description of the file 3]</cbc:Description>
+                </cac:ExternalReference>
+            </cac:Attachment>
+        </cac:DocumentReference>
+        <cac:DocumentReference>
+            <cbc:ID>998413775</cbc:ID>
+            <cbc:DocumentType>TPD Document</cbc:DocumentType>
+            <cbc:VersionID>4.0</cbc:VersionID>
+            <cac:Attachment>
+                <cac:ExternalReference>
+                    <cbc:URI>[URL 4 where the file is available]</cbc:URI>
+                    <cbc:FileName>[File name 4]</cbc:FileName>
+                    <cbc:Description>[Description of the file 4]</cbc:Description>
+                </cac:ExternalReference>
+            </cac:Attachment>
+        </cac:DocumentReference>
+    </cac:OrderLine>
+    <cac:OrderLine>
+        <cac:LineItem>
+            <cbc:ID>02</cbc:ID>
+            <cbc:Note>Freeform text 2</cbc:Note>
+            <cbc:Note>Freeform text 3</cbc:Note>
+            <cbc:LineStatusCode>cancelled</cbc:LineStatusCode>
+            <cbc:Quantity unitCode="B41">10.000</cbc:Quantity>
+            <cbc:LineExtensionAmount currencyID="EUR">0.60</cbc:LineExtensionAmount>
+            <cac:Delivery>
+                <cbc:ID>1</cbc:ID>
+                <cbc:Quantity unitCode="B41">6.000</cbc:Quantity>
+                <cac:DeliveryLocation>
+                    <cbc:ID schemeID="GLN">12324567890</cbc:ID>
+                    <cbc:Description>[Free-form description of the location]</cbc:Description>
+                    <cac:Address>
+                        <cbc:StreetName>Atlantic street</cbc:StreetName>
+                        <cbc:BuildingNumber>5</cbc:BuildingNumber>
+                        <cbc:CityName>London</cbc:CityName>
+                        <cbc:PostalZone>7795 AW</cbc:PostalZone>
+                        <cac:Country>
+                            <cbc:IdentificationCode>GB</cbc:IdentificationCode>
+                        </cac:Country>
+                    </cac:Address>
+                </cac:DeliveryLocation>
+                <cac:RequestedDeliveryPeriod>
+                    <cbc:EndDate>2020-10-16</cbc:EndDate>
+                </cac:RequestedDeliveryPeriod>
+            </cac:Delivery>
+            <cac:Delivery>
+                <cbc:ID>2</cbc:ID>
+                <cbc:Quantity unitCode="B41">4.000</cbc:Quantity>
+                <cac:DeliveryLocation>
+                    <cac:Address>
+                        <cbc:StreetName>Atlantic street</cbc:StreetName>
+                        <cbc:BuildingNumber>5</cbc:BuildingNumber>
+                        <cbc:CityName>London</cbc:CityName>
+                        <cbc:PostalZone>7795 AW</cbc:PostalZone>
+                        <cac:Country>
+                            <cbc:IdentificationCode>GB</cbc:IdentificationCode>
+                        </cac:Country>
+                    </cac:Address>
+                </cac:DeliveryLocation>
+                <cac:RequestedDeliveryPeriod>
+                    <cbc:EndDate>2020-10-18</cbc:EndDate>
+                </cac:RequestedDeliveryPeriod>
+            </cac:Delivery>
+            <cac:Price>
+                <cbc:PriceAmount currencyID="EUR">10.80</cbc:PriceAmount>
+                <cbc:BaseQuantity unitCode="B42">1</cbc:BaseQuantity>
+                <cbc:PriceType>gross</cbc:PriceType>
+                <cac:AllowanceCharge>
+                    <cbc:ChargeIndicator>true</cbc:ChargeIndicator>
+                    <cbc:AllowanceChargeReasonCode>[reason code]</cbc:AllowanceChargeReasonCode>
+                    <cbc:MultiplierFactorNumeric>10.00</cbc:MultiplierFactorNumeric>
+                    <cbc:Amount currencyID="EUR">0.006</cbc:Amount>
+                </cac:AllowanceCharge>
+            </cac:Price>
+            <cac:Item>
+                <cbc:Description>Bolt M6 (Titanium)</cbc:Description>
+                <cbc:Name>Bolt M6</cbc:Name>
+                <cac:BuyersItemIdentification>
+                    <cbc:ID>0001236</cbc:ID>
+                    <cbc:ExtendedID>006</cbc:ExtendedID>
+                </cac:BuyersItemIdentification>
+                <cac:SellersItemIdentification>
+                    <cbc:ID>BBB1236</cbc:ID>
+                </cac:SellersItemIdentification>
+            </cac:Item>
+        </cac:LineItem>
+        <cac:DocumentReference>
+            <cbc:ID>998413775</cbc:ID>
+            <cbc:IssueDate>2018-10-05</cbc:IssueDate>
+            <cbc:DocumentType>TPD 5 Document</cbc:DocumentType>
+            <cbc:VersionID>5.0</cbc:VersionID>
+            <cac:Attachment>
+                <cac:ExternalReference>
+                    <cbc:EmbeddedDocumentBinaryObject mimeCode="application/octet-stream" filename="example.file">embedded-base64-encoded-binary-file</cbc:EmbeddedDocumentBinaryObject>
+                    <cbc:URI>[URL 5 where the file is available]</cbc:URI>
+                    <cbc:FileName>[File name 5]</cbc:FileName>
+                    <cbc:Description>[Description 5 of the file]</cbc:Description>
+                </cac:ExternalReference>
+            </cac:Attachment>
+        </cac:DocumentReference>
+    </cac:OrderLine>
+</Order>
