@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -8,6 +9,7 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class FindOrderById
     {   
+        const bool useToken = true;
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
         // Fill in mandatory username
@@ -16,21 +18,29 @@ namespace Com.Tradecloud1.SDK.Client
         const string password = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order-search/specs.yaml#/order-search
-        const string orderSearchUrl = "https://api.accp.tradecloud1.com/v2/order-search/";
+        const string orderSearchUrl = "https://api.accp.tradecloud1.com/v2/order/";
         // Fill in manadatory order id
         const string orderId = "";
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud search orders example.");
+            Console.WriteLine("Tradecloud find order by id example.");
             
             HttpClient httpClient = new HttpClient();
-            var authenticationClient = new Authentication(httpClient, authenticationUrl);
-            var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-            await FindOrderById(accessToken);
+            if (useToken)
+            {
+                var authenticationClient = new Authentication(httpClient, authenticationUrl);
+                var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);            
+            }
+            else
+            {
+                var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
+            }
+            await FindOrderById();
 
-            async Task FindOrderById(string accessToken)
+            async Task FindOrderById()
             {                
                 var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -43,7 +53,7 @@ namespace Com.Tradecloud1.SDK.Client
                 if (statusCode == 200)
                     Console.WriteLine("FindOrderById response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
                 else
-                    Console.WriteLine("FindOrderById response body=" +  responseString); 
+                    Console.WriteLine("FindOrderById response body=" +  responseString);
             }
         }
     }
