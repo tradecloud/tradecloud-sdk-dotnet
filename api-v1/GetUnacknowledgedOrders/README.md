@@ -2,15 +2,19 @@
 
 This example fetches unacknowledged (either new or updated) orders from the API v1
 
+The supplier can use polling to check for new or updated orders periodically.
+
+The buyer can use polling to check for new or updated confirmations periodically. 
+
 ## Prerequisites
 
-A tradecloud.nl user
+A tradecloud.nl buyer or supplier user
 
 ## Configure
 
 In the source code:
-- fill in username on tradecloud.nl
-- fill in password on tradecloud.nl
+- fill in your Tradecloud username
+- fill in your password
 
 ## Run
 ```
