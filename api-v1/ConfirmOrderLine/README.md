@@ -21,7 +21,8 @@ In the source code:
 ## Run
 
 ```
-➜  AcknowledgeOrder git:(master) ✗ dotnet run
+➜  api-v1 git:(master) ✗ cd ConfirmOrderLine 
+➜  ConfirmOrderLine git:(master) ✗ dotnet run
 Tradecloud confirm order line example.
 ConfirmOrderLine status=200 reason=OK
 ConfirmOrderLine response body={

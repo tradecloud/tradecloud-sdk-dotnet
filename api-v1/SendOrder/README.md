@@ -17,6 +17,7 @@ In the source code:
 ## Run
 
 ```
+➜  api-v1 git:(master) ✗ cd SendOrder 
 ➜  SendOrder git:(master) ✗ dotnet run
 Tradecloud send order example.
 ConfirmOrderLine status=200 reason=OK
