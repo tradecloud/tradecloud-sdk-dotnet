@@ -10,7 +10,7 @@ The .NET SDK can help you to develop a Tradecloud API v1 client in .NET and C#
 
 ```
 ➜ git clone https://github.com/tradecloud/tradecloud-sdk-dotnet.git
-➜ cd tradecloud-sdk-dotnet
+➜ cd tradecloud-sdk-dotnet/api-v1
 ```
 
 ## Update
