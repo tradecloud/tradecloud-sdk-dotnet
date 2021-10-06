@@ -14,18 +14,19 @@ In the source code:
 - amend authenticationUrl if necessary
 - username on Tradecloud
 - password on Tradecloud
-- amend sendOrderDocumentsUrl in necessary
+- amend sendOrderDocumentsUrl if necessary
 - replace the `objectId` in the source as returned from `2. Upload a document using object-storage/UploadDocument`
 - replace `companyId` and `purchaseOrderNumber` in the source as used in `3. Issue an order using api-connector/SendOrder`
-- amend other order/lines fields
+
+Amend order-documents.json if necessary
 
 ## Run
 
 ```
 ➜  api-connector git:(master) ✗ dotnet run
 Tradecloud send order documents example.
-Login response StatusCode: 200 ElapsedMilliseconds: 559
-Login response Content:...
-SendOrder StatusCode: 200 ElapsedMilliseconds: 165
-SendOrder Body: {"ok":true}
+Login response StatusCode: 200 ElapsedMilliseconds: 456
+Login response Content: {"username":...}
+SendOrderDocuments start=10/6/2021 7:42:02 PM elapsed=198ms status=200 reason=OK
+SendOrderDocuments response body={"ok":true}
 ```

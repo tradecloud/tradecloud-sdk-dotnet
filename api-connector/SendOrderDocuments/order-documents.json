@@ -1,0 +1,30 @@
+{
+    "order": {
+        "purchaseOrderNumber": "TC-7245-1",
+        "documents": [
+            {
+                "code": "123456789",
+                "revision": "B",
+                "name": "Tradecloud API Manual",
+                "objectId": "a4f73172-6ccc-4588-8a1d-550297156c9d",
+                "type": "General",
+                "description": "General document"
+            }
+        ]
+    },
+    "lines": [
+        {
+            "position": "0001",
+            "documents": [
+                {
+                "code": "123456789",
+                "revision": "B",
+                "name": "Tradecloud API Manual",
+                "objectId": "a4f73172-6ccc-4588-8a1d-550297156c9d",
+                "type": "General",
+                "description": "General document"
+                }
+            ]
+        }
+    ]
+}
