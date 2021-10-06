@@ -12,8 +12,9 @@ In the source code:
 - amend authenticationUrl if necessary
 - fill in username on Tradecloud
 - fill in password on Tradecloud
-- amend sendOrderUrl in necessary
-- amend order/lines fields
+- amend sendOrderUrl if necessary
+
+Amend order.json if necessary
 
 ## Run
 
