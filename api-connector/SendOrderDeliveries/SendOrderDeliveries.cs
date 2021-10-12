@@ -9,24 +9,25 @@ using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class SendOrderReponse
+    class SendOrderDeliveries
     {   
         const bool useToken = true;
-         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
+        
         // Fill in mandatory username
         const string username = "";
         // Fill in mandatory password
         const string password = "";
 
-        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/supplier-endpoints/sendOrderResponseBySupplierRoute
-        const string sendOrderResponseUrl = "https://api.accp.tradecloud1.com/v2/api-connector/order-response";
-        
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderDeliveriesByBuyer
+        const string sendOrderDeliveriesUrl = "https://api.accp.tradecloud1.com/v2/api-connector/order/deliveries";
+
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud send order response example.");
-
-            var jsonContent = File.ReadAllText(@"order-response.json");
+            Console.WriteLine("Tradecloud send order deliveries example.");
+            
+            var jsonContent = File.ReadAllText(@"order-deliveries.json");
 
             HttpClient httpClient = new HttpClient();
             if (useToken)
@@ -40,26 +41,26 @@ namespace Com.Tradecloud1.SDK.Client
                 var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
             }
-            await SendOrderResponse();
+            await SendOrderDeliveries();
 
-            async Task SendOrderResponse()
+            async Task SendOrderDeliveries()
             {                
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+               var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                 var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                var response = await httpClient.PostAsync(sendOrderResponseUrl, content);
+                var response = await httpClient.PostAsync(sendOrderDeliveriesUrl, content);
                 watch.Stop();
 
                 var statusCode = (int)response.StatusCode;
-                Console.WriteLine("SendOrderResponse start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                Console.WriteLine("SendOrderDelveries start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                 if (statusCode == 400)
-                     Console.WriteLine("SendOrderResponse request body=" + jsonContent); 
+                     Console.WriteLine("SendOrderDelveries request body=" + jsonContent); 
                 string responseString = await response.Content.ReadAsStringAsync();
                 if (statusCode == 200)
-                    Console.WriteLine("SendOrderResponse response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
+                    Console.WriteLine("SendOrderDelveries response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
                 else
-                    Console.WriteLine("SendOrderResponse response body=" +  responseString);
+                    Console.WriteLine("SendOrderDelveries response body=" +  responseString);
             }
         }
     }

@@ -14,7 +14,8 @@ In the source code:
 - fill in password on Tradecloud
 - amend sendOrderUrl if necessary
 
-Amend order.json if necessary
+Amend order.json if necessary:
+- amend the `purchaseOrderNumber` 
 
 ## Run
 
