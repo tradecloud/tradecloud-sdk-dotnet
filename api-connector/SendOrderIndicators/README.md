@@ -4,7 +4,8 @@ This example sends order indicators to Tradecloud using the API Connector
 
 ## Prerequisites
 
-A Tradecloud user with `buyer` and `integration` roles
+1. A Tradecloud user with `buyer` and `integration` roles
+2. Issue an order using api-connector/SendOrder
 
 ## Configure
 
@@ -14,8 +15,9 @@ In the source code:
 - fill in username
 - fill in password
 - amend sendOrderIndicatorsUrl
-- amend companyId when using super user, else remove companyId from the body
-- amend order/lines indicators in the body
+
+Amend order-indicators.json if necessary:
+- replace the `purchaseOrderNumber` as used in `2. Issue an order using api-connector/SendOrder`
 
 ## Run
 
