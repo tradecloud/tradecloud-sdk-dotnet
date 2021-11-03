@@ -20,6 +20,9 @@ namespace Com.Tradecloud1.SDK.Client
         const string jsonContentWithSingleQuotes = 
             @"{
                 `roles`: [
+                    `admin`
+                ],
+                `companyRoles`: [
                     `buyer`
                 ]
             }";
