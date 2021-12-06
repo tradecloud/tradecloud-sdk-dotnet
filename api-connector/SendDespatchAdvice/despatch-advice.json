@@ -1,0 +1,95 @@
+{
+	"header": {
+		"buyerAccountNumber": "340760",
+        "despatchAdviceNumber": "DA123456789",
+        "shipment": {
+          "shipmentNumber": "SN123456789",
+          "shipmentCompanyName": "Maersk",
+          "trackingNumber": "1Z662F416878787827",
+          "departure": {
+            "location": {
+              "locationType": "PlaceOfDestination",
+              "id": "123",
+              "idScheme": "GLN",
+              "names": [
+                "My Company Warehouse",
+                "Dock 12"
+              ],
+              "addressLines": [
+                "Street 123",
+                "Area 52"
+              ],
+              "postalCode": "1234 AB",
+              "city": "Rotterdam",
+              "countryCodeIso2": "NL"
+            },
+            "actualDate": "2019-12-31"
+          },
+          "destination": {
+            "location": {
+              "locationType": "PlaceOfDestination",
+              "id": "123",
+              "idScheme": "GLN",
+              "names": [
+                "My Company Warehouse",
+                "Dock 12"
+              ],
+              "addressLines": [
+                "Street 123",
+                "Area 52"
+              ],
+              "postalCode": "1234 AB",
+              "city": "Rotterdam",
+              "countryCodeIso2": "NL"
+            },
+            "scheduledStartDate": "2019-12-31",
+            "scheduledStartTime": "12:13:14",
+            "scheduledEndDate": "2019-12-31",
+            "scheduledEndTime": "12:13:14"
+          },
+          "finalDestination": {
+            "location": {
+              "locationType": "PlaceOfDestination",
+              "id": "123",
+              "idScheme": "GLN",
+              "names": [
+                "My Company Warehouse",
+                "Dock 12"
+              ],
+              "addressLines": [
+                "Street 123",
+                "Area 52"
+              ],
+              "postalCode": "1234 AB",
+              "city": "Rotterdam",
+              "countryCodeIso2": "NL"
+            },
+            "scheduledStartDate": "2019-12-31",
+            "scheduledStartTime": "12:13:14",
+            "scheduledEndDate": "2019-12-31",
+            "scheduledEndTime": "12:13:14"
+          }
+        }
+      },
+      "lines": [
+        {
+          "despatchAdviceLinePosition": "01",
+          "purchaseOrderNumber": "PO123456789",
+          "purchaseOrderLinePosition": "0001",
+          "item": {
+            "buyerItemNumber": "12345",
+            "buyerItemRevision": "v2",
+            "buyerItemName": "Round tube ø60x45",
+            "supplierItemNumber": "67890",
+            "supplierItemRevision": "v2",
+            "supplierItemName": "Round tube ø60x45",
+            "purchaseUnitOfMeasureIso": "PCE"
+          },
+          "despatchQuantity": 1234.56,
+          "backorderQuantity": 1234.56
+        }
+      ],
+      "erpIssueDateTime": "2019-12-31T10:11:12"
+    }
+    
+    
