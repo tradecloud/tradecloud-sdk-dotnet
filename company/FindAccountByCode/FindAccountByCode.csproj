@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\authentication\Authentication\authentication.csproj" />
+    <ProjectReference Include="..\..\authentication\Authentication\authentication.csproj" />
   </ItemGroup>
 
   <ItemGroup>
