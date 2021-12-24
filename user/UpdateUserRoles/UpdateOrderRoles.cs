@@ -14,16 +14,16 @@ namespace Com.Tradecloud1.SDK.Client
         // Fill in mandatory password
         const string password = "";
         // Add user add url
-        const string updateUserRolesUrl = "";
+        const string updateUserRolesUrl = "https://api.accp.tradecloud1.com/v2/user/<userId>/roles";
 
         // Check/amend manadatory order
         const string jsonContentWithSingleQuotes = 
             @"{
                 `roles`: [
-                    `admin`
+                    `admin`, `integration`
                 ],
                 `companyRoles`: [
-                    `buyer`
+                    `supplier`
                 ]
             }";
                         
