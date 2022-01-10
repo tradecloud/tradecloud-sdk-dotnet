@@ -101,6 +101,42 @@
                     "quantity": 1234.56
                 }
             ],
+            "chargeLines": [
+                {
+                    "position": "01",
+                    "chargeTypeCode": "code1",
+                    "chargeDescription": "Description 1",
+                    "quantity": 1,
+                    "price": {
+                        "priceInTransactionCurrency": {
+                            "value": 1.23,
+                            "currencyIso": "EUR"
+                        },
+                        "priceInBaseCurrency": {
+                            "value": 1.23,
+                            "currencyIso": "EUR"
+                        }
+                    },
+                    "priceUnitOfMeasureIso": "PCE"
+                },
+                {
+                    "position": "02",
+                    "chargeTypeCode": "code2",
+                    "chargeDescription": "Description 2",
+                    "quantity": 1,
+                    "price": {
+                        "priceInTransactionCurrency": {
+                            "value": 4.56,
+                            "currencyIso": "EUR"
+                        },
+                        "priceInBaseCurrency": {
+                            "value": 4.56,
+                            "currencyIso": "EUR"
+                        }
+                    },
+                    "priceUnitOfMeasureIso": "PCE"
+                }
+            ],
             "prices": {
                 "grossPrice": {
                     "priceInTransactionCurrency": {
@@ -125,7 +161,7 @@
                 },
                 "priceUnitOfMeasureIso": "PCE",
                 "priceUnitQuantity": 100
-            },                 
+            },                        
             "terms": {
                 "contractNumber": "123456789",
                 "contractPosition": "0001"
