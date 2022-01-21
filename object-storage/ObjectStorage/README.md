@@ -4,14 +4,14 @@ This example gets the document meta data from the Tradecloud object storage.
 ## Configure
 
 In the source code:
-- username on Tradecloud
-- password on Tradecloud
-- getDocumentMetadataUrl including objectId
+- set Tradecloud username
+- set Tradecloud password
+- set the objectId
 
 ## Run
 
 ```
-➜  GetDocumentMetaData git:(master) ✗ dotnet run
+➜  ObjectStorage git:(master) ✗ dotnet run
 Tradecloud get document metadata example.
 Authenticate StatusCode: 200
 Authenticate Content: OK
