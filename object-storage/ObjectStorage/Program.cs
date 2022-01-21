@@ -17,9 +17,11 @@ namespace Com.Tradecloud1.SDK.Client
         // Fill in mandatory password
         const string password = "";
 
-        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/object-storage/specs.yaml#/object-storage/getDocumentMetadata
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/object-storage/specs.yaml#/
+        const string objectStorageDocumentUrl = "https://api.accp.tradecloud1.com/v2/object-storage/document/";
+        
         // Fill in manadatory objectId
-        const string getDocumentMetadataUrl = "https://api.accp.tradecloud1.com/v2/object-storage/document/<objectId>/metadata";
+        const string objectId = "<objectId>";
 
         static async Task Main(string[] args)
         {
@@ -37,20 +39,9 @@ namespace Com.Tradecloud1.SDK.Client
                 var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
             }
-            await GetDocumentMetadataRequest();
-
-            async Task GetDocumentMetadataRequest()
-            {                        
-                var start = DateTime.Now;
-                var watch = System.Diagnostics.Stopwatch.StartNew();
-                    var response = await httpClient.GetAsync(getDocumentMetadataUrl);
-                watch.Stop();
-
-                var statusCode = (int)response.StatusCode;
-                Console.WriteLine("GetDocumentMetadata start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
-                string responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("GetDocumentMetadata response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
-            }
+            
+            var objectStorage = new ObjectStorage(httpClient, objectStorageDocumentUrl);
+            var meta = await objectStorage.GetDocumentMetadata(objectId);
         }
     }
 }

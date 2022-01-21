@@ -12,7 +12,7 @@ In the source code:
 - amend authenticationUrl if necessary
 - fill in username on Tradecloud
 - fill in password on Tradecloud
-- amend sendOrderUrl in necessary
+- amend uploadDocumentUrl in necessary
 - fill in document path (for example `test.pdf`)
 
 ## Run
