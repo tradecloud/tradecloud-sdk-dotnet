@@ -37,3 +37,7 @@ The .NET SDK can help you to develop a Tradecloud API v1 client in .NET and C#
 2. [Acknowledge fetched orders](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/api-v1/AcknowledgeOrder)
 
 3. [Confirm order lines](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/api-v1/ConfirmOrderLine)
+
+## Order and line status fields
+
+[Order and line status fields](status.md)
