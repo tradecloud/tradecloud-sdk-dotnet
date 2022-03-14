@@ -42,27 +42,27 @@
             "deliverySchedule": [
                 {
                   "position": "0001",
-                  "date": "2021-11-04",
+                  "date": "2021-11-01",
                   "quantity": 1234.56
               },
               {
                   "position": "0002",
-                  "date": "2021-11-05",
+                  "date": "2021-11-02",
                   "quantity": 1234.56
               },
               {
                   "position": "0003",
-                  "date": "2021-11-06",
+                  "date": "2021-11-03",
+                  "quantity": 1234.56
+              },
+              {
+                  "date": "2021-11-03",
                   "quantity": 1234.56
               }
             ],
             "prices": {
                 "grossPrice": {
                     "priceInTransactionCurrency": {
-                        "value": 1235,
-                        "currencyIso": "EUR"
-                    },
-                    "priceInBaseCurrency": {
                         "value": 1235,
                         "currencyIso": "EUR"
                     }
@@ -72,15 +72,51 @@
                     "priceInTransactionCurrency": {
                         "value": 1235,
                         "currencyIso": "EUR"
-                    },
-                    "priceInBaseCurrency": {
-                        "value": 1235,
-                        "currencyIso": "EUR"
                     }
                 },
                 "priceUnitOfMeasureIso": "PCE",
                 "priceUnitQuantity": 100
             },
+            "chargeLines": [
+                {
+                    "position": "01",
+                    "chargeTypeCode": "FC",
+                    "chargeDescription": "Description A",
+                    "quantity": 2,
+                    "price": {
+                        "priceInTransactionCurrency": {
+                            "value": 1.23,
+                            "currencyIso": "EUR"
+                        }
+                    },
+                    "priceUnitOfMeasureIso": "PCE"
+                },
+                {
+                    "position": "02",
+                    "chargeTypeCode": "FC",
+                    "chargeDescription": "Description B",
+                    "quantity": 1,
+                    "price": {
+                        "priceInTransactionCurrency": {
+                            "value": 4.57,
+                            "currencyIso": "EUR"
+                        }
+                    },
+                    "priceUnitOfMeasureIso": "PCE"
+                },
+                {
+                    "chargeTypeCode": "FC",
+                    "chargeDescription": "Description C",
+                    "quantity": 1,
+                    "price": {
+                        "priceInTransactionCurrency": {
+                            "value": 7.89,
+                            "currencyIso": "EUR"
+                        }
+                    },
+                    "priceUnitOfMeasureIso": "PCE"
+                }
+            ],
             "indicators": {
                 "accepted": false,
                 "rejected": false,
