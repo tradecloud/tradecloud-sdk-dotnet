@@ -19,7 +19,7 @@ namespace Com.Tradecloud1.SDK.Client
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/object-storage/specs.yaml#/object-storage/uploadDocument
         const string uploadDocumentUrl = "https://api.accp.tradecloud1.com/v2/object-storage/document";
         // Fill in manadatory local path
-        const string path = "test.pdf";
+        const string path = "test";
 
         static async Task Main(string[] args)
         {
@@ -59,7 +59,7 @@ namespace Com.Tradecloud1.SDK.Client
                 var statusCode = (int)response.StatusCode;
                 Console.WriteLine("SendOrder start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                 if (statusCode == 400)
-                     Console.WriteLine("SendOrder request body=" + streamContent); 
+                     Console.WriteLine("SendOrder request=" + response.RequestMessage); 
                 string responseString = await response.Content.ReadAsStringAsync();
                 Console.WriteLine("SendOrder response body=" +  responseString); 
             }
