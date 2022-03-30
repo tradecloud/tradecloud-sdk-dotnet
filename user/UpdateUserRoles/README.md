@@ -1,6 +1,6 @@
 # Add User
 
-This example updates user roles
+This example updates the user roles
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@ In the source code:
 - amend authenticationUrl
 - fill in username
 - fill in password
-- add updateUserRolesUrl
+- add <userId> in updateUserRolesUrl
 - amend user fields
 
 ## Run
