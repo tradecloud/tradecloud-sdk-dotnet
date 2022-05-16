@@ -14,9 +14,10 @@ namespace Com.Tradecloud1.SDK.Client
         // Fill in mandatory password
         const string password = "";
         // Add user add url
-        const string addUserUrl = "";
+        //  https://swagger-ui.s.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/user/private/specs.yaml#/user/addUserRoute
+        const string addUserUrl = "https://api.accp.tradecloud1.com/v2/user/add";
 
-        // Check/amend manadatory order
+        // Check/amend new user
         const string jsonContentWithSingleQuotes = 
             @"{
                 `newUserId`: `40fef20d-8769-4a0b-aa2d-90a0b00750b4`,

@@ -1,0 +1,72 @@
+{
+    "newId": "00f03b98-2511-489f-9695-13791b3f66b6",
+    "identifiers": {
+      "gln": "0847976000005"
+    },
+    "name": "My Company Name",
+    "roles": [
+      "buyer"
+    ],
+    "profile": {
+      "logoId": "00f03b98-2511-489f-9695-13791b3f66b6",
+      "location": "Delft, The Netherlands",
+      "website": "https://www.company.com",
+      "erpSystem": "SAP S/4HANA"
+    },
+    "settings": {
+      "integration": {
+        "webhook": {
+          "orderEventEndpoint": {
+            "url": "https://company.com/webhooks/tradecloud/{orderId}",
+            "method": "HttpPost",
+            "credentials": {
+              "username": "username",
+              "password": "EXAMPLE_UseADifferentPasswordThatIsLongEnoughAndSecurelyStored"
+            },
+            "token": "EXAMPLE_UseADifferentTokenThatIsLongEnoughAndSecurelyStored"
+          },
+          "orderDocumentsEventEndpoint": {
+            "url": "https://company.com/webhooks/tradecloud/{orderId}",
+            "method": "HttpPost",
+            "credentials": {
+              "username": "username",
+              "password": "EXAMPLE_UseADifferentPasswordThatIsLongEnoughAndSecurelyStored"
+            },
+            "token": "EXAMPLE_UseADifferentTokenThatIsLongEnoughAndSecurelyStored"
+          }
+        },
+        "enabledEventNames": [
+          "OrderChangesProposalApprovedByBuyer",
+          "OrderChangesProposalRejectedByBuyer",
+          "OrderChangesProposedBySupplier",
+          "OrderDocumentsAttachedByBuyer",
+          "OrderDocumentsAttachedBySupplier",
+          "OrderIssuedByBuyer",
+          "OrderLinesAcceptedBySupplier",
+          "OrderLinesCancellationRequestApprovedByBuyer",
+          "OrderLinesCancellationRequestApprovedBySupplier",
+          "OrderLinesCancellationRequestedByBuyer",
+          "OrderLinesCancellationRequestedBySupplier",
+          "OrderLinesCancellationRequestRejectedByBuyer",
+          "OrderLinesCancellationRequestRejectedBySupplier",
+          "OrderLinesCancelledByBuyer",
+          "OrderLinesCancelledBySupplier",
+          "OrderLinesItemDetailsChangedBySupplier",
+          "OrderLinesRejectedBySupplier",
+          "OrderLinesReopenRequestApprovedByBuyer",
+          "OrderLinesReopenRequestApprovedBySupplier",
+          "OrderLinesReopenRequestedByBuyer",
+          "OrderLinesReopenRequestedBySupplier",
+          "OrderLinesReopenRequestRejectedByBuyer",
+          "OrderLinesReopenRequestRejectedBySupplier",
+          "OrderLinesUpdatedByBuyer",
+          "OrderLinesUpdatedBySupplier",
+          "OrderLinesReissuedByBuyer",
+          "OrderResentByBuyer",
+          "OrderResentBySupplier",
+          "OrderSynced"
+        ]
+      }
+    }
+  }
+  
