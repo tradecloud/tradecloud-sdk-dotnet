@@ -1,0 +1,26 @@
+{
+    "newUserId": "00f03b98-2511-489f-9695-13791b3f66b6",
+    "email": "user@example.com",
+    "companyId": "384cb2dc-b7d9-4b55-a81b-6244fcf67c56",
+    "companyName": "Company Name",
+    "roles": [
+      "admin"
+    ],
+    "companyRoles": [
+      "buyer"
+    ],
+    "profile": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "position": "Company Employee",
+      "phoneNumber": "012345678",
+      "linkedInProfile": "linkedin/in/johndoe",
+      "profilePictureId": "384cb2dc-b7d9-4b55-a81b-6244fcf67c56"
+    },
+    "settings": {
+      "externalUsername": "johndoe",
+      "notificationInterval": "realtime",
+      "languageCode": "en",
+      "unassignedTasksSubscription": false
+    }
+  }
