@@ -4,7 +4,7 @@ This example sets the Isah SCI Connector settings
 
 ## Prerequisites
 
-A Tradecloud user with `buyer` role
+A Tradecloud user with `admin` role and `buyer` company role
 
 ## Configure
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -14,24 +15,15 @@ namespace Com.Tradecloud1.SDK.Client
         // Fill in mandatory  password
         const string password = "";
         // Add identity add url
-        const string addIdentityUrl = "";
-
-        // Check/amend manadatory order
-        const string jsonContentWithSingleQuotes = 
-            @"{
-                `email`: `user@example.com`,
-                `plainPassword`: ``,
-                `userId`: `40fef20d-8769-4a0b-aa2d-90a0b00750b5`,
-                `userRoles`: [
-                    `buyer`
-                ],
-                `companyId`: `f56aa4ce-8ec8-5197-bc26-77716a58add7`
-            }";
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/private/specs.yaml#/authentication/add
+        const string addIdentityUrl = "https://api.accp.tradecloud1.com/v2/authentication/add";
                         
         static async Task Main(string[] args)
         {
             Console.WriteLine("Tradecloud add identity example.");
             
+            var jsonContent = File.ReadAllText(@"identity.json");
+
             HttpClient httpClient = new HttpClient();
             var authenticationClient = new Authentication(httpClient, authenticationUrl);
             var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
@@ -40,7 +32,6 @@ namespace Com.Tradecloud1.SDK.Client
             async Task AddIdentity(string accessToken)
             {                
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-                var jsonContent = jsonContentWithSingleQuotes.Replace("`", "\"");
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                 var watch = System.Diagnostics.Stopwatch.StartNew();

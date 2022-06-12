@@ -1,0 +1,18 @@
+{
+	"header": {
+		"buyerAccountNumber": "340760",
+        "despatchAdviceNumber": "DA123456789",
+        "shipment": {
+          "shipmentNumber": "SN123456789"       
+        }
+    },
+    "lines": [
+        {
+          "despatchAdviceLinePosition": "01",
+          "purchaseOrderNumber": "PO123456789",
+          "purchaseOrderLinePosition": "0001",      
+          "despatchQuantity": 1234.56
+        }
+    ]
+}    
+    

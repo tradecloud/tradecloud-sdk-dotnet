@@ -1,0 +1,7 @@
+{
+    "host": "<hostname>",
+    "port": 44300,
+    "secure": true,
+    "username": "<username>",
+    "password": "<password>"
+  }
