@@ -12,7 +12,9 @@ In the source code:
 - amend authenticationUrl
 - fill in username
 - fill in password
-- amend user fields
+- amend addUserUrl
+
+Amend user.json
 
 ## Run
 

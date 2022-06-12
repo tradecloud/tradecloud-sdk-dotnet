@@ -12,8 +12,8 @@ In the source code:
 - amend authenticationUrl
 - fill in username
 - fill in password
-- add addIdentityUrl
-- amend identity fields
+
+Amend identity.json
 
 ## Run
 

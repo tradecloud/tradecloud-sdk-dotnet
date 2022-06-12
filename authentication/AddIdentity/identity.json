@@ -1,0 +1,10 @@
+{
+    "email": "<email>",
+    "plainPassword": "<plainPassword>",
+    "userId": "<userId>",
+    "userRoles": [],
+    "companyRoles": [
+      "buyer"
+    ],
+    "companyId": "<companyId>"
+  }
