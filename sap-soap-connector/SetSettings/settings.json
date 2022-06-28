@@ -3,5 +3,21 @@
     "port": 44300,
     "secure": true,
     "username": "<username>",
-    "password": "<password>"
+    "password": "<password>",
+    "enabledEventNames": [
+        "OrderChangesProposedBySupplier",
+        "OrderChangesProposalApprovedByBuyer",
+        "OrderChangesProposalRejectedByBuyer",
+        "OrderLinesAcceptedBySupplier",
+        "OrderLinesConfirmedBySupplier",
+        "OrderLinesRejectedBySupplier",
+        "OrderLinesReopenRequestedByBuyer",
+        "OrderLinesReopenRequestedBySupplier",
+        "OrderLinesReopenRequestApprovedByBuyer",
+        "OrderLinesReopenRequestApprovedBySupplier",
+        "OrderLinesReopenRequestRejectedByBuyer",
+        "OrderLinesReopenRequestRejectedBySupplier",
+        "OrderResentByBuyer",
+        "OrderSynced"
+    ]
   }
