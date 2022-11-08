@@ -85,20 +85,28 @@
                 "batchNumber": "#18001"
             },
             "deliverySchedule": [
-                  {
+                {
                     "position": "0001",
                     "date": "2021-11-01",
-                    "quantity": 1234.56
+                    "quantity": 1111.11
                 },
                 {
                     "position": "0002",
                     "date": "2021-11-02",
-                    "quantity": 1234.56
+                    "quantity": 2222.22,
+                    "status": "ReadyToShip"
                 },
                 {
                     "position": "0003",
                     "date": "2021-11-03",
-                    "quantity": 1234.56
+                    "quantity": 3333.33,
+                    "status": "Shipped"
+                },
+                {
+                    "position": "0004",
+                    "date": "2021-11-04",
+                    "quantity": 4444.44,
+                    "status": "Delivered"
                 }
             ],
             "prices": {
