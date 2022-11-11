@@ -24,7 +24,6 @@ Amend purchaseOrderNumber.json if necessary:
 ```
 ➜  purchaseOrder git:(master) ✗ dotnet run
 Tradecloud migrate purchase order example.
-Tradecloud migrate purchase order example.
 Login response StatusCode: 200 ElapsedMilliseconds: 550
 Login response Content: {"username": ... }
 MigratePurchaseOrder start=8/29/2022 9:17:58 PM elapsed=397ms status=200 reason=OK
