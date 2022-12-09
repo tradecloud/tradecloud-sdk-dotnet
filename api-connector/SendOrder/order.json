@@ -73,7 +73,14 @@
                 "name": "Round tube ø60x45",
                 "description": "Very nice round tube ø60 x 45",
                 "purchaseUnitOfMeasureIso": "PCE",
-                "supplierItemNumber": "67890"
+                "supplierItemNumber": "67890",
+                "dimensions": [
+                    {
+                        "attribute": "mass",
+                        "measure": 5,
+                        "unitOfMeasureUnece": "KGM"
+                    }
+                ]
             },
             "itemDetails": {
                 "countryOfOriginCodeIso2": "NL",
