@@ -5,7 +5,7 @@ This example cancels one order line on the API v1
 ## Prerequisites
 
 - A tradecloud.nl supplier user
-- A to be confirmed order line
+- An order line to cancel
 
 ## Configure
 
