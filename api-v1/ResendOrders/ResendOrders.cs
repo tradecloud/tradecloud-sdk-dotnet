@@ -19,7 +19,7 @@ namespace Com.Tradecloud1.SDK.Client
         static async Task Main(string[] args)
         {
             Console.WriteLine("Tradecloud resend orders.");
-            string[] orderCodes = System.IO.File.ReadAllLines(@"orders.txt");
+            string[] orderCodes = System.IO.File.ReadAllLines(@"purchaseOrderCodes.txt");
 
             HttpClient httpClient = new HttpClient();
             var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
