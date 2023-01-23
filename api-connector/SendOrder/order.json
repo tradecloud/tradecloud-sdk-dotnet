@@ -95,13 +95,15 @@
                 {
                     "position": "0001",
                     "date": "2021-11-01",
-                    "quantity": 1111.11
+                    "quantity": 1111.11,
+                    "transportMode": "Ship 0001"
                 },
                 {
                     "position": "0002",
                     "date": "2021-11-02",
                     "quantity": 2222.22,
-                    "status": "ReadyToShip"
+                    "status": "ReadyToShip",
+                    "transportMode": "Ship 0002"
                 },
                 {
                     "position": "0003",
