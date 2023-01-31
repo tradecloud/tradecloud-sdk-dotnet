@@ -1,6 +1,7 @@
 # Send Order
 
-This example sends a supplier forecast to Tradecloud using the API Connector
+This example seeds a bunch of supplier forecasts in Tradecloud using the API Connector
+If you want to send one supplier forecast, check `SendForcast` instead.
 
 ## Prerequisites
 
@@ -14,16 +15,14 @@ In the source code:
 - fill in password on Tradecloud
 - amend sendForecastUrl if necessary
 
-Amend forecast.json if necessary:
-- amend the `forecastNumber` 
+Amend forecast.json or line.json if necessary.
 
 ## Run
 
 ```
-➜ SendForecast git:(master) ✗ dotnet run
+➜  SeedForecasts git:(master) ✗ dotnet run
 Tradecloud send forecast example.
 Login response StatusCode: 200
 Login response Content: ...
-SendForecast StatusCode: 200
-SendForecast Body: {"ok":true}
+SeedForecasts ...
 ```
