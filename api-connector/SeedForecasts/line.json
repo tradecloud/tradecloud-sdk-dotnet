@@ -1,0 +1,12 @@
+{
+  "item": {
+    "buyerItemNumber": "{buyerItemNumber}",
+    "buyerItemRevision": "v1",
+    "buyerItemName": "Round tube ø60x45",
+    "supplierItemNumber": "67890",
+    "purchaseUnitOfMeasureIso": "PCE"
+  },
+  "startDate": "{startDate}",
+  "endDate": "{endDate}",
+  "quantity": {quantity}
+}

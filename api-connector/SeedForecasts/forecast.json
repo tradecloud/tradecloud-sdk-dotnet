@@ -1,0 +1,10 @@
+{
+  "header": {
+    "supplierAccountNumber": "540830",
+    "forecastNumber": "{forecastNumber}"
+  },
+  "lines": [
+    {lines}
+  ],
+  "issueDateTime": "{issueDateTime}"
+}
