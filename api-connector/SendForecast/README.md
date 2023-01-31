@@ -1,4 +1,4 @@
-# Send Order
+# Send forecast
 
 This example sends a supplier forecast to Tradecloud using the API Connector
 

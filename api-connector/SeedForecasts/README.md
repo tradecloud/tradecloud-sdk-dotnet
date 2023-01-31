@@ -1,4 +1,4 @@
-# Send Order
+# Seed forecasts
 
 This example seeds a bunch of supplier forecasts in Tradecloud using the API Connector
 If you want to send one supplier forecast, check `SendForcast` instead.
