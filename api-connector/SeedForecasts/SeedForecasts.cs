@@ -12,13 +12,7 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class SendOrder
     {   
-        const bool useToken = true;
-         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
-        const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
-        // Fill in mandatory username
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
+        const string accessToken = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendForecastByBuyerRoute
         const string sendForecastUrl = "https://api.accp.tradecloud1.com/v2/api-connector/forecast";
@@ -31,17 +25,7 @@ namespace Com.Tradecloud1.SDK.Client
             var jsonLineTemplate = File.ReadAllText(@"line.json");            
 
             HttpClient httpClient = new HttpClient();
-            if (useToken)
-            {
-                var authenticationClient = new Authentication(httpClient, authenticationUrl);
-                var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);            
-            }
-            else
-            {
-                var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
-            }
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);            
 
             var rnd = new Random();
             var forecastNumber = "Forecast" + rnd.Next(100000, 999999);
