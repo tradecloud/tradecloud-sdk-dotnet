@@ -12,9 +12,23 @@
           "supplierItemNumber": "67890",
           "purchaseUnitOfMeasureIso": "PCE"
         },
-        "startDate": "2023-01-01",
-        "endDate": "2023-01-31",
-        "quantity": 1234.56
+        "schedule": [
+          {
+            "startDate": "2023-01-01",
+            "endDate": "2023-01-31",
+            "quantity": 1234.56
+          },
+          {
+            "startDate": "2023-02-01",
+            "endDate": "2023-02-28",
+            "quantity": 2345.67
+          },
+          {
+            "startDate": "2023-03-01",
+            "endDate": "2023-03-31",
+            "quantity": 3456.78
+          }
+        ]
       }
     ],
     "issueDateTime": "2022-12-31T10:11:12"
