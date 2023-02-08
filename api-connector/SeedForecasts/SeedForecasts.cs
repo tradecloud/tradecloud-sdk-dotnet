@@ -32,7 +32,7 @@ namespace Com.Tradecloud1.SDK.Client
             var jsonForecastWithForecastNumber = jsonForecastTemplate.Replace("{forecastNumber}", forecastNumber);
             Console.WriteLine("Starting, forecastNumber=" + forecastNumber);
             
-            for (int item = 0; item < 10; item++) 
+            for (int item = 0; item < 100; item++) 
             {
                 string jsonLines = "";
                 var buyerItemNumber = rnd.Next(100000, 999999);
@@ -40,13 +40,17 @@ namespace Com.Tradecloud1.SDK.Client
                 var lastMonth = 12;
                 for (int month = 1; month <= lastMonth; month++) 
                 {
-                    var startDate = new DateTime(2023, month, 1).ToString("yyyy-MM-dd");
-                    var endDate = new DateTime(2023, month, 1).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
-                    double quantity = GetDoubleWithinRange(rnd, 1, 99999);
-                    jsonLines += jsonLine.Replace("{startDate}", startDate).Replace("{endDate}", endDate).Replace("{quantity}", quantity.ToString());
-                    if (month < lastMonth)
+                    var noPerMonth = rnd.Next(1, 3);
+                    for (int no = 1; no <= noPerMonth; no++) 
                     {
-                        jsonLines += ",";
+                        var startDate = new DateTime(2023, month, 1).ToString("yyyy-MM-dd");
+                        var endDate = new DateTime(2023, month, 1).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
+                        var quantity = rnd.Next(1, 9999).ToString() + "." + rnd.Next(1, 99);
+                        jsonLines += jsonLine.Replace("{startDate}", startDate).Replace("{endDate}", endDate).Replace("{quantity}", quantity);
+                        if (month < lastMonth)
+                        {
+                            jsonLines += ",";
+                        }
                     }
                 }
                 var jsonForecastWithLines = jsonForecastWithForecastNumber.Replace("{lines}", jsonLines);
