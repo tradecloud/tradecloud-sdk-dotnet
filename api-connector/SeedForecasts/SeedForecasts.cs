@@ -47,7 +47,7 @@ namespace Com.Tradecloud1.SDK.Client
                         var endDate = new DateTime(2023, month, 1).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
                         var quantity = rnd.Next(1, 9999).ToString() + "." + rnd.Next(1, 99);
                         jsonLines += jsonLine.Replace("{startDate}", startDate).Replace("{endDate}", endDate).Replace("{quantity}", quantity);
-                        if (month < lastMonth)
+                        if (month < lastMonth || no < noPerMonth)
                         {
                             jsonLines += ",";
                         }
