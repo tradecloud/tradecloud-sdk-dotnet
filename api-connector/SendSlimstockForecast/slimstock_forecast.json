@@ -1,0 +1,42 @@
+{
+    "header": {
+      "supplierAccountNumber": "540830",
+      "forecastNumber": "F123456789"
+    },
+    "lines": [
+      {
+        "item": {
+          "buyerItemNumber": "12345",
+          "buyerItemRevision": "v2",
+          "buyerItemName": "Round tube ø60x45",
+          "supplierItemNumber": "67890",
+          "purchaseUnitOfMeasureIso": "PCE"
+        },
+        "period": "M0",
+        "quantity": 1234.56
+      },
+      {
+        "item": {
+          "buyerItemNumber": "12345",
+          "buyerItemRevision": "v2",
+          "buyerItemName": "Round tube ø60x45",
+          "supplierItemNumber": "67890",
+          "purchaseUnitOfMeasureIso": "PCE"
+        },
+        "period": "M1",
+        "quantity": 2345.67
+      },
+      {
+        "item": {
+          "buyerItemNumber": "12345",
+          "buyerItemRevision": "v2",
+          "buyerItemName": "Round tube ø60x45",
+          "supplierItemNumber": "67890",
+          "purchaseUnitOfMeasureIso": "PCE"
+        },
+        "period": "M2",
+        "quantity": 3456.78
+      }
+    ],
+    "issueDateTime": "2022-12-31T10:11:12"
+}
