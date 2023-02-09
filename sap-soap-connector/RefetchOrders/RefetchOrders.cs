@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class RefetchDeliveredOrders
+    class RefetchOrders
     {
         const string accessToken = "";
         const string companyId = "";
@@ -28,8 +28,8 @@ namespace Com.Tradecloud1.SDK.Client
                     'companyId': ['{companyId}']
                 },
                 'status': {
-                    'processStatus': ['InProgress'],
-                    'logisticsStatus': ['Delivered']
+                    'processStatus': ['Issued'],
+                    'logisticsStatus': ['Open']
                 }
             },
             'sort':[{'field':'buyerOrder.purchaseOrderNumber','order':'asc'}],
@@ -40,12 +40,12 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud refetch delivered orders.");
+            Console.WriteLine("Tradecloud refetch orders.");
 
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-            using (var log = new StreamWriter("refetch_delivered_orders.log", append: true))
+            using (var log = new StreamWriter("refetch_orders.log", append: true))
             {
                 int offset = 0;
                 int total = limit;
@@ -64,7 +64,7 @@ namespace Com.Tradecloud1.SDK.Client
                             string processStatus = order["status"]["processStatus"].ToString();
                             string logisticsStatus = order["status"]["logisticsStatus"].ToString();
 
-                            await FetchOrder(purchaseOrderNumber, log);
+                            await RefetchOrders(purchaseOrderNumber, log);
                         }
                     }
                     else {
@@ -98,7 +98,7 @@ namespace Com.Tradecloud1.SDK.Client
                     }
                 }
 
-                async Task FetchOrder(string purchaseOrderNumber, StreamWriter log)
+                async Task RefetchOrders(string purchaseOrderNumber, StreamWriter log)
                 {                
                     var fetchPurchaseOrderUrl = fetchPurchaseOrderUrlTemplate.Replace("{companyId}", companyId).Replace("{purchaseOrderNumber}", purchaseOrderNumber);
 
