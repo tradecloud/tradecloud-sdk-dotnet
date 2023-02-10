@@ -1,6 +1,6 @@
 # API v1 Resend Orders
 
-This code bulk resends orders to your ERP using the API v1
+This code bulk resends orders to your ERP using the API v1 or connector in use.
 
 ## Prerequisites
 
