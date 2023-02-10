@@ -1,3 +1,0 @@
-order_code1
-order_code2
-order_code3
