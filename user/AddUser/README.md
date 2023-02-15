@@ -9,20 +9,16 @@ Super powers
 ## Configure
 
 In the source code:
-- amend authenticationUrl
-- fill in username
-- fill in password
-- amend addUserUrl
+- amend `addUserUrl`
+- fill in your `accessToken`
 
-Amend user.json
+Amend `user.json`
 
 ## Run
 
 ```
 ➜  AddUser git:(master) ✗ dotnet run
 Tradecloud add user example.
-Login response StatusCode: 200 ElapsedMilliseconds: 540
-Login response Content: ...
 AddUser StatusCode: 200 ElapsedMilliseconds: 164
 AddUser Body: {"id": ...}
 ```
