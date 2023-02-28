@@ -4,6 +4,8 @@ using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
 
+using Newtonsoft.Json.Linq;
+
 namespace Com.Tradecloud1.SDK.Client
 {
     class MigrateSupplier
@@ -13,6 +15,11 @@ namespace Com.Tradecloud1.SDK.Client
         // Fill in mandatory password
         const string password = "";
 
+
+        const string tenantId = "";
+        const int supplierCodeLength = 10;
+
+        const string getCompanyUrlTemplate = "https://portal.tradecloud.nl/api/v1/company/tenant/{tenantId}/code/{code}";
         const string migrateCompanyUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{companyId}";
         const string migrateUsersUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{companyId}/users";
         const string migrateOrdersUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{companyId}/orders";
@@ -27,20 +34,44 @@ namespace Com.Tradecloud1.SDK.Client
                         
             using(var log = new StreamWriter("migrate-suppliers.log", append: true) )
             {
-                using(var reader = new StreamReader("migrate-supplier-companyids.txt"))
+                using(var reader = new StreamReader("migrate-supplier-codes.txt"))
                 {                    
                     while (!reader.EndOfStream)
                     {   
-                        var companyId = reader.ReadLine();
+                        var supplierCode = reader.ReadLine().PadLeft(supplierCodeLength, '0');
+                        var getCompanyUrl = getCompanyUrlTemplate.Replace("{tenantId}", tenantId).Replace("{code}", supplierCode);
                         
-                        var migrateCompanyUrl = migrateCompanyUrlTemplate.Replace("{companyId}", companyId);
-                        await MigrateSupplier(migrateCompanyUrl, log);
-                        var migrateUsersUrl = migrateUsersUrlTemplate.Replace("{companyId}", companyId);
-                        await MigrateSupplier(migrateUsersUrl, log);
-                        var migrateOrdersUrl = migrateOrdersUrlTemplate.Replace("{companyId}", companyId);
-                        await MigrateSupplier(migrateOrdersUrl, log);
+                        var queryResult = await GetSupplier(getCompanyUrl, log);
+                        if (queryResult != null)
+                        {
+                           string companyId = queryResult["id"].ToString();
+                           var migrateCompanyUrl = migrateCompanyUrlTemplate.Replace("{companyId}", companyId);
+                           await MigrateSupplier(migrateCompanyUrl, log);
+                           var migrateUsersUrl = migrateUsersUrlTemplate.Replace("{companyId}", companyId);
+                           await MigrateSupplier(migrateUsersUrl, log);
+                           var migrateOrdersUrl = migrateOrdersUrlTemplate.Replace("{companyId}", companyId);
+                           await MigrateSupplier(migrateOrdersUrl, log);
+                        }
                     }
                 }
+            }
+
+            async Task<JObject> GetSupplier(string url, StreamWriter log)
+            {                
+                var response = await httpClient.GetAsync(url);
+                var statusCode = (int)response.StatusCode;
+                await log.WriteLineAsync("MigrateSupplier url=" + url + " status=" + statusCode + " reason=" + response.ReasonPhrase);
+                
+                string responseString = await response.Content.ReadAsStringAsync();
+                if (statusCode == 200)
+                {
+                    return JObject.Parse(responseString);
+                }
+                else
+                {
+                    await log.WriteLineAsync("MigrateSupplier response body=" +  responseString);
+                    return null;
+                }                    
             }
 
             async Task MigrateSupplier(string url, StreamWriter log)
