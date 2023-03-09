@@ -17,7 +17,7 @@ namespace Com.Tradecloud1.SDK.Client
         const string orderIdToClose = "{buyerId}-{purchaseOrderNumber}"; // Close all tasks related to this `orderId` for above buyer or supplier.
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/workflow/private/specs.yaml#/workflow/searchWorkflowTasksRoute
-        const string workflowSearchUrl = "https://api.tradecloud1.com/v2/workflow/search";
+        const string workflowSearchUrl = "https://api.accp.tradecloud1.com/v2/workflow/search";
 
         // Fill in the search query
         const string queryTemplateWithSingleQuotes = @"{
@@ -33,7 +33,7 @@ namespace Com.Tradecloud1.SDK.Client
 
         // This API resource will also clean up tasks in Elasticsearch when not available in Cassandra anymore. 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/workflow/private/specs.yaml#/workflow/closeOrderTasks
-        const string closeOrderTasksUrl = "https://api.tradecloud1.com/v2/workflow/order/close";
+        const string closeOrderTasksUrl = "https://api.accp.tradecloud1.com/v2/workflow/order/close";
 
         static async Task Main(string[] args)
         {
