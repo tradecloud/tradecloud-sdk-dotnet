@@ -9,18 +9,22 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class FindOrderById
     {   
-        const bool useToken = true;
+        // Fill in order id
+        const string orderId = "";
+
+        // Fill in username and password
+        const string username = "";
+        const string password = "";       
+        
+        // Use token?
+        const bool useToken = true;  
+         
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
         // Fill in mandatory username
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
 
-        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order-search/specs.yaml#/order-search
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order/specs.yaml#/order/getOrderByIdRoute
         const string orderSearchUrl = "https://api.accp.tradecloud1.com/v2/order/";
-        // Fill in manadatory order id
-        const string orderId = "";
 
         static async Task Main(string[] args)
         {
