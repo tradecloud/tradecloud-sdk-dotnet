@@ -1,0 +1,10 @@
+{
+    "orderId": "{orderId}",
+    "orderLineId": "{orderLineId}",
+    "members": [
+      [
+        "{buyerId}",
+        "{supplierId}"
+      ]
+    ]
+  }
