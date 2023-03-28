@@ -43,7 +43,7 @@ namespace Com.Tradecloud1.SDK.Client
 
                     if (dryRun)
                     {
-                        await log.WriteLineAsync("CompleteOrders dry run: CreateConversation orderId=" + orderId);
+                        await log.WriteLineAsync("CreateConversations dry run: CreateConversation orderId=" + orderId);
                     }
                     else
                     {
@@ -55,7 +55,7 @@ namespace Com.Tradecloud1.SDK.Client
                         
                         if (dryRun)
                     {
-                            await log.WriteLineAsync("CompleteOrders dry run: CreateConversation orderId=" + orderId + " lineId=" + lineId);
+                            await log.WriteLineAsync("CreateConversations dry run: CreateConversation orderId=" + orderId + " lineId=" + lineId);
                         }
                         else
                         {
