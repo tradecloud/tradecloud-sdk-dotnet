@@ -1,0 +1,22 @@
+{
+    "header": {
+      "supplierAccountNumber": "540830",
+      "forecastNumber": "F123456789"
+    },
+    "lines": [
+      {
+        "item": {
+          "buyerItemNumber": "12345",
+          "buyerItemName": "Round tube ø60x45",
+          "purchaseUnitOfMeasureIso": "PCE"
+        },
+        "schedule": [
+          {
+            "startDate": "2023-01-01",
+            "endDate": "2023-01-31",
+            "quantity": 1234.56
+          }
+        ]
+      }
+    ]
+}
