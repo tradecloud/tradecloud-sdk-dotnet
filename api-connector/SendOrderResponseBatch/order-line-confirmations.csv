@@ -1,2 +1,2 @@
-purchaseOrderNumber,purchaseOrderLinePosition,deliveryLinePosition,confirmedDate,confirmedQuantity,confirmedNetPrice,shipped
-PUR23-SCNL-003548,10,10,2023-04-23,100,125.04,false
+purchaseOrderNumber,purchaseOrderLinePosition,confirmedDeliveryDate,confirmedQuantity,confirmedNetPrice
+PUR23-SCNL-003548,10,2023-04-23,100,125.04
