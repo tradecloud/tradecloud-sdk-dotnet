@@ -43,17 +43,19 @@ namespace Com.Tradecloud1.SDK.Client
                 var orderLineResponses = csvReader.GetRecords<OrderLineResponse>();
                 foreach (var orderLineResponse in orderLineResponses)
                 {
-                    var lineId = buyerId + "-" + orderLineResponse.PurchaseOrderNumber + "-" + orderLineResponse.PurchaseOrderLinePosition;
-                    var queryResult = await FindOrderLineById(lineId, log);
+                    var orderLineId = buyerId + "-" + orderLineResponse.purchaseOrderNumber + "-" + orderLineResponse.purchaseOrderLinePosition;
+                    var queryResult = await FindOrderLineById(orderLineId, log);
                     if (queryResult != null)
                     {
+                        orderLineResponse.orderLineId = orderLineId;
                         orderLineResponse.companyId = queryResult["supplierOrder"]["companyId"].ToString();
                         orderLineResponse.buyerAccountNumber = buyerAccountNumber;
+                        orderLineResponse.deliveryLinePosition = orderLineResponse.purchaseOrderLinePosition;
                         orderLineResponse.currencyIso = queryResult["buyerLine"]["prices"]["netPrice"]["priceInBaseCurrency"]["currencyIso"].ToString();
                         orderLineResponse.priceUnitOfMeasureIso = queryResult["buyerLine"]["prices"]["priceUnitOfMeasureIso"].ToString();
                         orderLineResponse.priceUnitQuantity = queryResult["buyerLine"]["prices"]["priceUnitQuantity"].ToString();
 
-                        await log.WriteLineAsync("orderLineResponse=" + JsonConvert.SerializeObject(orderLineResponse));
+                        await log.WriteLineAsync("SendOrderResponse orderLineResponse=" + JsonConvert.SerializeObject(orderLineResponse));
                         
                         if (dryRun)
                         {
@@ -61,7 +63,7 @@ namespace Com.Tradecloud1.SDK.Client
                         }
                         else
                         {
-                            //await SendOrderResponse(orderResponse, log);
+                            await SendOrderResponse(orderLineResponse, log);
                         }
                     }
                 }
@@ -86,7 +88,7 @@ namespace Com.Tradecloud1.SDK.Client
                 }
                 else
                 {
-                    await log.WriteLineAsync("FindOrderById response body=" +  responseString);
+                    await log.WriteLineAsync("FindOrderLineById orderLineId=" + orderLineId + " response body=" +  responseString);
                     return null;
                 }
             }
@@ -94,16 +96,19 @@ namespace Com.Tradecloud1.SDK.Client
             async Task SendOrderResponse(OrderLineResponse orderLineResponse, StreamWriter log)
             {           
                 var jsonOrderResponse = jsonOrderResponseTemplate
-                    .Replace("{companyId}", orderResponse.companyId)
-                    .Replace("{buyerAccountNumber}", orderResponse.buyerAccountNumber)
-                    .Replace("{purchaseOrderNumber}", orderResponse.purchaseOrderNumber)
-                    .Replace("{purchaseOrderLinePosition}", orderResponse.purchaseOrderLinePosition)
-                    .Replace("{confirmedDeliveryDate}", orderResponse.confirmedDeliveryDate)
-                    .Replace("{confirmedQuantity}", orderResponse.confirmedQuantity)
-                    .Replace("{confirmedNetPrice}", orderResponse.confirmedNetPrice)
-                    .Replace("{currencyIso}", orderResponse.currencyIso)
-                    .Replace("{priceUnitOfMeasureIso}", orderResponse.priceUnitOfMeasureIso)
-                    .Replace("{priceUnitQuantity}", orderResponse.priceUnitQuantity);
+                    .Replace("{companyId}", orderLineResponse.companyId)
+                    .Replace("{buyerAccountNumber}", orderLineResponse.buyerAccountNumber)
+                    .Replace("{purchaseOrderNumber}", orderLineResponse.purchaseOrderNumber)
+                    .Replace("{purchaseOrderLinePosition}", orderLineResponse.purchaseOrderLinePosition)
+                    .Replace("{deliveryLinePosition}", orderLineResponse.deliveryLinePosition)
+                    .Replace("{confirmedDate}", orderLineResponse.confirmedDate)
+                    .Replace("{confirmedQuantity}", orderLineResponse.confirmedQuantity)
+                    .Replace("{confirmedNetPriceValue}", orderLineResponse.confirmedNetPrice)
+                    .Replace("{confirmedNetPriceCurrencyIso}", orderLineResponse.currencyIso)
+                    .Replace("{priceUnitOfMeasureIso}", orderLineResponse.priceUnitOfMeasureIso)
+                    .Replace("{priceUnitQuantity}", orderLineResponse.priceUnitQuantity);
+                
+                await log.WriteLineAsync("SendOrderResponse jsonOrderResponse=" + jsonOrderResponse);
 
                 var content = new StringContent(jsonOrderResponse, Encoding.UTF8, "application/json");
 
@@ -113,24 +118,25 @@ namespace Com.Tradecloud1.SDK.Client
                 watch.Stop();
 
                 var statusCode = (int)response.StatusCode;
-                Console.WriteLine("SendOrderResponse start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                await log.WriteLineAsync("SendOrderResponse orderLineId=" + orderLineResponse.orderLineId + " start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                 if (statusCode == 400)
-                    Console.WriteLine("SendOrderResponse request body=" + jsonOrderResponse); 
+                    await log.WriteLineAsync("SendOrderResponse request body=" + jsonOrderResponse); 
                 string responseString = await response.Content.ReadAsStringAsync();
                 if (statusCode != 200)
-                    Console.WriteLine("SendOrderResponse response body=" +  responseString);
+                    await log.WriteLineAsync("SendOrderResponse response body=" +  responseString);
             }
         }
     }
 
     public class OrderLineResponse
     {
+        public string orderLineId { get; set; }
         public string companyId { get; set; }
         public string buyerAccountNumber { get; set; }
         public string purchaseOrderNumber { get; set; }
         public string purchaseOrderLinePosition { get; set; } 
         public string deliveryLinePosition { get; set; }
-        public string confirmedDeliveryDate { get; set; }
+        public string confirmedDate { get; set; }
         public string confirmedQuantity { get; set; }
         public string confirmedNetPrice { get; set; }
         public string currencyIso { get; set; }
@@ -143,12 +149,13 @@ namespace Com.Tradecloud1.SDK.Client
         public OrderLineResponseMap()
         {
             AutoMap(CultureInfo.InvariantCulture);
-            Map(m => m.CompanyId).Ignore();
-            Map(m => m.BuyerAccountNumber).Ignore();
+            Map(m => m.orderLineId).Ignore();
+            Map(m => m.companyId).Ignore();            
+            Map(m => m.buyerAccountNumber).Ignore();
             Map(m => m.deliveryLinePosition).Ignore();
-            Map(m => m.CurrencyIso).Ignore();
-            Map(m => m.PriceUnitOfMeasureIso).Ignore();
-            Map(m => m.PriceUnitQuantity).Ignore();
+            Map(m => m.currencyIso).Ignore();
+            Map(m => m.priceUnitOfMeasureIso).Ignore();
+            Map(m => m.priceUnitQuantity).Ignore();
         }
     }
 }
