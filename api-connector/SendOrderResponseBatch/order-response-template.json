@@ -17,15 +17,12 @@
             "prices": {
                 "netPrice": {
                     "priceInTransactionCurrency": {
-                        "value": "{confirmedNetPriceValue}",
-                        "currencyIso":  "{confirmedNetPriceCurrency}"
+                        "value": {confirmedNetPriceValue},
+                        "currencyIso": "{confirmedNetPriceCurrencyIso}"
                     }
                 },
                 "priceUnitOfMeasureIso": "{priceUnitOfMeasureIso}",
                 "priceUnitQuantity": {priceUnitQuantity}
-            },
-            "indicators": {
-                "shipped": {shipped}
             }
         }
     ]
