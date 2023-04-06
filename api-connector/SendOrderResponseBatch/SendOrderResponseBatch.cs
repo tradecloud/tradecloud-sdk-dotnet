@@ -16,6 +16,7 @@ namespace Com.Tradecloud1.SDK.Client
     class SendOrderResponseBatch
     {
         const bool dryRun = true;
+        const string delimiter = ";";
         const string buyerId = "";
         const string buyerAccountNumber = "";
         const string accessToken = "";
@@ -34,11 +35,12 @@ namespace Com.Tradecloud1.SDK.Client
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = delimiter, Encoding = Encoding.UTF8 };
+
             using (var log = new StreamWriter("order-response-batch.log", append: true))
             using (var reader = new StreamReader("order-line-confirmations.csv"))
-            using (var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
+            using (var csvReader = new CsvReader(reader, config))
             {
-                
                 csvReader.Context.RegisterClassMap<OrderLineResponseMap>();
                 var orderLineResponses = csvReader.GetRecords<OrderLineResponse>();
                 foreach (var orderLineResponse in orderLineResponses)
@@ -51,17 +53,18 @@ namespace Com.Tradecloud1.SDK.Client
                         orderLineResponse.companyId = queryResult["supplierOrder"]["companyId"].ToString();
                         orderLineResponse.buyerAccountNumber = buyerAccountNumber;
                         orderLineResponse.deliveryLinePosition = orderLineResponse.purchaseOrderLinePosition;
+                        if (orderLineResponse.confirmedDate.Contains("/"))
+                        {
+                            var confirmedDateTime = DateTime.ParseExact(orderLineResponse.confirmedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                            orderLineResponse.confirmedDate = confirmedDateTime.ToString("yyyy-MM-dd");
+                        }
+                        orderLineResponse.confirmedNetPrice = orderLineResponse.confirmedNetPrice.Replace(",", ".");
                         orderLineResponse.currencyIso = queryResult["buyerLine"]["prices"]["netPrice"]["priceInBaseCurrency"]["currencyIso"].ToString();
                         orderLineResponse.priceUnitOfMeasureIso = queryResult["buyerLine"]["prices"]["priceUnitOfMeasureIso"].ToString();
                         orderLineResponse.priceUnitQuantity = queryResult["buyerLine"]["prices"]["priceUnitQuantity"].ToString();
 
                         await log.WriteLineAsync("SendOrderResponse orderLineResponse=" + JsonConvert.SerializeObject(orderLineResponse));
-                        
-                        if (dryRun)
-                        {
-                            await log.WriteLineAsync("SendOrderResponse dry run: orderLineResponse=" + orderLineResponse);
-                        }
-                        else
+                        if (!dryRun)
                         {
                             await SendOrderResponse(orderLineResponse, log);
                         }
@@ -108,7 +111,7 @@ namespace Com.Tradecloud1.SDK.Client
                     .Replace("{priceUnitOfMeasureIso}", orderLineResponse.priceUnitOfMeasureIso)
                     .Replace("{priceUnitQuantity}", orderLineResponse.priceUnitQuantity);
                 
-                await log.WriteLineAsync("SendOrderResponse jsonOrderResponse=" + jsonOrderResponse);
+                //await log.WriteLineAsync("SendOrderResponse jsonOrderResponse=" + jsonOrderResponse);
 
                 var content = new StringContent(jsonOrderResponse, Encoding.UTF8, "application/json");
 
