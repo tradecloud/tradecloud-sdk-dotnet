@@ -1,6 +1,50 @@
 {
     "order": {
+        "buyerParty": {
+            "id": "buyer-gln",
+            "idScheme": "GLN",
+            "names": [
+                "Buyer B.V."
+            ],
+            "addressLines": [
+              "Buyer Street 123"
+            ],
+            "postalCode": "1234 AB",
+            "city": "Rotterdam",
+            "countryCodeIso2": "NL",
+            "countryName": "The Netherlands"
+        },
+          "buyerAccountingParty": {
+            "id": "buyer-accounting-gln",
+            "idScheme": "GLN",
+            "names": [
+                "Buyer Invoice Party B.V.",
+                "VAT 123456789"
+            ],
+            "addressLines": [
+                "Finance Department",
+                "Invoice Street 123"
+            ],
+            "postalCode": "1234 AB",
+            "city": "Rotterdam",
+            "countryCodeIso2": "NL",
+            "countryName": "The Netherlands"
+        },
         "supplierAccountNumber": "540830",
+        "supplierParty": {
+            "id": "supplier-gln",
+            "idScheme": "GLN",
+            "names": [
+                "Supplier B.V."
+            ],
+            "addressLines": [
+                "Supplier Street 123"
+            ],
+            "postalCode": "1234 AB",
+            "city": "Rotterdam",
+            "countryCodeIso2": "NL",
+            "countryName": "The Netherlands"
+        },
         "purchaseOrderNumber": "PO0123456789",
         "description": "Any buyer custom text about this order",
         "destination": {
