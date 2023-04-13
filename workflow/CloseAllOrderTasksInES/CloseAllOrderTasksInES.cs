@@ -48,7 +48,6 @@ namespace Com.Tradecloud1.SDK.Client
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);            
 
-            //string lastOrderId = null;
             int offset = 0;
             int total = limit;
             while (total > offset)                

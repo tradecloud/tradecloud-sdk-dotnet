@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class MigrateSupplier
+    class MigrateSuppliers
     {   
         // Fill in the mandatory username
        const string username = "";
@@ -23,7 +23,7 @@ namespace Com.Tradecloud1.SDK.Client
         const string migrateCompanyUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{companyId}";
         const string migrateUsersUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{companyId}/users";
         const string migrateOrdersUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{companyId}/orders";
-        
+
         static async Task Main(string[] args)
         {
             Console.WriteLine("Tradecloud migrate suppliers.");
