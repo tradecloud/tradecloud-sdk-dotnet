@@ -64,10 +64,7 @@ namespace Com.Tradecloud1.SDK.Client
                         orderLineResponse.priceUnitQuantity = queryResult["buyerLine"]["prices"]["priceUnitQuantity"].ToString();
 
                         await log.WriteLineAsync("SendOrderResponse orderLineResponse=" + JsonConvert.SerializeObject(orderLineResponse));
-                        if (!dryRun)
-                        {
-                            await SendOrderResponse(orderLineResponse, log);
-                        }
+                        await SendOrderResponse(orderLineResponse, log);
                     }
                 }
             }
@@ -111,22 +108,27 @@ namespace Com.Tradecloud1.SDK.Client
                     .Replace("{priceUnitOfMeasureIso}", orderLineResponse.priceUnitOfMeasureIso)
                     .Replace("{priceUnitQuantity}", orderLineResponse.priceUnitQuantity);
                 
-                //await log.WriteLineAsync("SendOrderResponse jsonOrderResponse=" + jsonOrderResponse);
+                if (dryRun)
+                {
+                    await log.WriteLineAsync("SendOrderResponse dry run jsonOrderResponse=" + jsonOrderResponse);
+                }
+                else
+                {
+                    var content = new StringContent(jsonOrderResponse, Encoding.UTF8, "application/json");
 
-                var content = new StringContent(jsonOrderResponse, Encoding.UTF8, "application/json");
+                    var start = DateTime.Now;
+                    var watch = System.Diagnostics.Stopwatch.StartNew();
+                    var response = await httpClient.PostAsync(sendOrderResponseUrl, content);
+                    watch.Stop();
 
-                var start = DateTime.Now;
-                var watch = System.Diagnostics.Stopwatch.StartNew();
-                var response = await httpClient.PostAsync(sendOrderResponseUrl, content);
-                watch.Stop();
-
-                var statusCode = (int)response.StatusCode;
-                await log.WriteLineAsync("SendOrderResponse orderLineId=" + orderLineResponse.orderLineId + " start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
-                if (statusCode == 400)
-                    await log.WriteLineAsync("SendOrderResponse request body=" + jsonOrderResponse); 
-                string responseString = await response.Content.ReadAsStringAsync();
-                if (statusCode != 200)
-                    await log.WriteLineAsync("SendOrderResponse response body=" +  responseString);
+                    var statusCode = (int)response.StatusCode;
+                    await log.WriteLineAsync("SendOrderResponse orderLineId=" + orderLineResponse.orderLineId + " start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                    if (statusCode == 400)
+                        await log.WriteLineAsync("SendOrderResponse request body=" + jsonOrderResponse); 
+                    string responseString = await response.Content.ReadAsStringAsync();
+                    if (statusCode != 200)
+                        await log.WriteLineAsync("SendOrderResponse response body=" +  responseString);
+                }
             }
         }
     }
