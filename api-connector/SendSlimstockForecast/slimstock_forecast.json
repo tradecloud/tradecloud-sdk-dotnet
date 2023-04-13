@@ -5,37 +5,38 @@
     },
     "lines": [
       {
-        "item": {
-          "buyerItemNumber": "12345",
-          "buyerItemRevision": "v2",
-          "buyerItemName": "Round tube ø60x45",
-          "supplierItemNumber": "67890",
-          "purchaseUnitOfMeasureIso": "PCE"
-        },
-        "period": "M0",
-        "quantity": 1234.56
+        "buyerItemNumber": "11111",
+        "buyerItemRevision": "v2",
+        "buyerItemName": "Round tube ø60x45",
+        "supplierItemNumber": "67890",
+        "purchaseUnitOfMeasureIso": "PCE",
+        "startDate": "2023-01-23",
+        "M0": 111.11,
+        "M1": 222.22,
+        "M4": 333.33,
+        "M35": 444.44
       },
       {
-        "item": {
-          "buyerItemNumber": "12345",
-          "buyerItemRevision": "v2",
-          "buyerItemName": "Round tube ø60x45",
-          "supplierItemNumber": "67890",
-          "purchaseUnitOfMeasureIso": "PCE"
-        },
-        "period": "M1",
-        "quantity": 2345.67
+        "buyerItemNumber": "22222",
+        "buyerItemRevision": "v2",
+        "buyerItemName": "Round tube ø60x45",
+        "supplierItemNumber": "67891",
+        "purchaseUnitOfMeasureIso": "PCE",
+        "startDate": "2023-02-23",
+        "M0": 111.11,
+        "M1": 222.22,
+        "M4": 333.33,
+        "M35": 444.44
       },
       {
-        "item": {
-          "buyerItemNumber": "12345",
-          "buyerItemRevision": "v2",
-          "buyerItemName": "Round tube ø60x45",
-          "supplierItemNumber": "67890",
-          "purchaseUnitOfMeasureIso": "PCE"
-        },
-        "period": "M2",
-        "quantity": 3456.78
+        "buyerItemNumber": "33333",
+        "buyerItemName": "Round tube ø60x45",
+        "purchaseUnitOfMeasureIso": "PCE",
+        "startDate": "2023-03-23",
+        "M0": 111.11,
+        "M1": 222.22,
+        "M4": 333.33,
+        "M35": 444.44
       }
     ],
     "issueDateTime": "2022-12-31T10:11:12"
