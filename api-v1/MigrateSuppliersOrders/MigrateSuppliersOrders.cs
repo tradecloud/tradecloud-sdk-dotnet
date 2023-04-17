@@ -11,28 +11,28 @@ namespace Com.Tradecloud1.SDK.Client
     class MigrateSuppliersOrders
     {   
         const bool dryRun = true;
-        // Fill in the mandatory username
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
+        const string adminUsername = "";
+        const string adminPassword = "";
+        const string tenantUsername = "";
+        const string tenantPassword = "";
         const string tenantId = "";
         //const int supplierCodeLength = 10;
-        static readonly string[] statusses = {"open", "inconsistent", "confirmed", "overdue", "approved", "shipped"};
+        static readonly string[] statuses = {"open", "inconsistent", "confirmed", "overdue", "approved", "shipped"};
 
         const string getCompanyUrlTemplate = "https://portal.tradecloud.nl/api/v1/company/tenant/{tenantId}/code/{code}";
         const string migrateCompanyUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{supplierId}";
         const string migrateUsersUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{supplierId}/users";
         const string migrateOrderUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/order/{orderId}";
-        const string searchOrdersUrlTemplate = "https://portal.tradecloud.nl/api/v1/purchaseOrder?supplierId={supplierId}&status={status}&archived=false&page={page}&limit={limit}";
-        const string searchPageSize = "10";
+        const string searchOrdersUrlTemplate = "https://portal.tradecloud.nl/api/v1/purchaseOrder?tenantId={tenantId}&supplierId={supplierId}&status={status}&archived=false&page={page}&limit={limit}";
+        const string searchPageSize = "100";
         
         static async Task Main(string[] args)
         {
             Console.WriteLine("Tradecloud migrate suppliers with filtered orders.");
 
             HttpClient httpClient = new HttpClient();
-            var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
+            var adminEncodedCredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(adminUsername + ":" + adminPassword));
+            var tenantEncodedCredentials = Convert.ToBase64String(Encoding.ASCII.GetBytes(tenantUsername + ":" + tenantPassword));
                         
             using(var log = new StreamWriter("migrate-suppliers.log", append: true) )
             {
@@ -52,7 +52,7 @@ namespace Com.Tradecloud1.SDK.Client
                             var migrateUsersUrl = migrateUsersUrlTemplate.Replace("{supplierId}", supplierId);
                             await Migrate("supplierCode=" + supplierCode, migrateUsersUrl, log);
 
-                            foreach (string status in statusses)
+                            foreach (string status in statuses)
                             {
                                 await MigrateOrders(supplierCode, supplierId, status, log);
                             }
@@ -94,6 +94,7 @@ namespace Com.Tradecloud1.SDK.Client
 
             async Task<JObject> GetSupplier(string supplierCode, string url, StreamWriter log)
             {                
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", adminEncodedCredentials);
                 var response = await httpClient.GetAsync(url);
                 var statusCode = (int)response.StatusCode;
                 await log.WriteLineAsync("GetSupplier   supplierCode=" + supplierCode + " url=" + url + " status=" + statusCode + " reason=" + response.ReasonPhrase);
@@ -113,11 +114,13 @@ namespace Com.Tradecloud1.SDK.Client
             async Task<JObject> SearchOrders(string supplierCode, string supplierId, string status, int page, StreamWriter log)
             {
                 var url = searchOrdersUrlTemplate
+                    .Replace("{tenantId}", tenantId)
                     .Replace("{supplierId}", supplierId)
                     .Replace("{status}", status)
                     .Replace("{page}", page.ToString())
                     .Replace("{limit}", searchPageSize.ToString());
 
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", tenantEncodedCredentials);
                 var response = await httpClient.GetAsync(url);
                 var statusCode = (int)response.StatusCode;
                 await log.WriteLineAsync("SearchOrders  supplierCode=" + supplierCode + " url=" + url + " status=" + statusCode + " reason=" + response.ReasonPhrase);
@@ -142,6 +145,7 @@ namespace Com.Tradecloud1.SDK.Client
                 }
                 else
                 {                
+                    httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", adminEncodedCredentials);
                     var response = await httpClient.PostAsync(url, null);
                     var statusCode = (int)response.StatusCode;
                     await log.WriteLineAsync("Migrate       " + migration + " url=" + url + " status=" + statusCode + " reason=" + response.ReasonPhrase);
