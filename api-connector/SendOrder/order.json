@@ -70,12 +70,12 @@
             "paymentTerms": "30 days"
         },
         "indicators": {
-            "noDeliveryExpected": false,
             "shipped": false,
             "delivered": false,
             "completed": false,
             "cancelled": false,
-            "cancelLineWhenMissing": false
+            "cancelLineWhenMissing": false,
+            "autoConfirm": false
         },
         "properties": [
             {
@@ -219,7 +219,8 @@
                 "shipped": false,
                 "delivered": false,
                 "completed": false,
-                "cancelled": false
+                "cancelled": false,
+                "proposeWhenAccepted": false
             },
             "properties": [
                 {
