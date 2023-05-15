@@ -2,11 +2,12 @@
     "order": {
         "purchaseOrderNumber": "PO0123456789",
         "indicators": {
-            "noDeliveryExpected": false,
             "shipped": false,
             "delivered": false,
             "completed": false,
-            "cancelled" : false
+            "cancelled": false,
+            "cancelLineWhenMissing": false,
+            "autoConfirm": false
         }
     },
     "lines": [
@@ -17,7 +18,8 @@
                 "shipped": false,
                 "delivered": false,
                 "completed": false,
-                "cancelled" : false
+                "cancelled": false,
+                "proposeWhenAccepted": false
             }
         }
     ]
