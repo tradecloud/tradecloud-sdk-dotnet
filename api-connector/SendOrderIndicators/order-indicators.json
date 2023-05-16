@@ -5,21 +5,17 @@
             "shipped": false,
             "delivered": false,
             "completed": false,
-            "cancelled": false,
-            "cancelLineWhenMissing": false,
-            "autoConfirm": false
+            "cancelled": false
         }
     },
     "lines": [
         {
             "position": "0001",
             "indicators": {
-                "noDeliveryExpected": false,
                 "shipped": false,
                 "delivered": false,
                 "completed": false,
-                "cancelled": false,
-                "proposeWhenAccepted": false
+                "cancelled": false
             }
         }
     ]
