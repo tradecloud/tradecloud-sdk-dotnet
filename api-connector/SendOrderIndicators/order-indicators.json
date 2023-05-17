@@ -2,7 +2,6 @@
     "order": {
         "purchaseOrderNumber": "PO0123456789",
         "indicators": {
-            "noDeliveryExpected": false,
             "shipped": false,
             "delivered": false,
             "completed": false,
@@ -13,7 +12,6 @@
         {
             "position": "0001",
             "indicators": {
-                "noDeliveryExpected": false,
                 "shipped": false,
                 "delivered": false,
                 "completed": false,
