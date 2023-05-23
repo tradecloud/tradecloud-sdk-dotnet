@@ -215,7 +215,6 @@
             "productionNumber": "PROD12345",
             "salesOrderNumber": "SO123456789",
             "indicators": {
-                "noDeliveryExpected": false,
                 "shipped": false,
                 "delivered": false,
                 "completed": false,
