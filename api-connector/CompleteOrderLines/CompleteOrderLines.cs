@@ -28,11 +28,12 @@ namespace Com.Tradecloud1.SDK.Client
             },
             'lines': [
                 {
-                'position': '{position}',
-                'indicators': {
-                    'completed': true
+                    'position': '{position}',
+                    'indicators': {
+                        'completed': true
+                    }
                 }
-            }
+            ]
         }";
 
         static async Task Main(string[] args)
