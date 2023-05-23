@@ -28,7 +28,7 @@ namespace Com.Tradecloud1.SDK.Client
             },
             'lines': [
                 {
-                `position`: `{position}`,
+                'position': '{position}',
                 'indicators': {
                     'completed': true
                 }
