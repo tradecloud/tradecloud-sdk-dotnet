@@ -11,10 +11,11 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class CloseOrderTasks
     {   
+        const bool dryRun = true;
+        const string accessToken = "";
+
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/workflow/private/specs.yaml#/workflow/closeOrderTasks
         const string closeOrderTasksUrl = "https://api.accp.tradecloud1.com/v2/workflow/order/close";
-
-        const string accessToken = "";
 
         static async Task Main(string[] args)
         {
@@ -39,7 +40,7 @@ namespace Com.Tradecloud1.SDK.Client
                         if (currentOrderId != lastOrderId) {
                             if (orderTasks != null)
                             {
-                                await CloseOrderTasks(orderTasks, log);
+                                await CloseOrderTasks(orderTasks, log); 
                             }
 
                             orderTasks = new OrderTasks
@@ -59,14 +60,26 @@ namespace Com.Tradecloud1.SDK.Client
                 }
             }
 
-            async Task TestCloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
-            {
-                string json = JsonConvert.SerializeObject(orderTasks, Formatting.Indented);
-                Console.WriteLine("CloseOrderTasks " + json);
-                await log.WriteLineAsync("CloseOrderTasks " + json);
+            async Task CloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
+            {  
+                if (dryRun) 
+                {
+                    await DryRunCloseOrderTasks(orderTasks, log);
+                }
+                else
+                {
+                    await RealRunCloseOrderTasks(orderTasks, log);
+                }
             }
 
-            async Task CloseOrderTasks(OrderTasks orderTasks, StreamWriter log)
+            async Task DryRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
+            {
+                string json = JsonConvert.SerializeObject(orderTasks, Formatting.Indented);
+                Console.WriteLine("DryRunCloseOrderTasks " + json);
+                await log.WriteLineAsync("DryRunCloseOrderTasks " + json);
+            }
+
+            async Task RealRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log)
             {                
                 string json = JsonConvert.SerializeObject(orderTasks, Formatting.Indented);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -77,14 +90,14 @@ namespace Com.Tradecloud1.SDK.Client
                 watch.Stop();
 
                 var statusCode = (int)response.StatusCode;
-                var summary = "CloseOrderTasks start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase + " json=" + json;
+                var summary = "RealRunCloseOrderTasks start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase + " json=" + json;
                 Console.WriteLine(summary);
                 await log.WriteLineAsync(summary);
 
                 string responseString = await response.Content.ReadAsStringAsync();
                 if (statusCode != 200) {
-                    Console.WriteLine("CloseOrderTasks response body=" +  responseString);
-                    await log.WriteLineAsync("CloseOrderTasks response body=" +  responseString);
+                    Console.WriteLine("RealRunCloseOrderTasks response body=" +  responseString);
+                    await log.WriteLineAsync("RealRunCloseOrderTasks response body=" +  responseString);
                 }         
             }
         }
