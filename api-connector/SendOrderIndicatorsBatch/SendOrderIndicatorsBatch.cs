@@ -26,6 +26,10 @@ namespace Com.Tradecloud1.SDK.Client
                 'buyerOrder': {
                     'companyId': ['{companyId}']
                 },
+                'status': {
+                    'process': 'Completed',
+                    'logistics': 'Open'
+                },
                 'indicators': {
                     'deliveryOverdue': true
                 }
