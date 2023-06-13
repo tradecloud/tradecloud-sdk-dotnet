@@ -1,0 +1,154 @@
+{
+    "order": {
+        "supplierAccountNumber": "540830",
+        "purchaseOrderNumber": "PO0123456791",
+        "description": "scheduledDelivery's of the same item will be merged",
+        "destination": {
+            "code": "001",
+            "names": [
+                "My Company Warehouse"
+            ],
+            "addressLines": [
+                "Street 123"
+            ],
+            "postalCode": "1234 AB",
+            "city": "Rotterdam",
+            "countryCodeIso2": "NL"
+        }
+    },
+    "lines": [
+        {
+            "position": "0001",
+            "item": {
+                "number": "12345",
+                "name": "Round tube ø60x45",
+                "purchaseUnitOfMeasureIso": "PCE"
+            },
+            "scheduledDelivery": {
+                "position": "0001",
+                "date": "2023-07-01",
+                "quantity": 1.0
+            },
+            "prices": {
+                "netPrice": {
+                    "priceInTransactionCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    }
+                },
+                "priceUnitOfMeasureIso": "PCE",
+                "priceUnitQuantity": 1
+            }
+        },
+        {
+            "position": "0002",
+            "item": {
+                "number": "12345",
+                "name": "Round tube ø60x45",
+                "purchaseUnitOfMeasureIso": "PCE"
+            },
+            "scheduledDelivery": {
+                "date": "2023-07-02",
+                "quantity": 2.0
+            },
+            "prices": {
+                "netPrice": {
+                    "priceInTransactionCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    }
+                },
+                "priceUnitOfMeasureIso": "PCE",
+                "priceUnitQuantity": 1
+            }
+        },
+        {
+            "position": "0003",
+            "item": {
+                "number": "12345",
+                "name": "Round tube ø60x45",
+                "purchaseUnitOfMeasureIso": "PCE"
+            },
+            "scheduledDelivery": {
+                "date": "2023-07-03",
+                "quantity": 3.0
+            },
+            "prices": {
+                "netPrice": {
+                    "priceInTransactionCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    }
+                },
+                "priceUnitOfMeasureIso": "PCE",
+                "priceUnitQuantity": 1
+            }
+        },                
+        {
+            "position": "0004",
+            "item": {
+                "number": "67890",
+                "name": "Square tube ø60x45",
+                "purchaseUnitOfMeasureIso": "PCE"
+            },
+            "scheduledDelivery": {
+                "date": "2023-07-04",
+                "quantity": 4.0
+            },
+            "prices": {
+                "netPrice": {
+                    "priceInTransactionCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    }
+                },
+                "priceUnitOfMeasureIso": "PCE",
+                "priceUnitQuantity": 1
+            }
+        },
+        {
+            "position": "0005",
+            "item": {
+                "number": "12345",
+                "name": "Round tube ø60x45",
+                "purchaseUnitOfMeasureIso": "PCE"
+            },
+            "scheduledDelivery": {
+                "date": "2023-07-05",
+                "quantity": 5.0
+            },
+            "prices": {
+                "netPrice": {
+                    "priceInTransactionCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    }
+                },
+                "priceUnitOfMeasureIso": "PCE",
+                "priceUnitQuantity": 1
+            }
+        },
+        {
+            "position": "0006",
+            "item": {
+                "number": "67890",
+                "name": "Square tube ø60x45",
+                "purchaseUnitOfMeasureIso": "PCE"
+            },
+            "scheduledDelivery": {
+                "date": "2023-07-06",
+                "quantity": 6.0
+            },
+            "prices": {
+                "netPrice": {
+                    "priceInTransactionCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    }
+                },
+                "priceUnitOfMeasureIso": "PCE",
+                "priceUnitQuantity": 1
+            }
+        }
+    ]
+}
