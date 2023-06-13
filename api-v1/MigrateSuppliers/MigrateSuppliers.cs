@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json.Linq;
@@ -17,7 +18,6 @@ namespace Com.Tradecloud1.SDK.Client
 
 
         const string tenantId = "";
-        const int supplierCodeLength = 10;
 
         const string getCompanyUrlTemplate = "https://portal.tradecloud.nl/api/v1/company/tenant/{tenantId}/code/{code}";
         const string migrateCompanyUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{companyId}";
@@ -38,7 +38,7 @@ namespace Com.Tradecloud1.SDK.Client
                 {                    
                     while (!reader.EndOfStream)
                     {   
-                        var supplierCode = reader.ReadLine().PadLeft(supplierCodeLength, '0');
+                        var supplierCode = reader.ReadLine();
                         var getCompanyUrl = getCompanyUrlTemplate.Replace("{tenantId}", tenantId).Replace("{code}", supplierCode);
                         
                         var queryResult = await GetSupplier(getCompanyUrl, log);
@@ -47,10 +47,13 @@ namespace Com.Tradecloud1.SDK.Client
                            string companyId = queryResult["id"].ToString();
                            var migrateCompanyUrl = migrateCompanyUrlTemplate.Replace("{companyId}", companyId);
                            await MigrateSupplier(migrateCompanyUrl, log);
+                           Thread.Sleep(2000);
                            var migrateUsersUrl = migrateUsersUrlTemplate.Replace("{companyId}", companyId);
                            await MigrateSupplier(migrateUsersUrl, log);
+                           Thread.Sleep(2000);
                            var migrateOrdersUrl = migrateOrdersUrlTemplate.Replace("{companyId}", companyId);
                            await MigrateSupplier(migrateOrdersUrl, log);
+                           Thread.Sleep(5000);
                         }
                     }
                 }
