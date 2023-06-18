@@ -1,0 +1,23 @@
+{
+    "host": "wdp.voortman.net",
+    "port": 44301,
+    "secure": true,
+    "username": "tradecloud",
+    "password": "V00rtm@nTr@decloud",
+    "enabledEventNames": [
+        "OrderChangesProposedBySupplier",
+        "OrderChangesProposalApprovedByBuyer",
+        "OrderChangesProposalRejectedByBuyer",
+        "OrderLinesAcceptedBySupplier",
+        "OrderLinesConfirmedBySupplier",
+        "OrderLinesRejectedBySupplier",
+        "OrderLinesReopenRequestedByBuyer",
+        "OrderLinesReopenRequestedBySupplier",
+        "OrderLinesReopenRequestApprovedByBuyer",
+        "OrderLinesReopenRequestApprovedBySupplier",
+        "OrderLinesReopenRequestRejectedByBuyer",
+        "OrderLinesReopenRequestRejectedBySupplier",
+        "OrderResentByBuyer",
+        "OrderSynced"
+    ]
+  }

@@ -27,8 +27,8 @@ namespace Com.Tradecloud1.SDK.Client
                     'companyId': ['{companyId}']
                 },
                 'status': {
-                    'process': 'Completed',
-                    'logistics': 'Open'
+                    'processStatus': 'Completed',
+                    'logisticsStatus': 'Open'
                 },
                 'indicators': {
                     'deliveryOverdue': true
@@ -70,7 +70,7 @@ namespace Com.Tradecloud1.SDK.Client
                             string logisticsStatus = orderLine["status"]["logisticsStatus"].ToString();
                             string deliveryOverdue = orderLine["indicators"]["deliveryOverdue"].ToString();
 
-                            if (!position.StartsWith("0"))
+                            if (!position.StartsWith("0") && processStatus == "Completed" && logisticsStatus == "Open")
                             {                                
                                 if (dryRun) 
                                 {
