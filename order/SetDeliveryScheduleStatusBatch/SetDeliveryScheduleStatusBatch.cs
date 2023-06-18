@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Text;
@@ -8,17 +9,18 @@ using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class SendOrderIndicatorsBatch
+    class SetDeliveryScheduleStatusBatch
     {
         const bool dryRun = true;
-        const string accessToken = "";
         const string buyerId = "";
+        const string fromDate = "2023-01-01";
+        const string accessToken = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order-search/specs.yaml#/order-search
         const string orderLineSearchUrl = "https://api.accp.tradecloud1.com/v2/order-line-search/search";
 
-        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderIndicatorsByBuyerRoute
-        const string sendOrderIndicatorsUrl = "https://api.accp.tradecloud1.com/v2/api-connector/order/indicators";
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order/private/specs.yaml#/order/updateOrderLineDeliverySchedule
+        const string setDeliveryScheduleUrlTemplate = "https://api.accp.tradecloud1.com/v2/order/{id}/line/{position}/deliverySchedule";
 
         // Fill in the search query
         const string queryTemplateWithSingleQuotes = @"{
@@ -27,11 +29,8 @@ namespace Com.Tradecloud1.SDK.Client
                     'companyId': ['{companyId}']
                 },
                 'status': {
-                    'processStatus': ['Completed'],
-                    'logisticsStatus': ['Open']
-                },
-                'indicators': {
-                    'deliveryOverdue': true
+                    'processStatus': ['Issued', 'InProgress', 'Confirmed', 'Rejected'],
+                    'logisticsStatus': ['Delivered']
                 }
             },
             'sort':[{'field':'buyerOrder.purchaseOrderNumber','order':'asc'}],
@@ -43,13 +42,15 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud send indicators batch.");
-             var jsonOrderIndicatorsTemplate = File.ReadAllText(@"order-indicators-template.json");
+            Console.WriteLine("Tradecloud set delivery schedule status as supplier batch.");
+             var jsonDeliveryScheduleTemplate = File.ReadAllText(@"delivery-schedule-template.json");
 
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-            using (var log = new StreamWriter("send_indicators_batch.log", append: true))
+            DateTime fromDateTime = DateTime.Parse(fromDate, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
+
+            using (var log = new StreamWriter("set_delivery_schedule.log", append: true))
             {
                 int offset = 0;
                 int total = limit;
@@ -59,26 +60,30 @@ namespace Com.Tradecloud1.SDK.Client
                     if (queryResult != null)
                     {
                         total = ((int)queryResult["total"]);
-                        await log.WriteLineAsync("total=" + total + " offset=" + offset);
+                        //await log.WriteLineAsync("total=" + total + " offset=" + offset);
                         offset += limit;
 
                         foreach (var orderLine in queryResult.First.Values())
                         {
                             string purchaseOrderNumber = orderLine["buyerOrder"]["purchaseOrderNumber"].ToString();
-                            string position = orderLine["buyerLine"]["position"].ToString();
+                            string orderId = buyerId + "-" + purchaseOrderNumber;
+                            string orderLinePosition = orderLine["buyerLine"]["position"].ToString();
+                            string? row = orderLine["buyerLine"]["row"] != null ? orderLine["buyerLine"]["row"].ToString() : null;
                             string processStatus = orderLine["status"]["processStatus"].ToString();
                             string logisticsStatus = orderLine["status"]["logisticsStatus"].ToString();
                             string deliveryOverdue = orderLine["indicators"]["deliveryOverdue"].ToString();
+                            string firstDeliveryDateString =  orderLine["firstDeliveryDate"].ToString();
+                            DateTime firstDeliveryDate = DateTime.Parse(firstDeliveryDateString, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
 
-                            if (!position.StartsWith("0") && processStatus == "Completed" && logisticsStatus == "Open")
+                            if (firstDeliveryDate >= fromDateTime && logisticsStatus == "Delivered")
                             {                                
                                 if (dryRun) 
                                 {
-                                    await log.WriteLineAsync("purchaseOrderNumber=" + purchaseOrderNumber + " position=" + position + " processStatus=" + processStatus + " logisticsStatus=" + logisticsStatus + " deliveryOverdue=" + deliveryOverdue);
+                                    await log.WriteLineAsync("SetDeliverySchedule to Open status: purchaseOrderNumber=" + purchaseOrderNumber + " row=" + row + " position=" + orderLinePosition + " processStatus=" + processStatus + " logisticsStatus=" + logisticsStatus + " deliveryOverdue=" + deliveryOverdue + " firstDeliveryDate=" + firstDeliveryDateString);
                                 }
                                 else
                                 {
-                                    await SendOrderIndicators(purchaseOrderNumber, position, log);
+                                    await SetDeliveryScheduleStatus(orderId, orderLinePosition, log);
                                 }
                             }
                         }
@@ -100,8 +105,8 @@ namespace Com.Tradecloud1.SDK.Client
                     watch.Stop();
 
                     var statusCode = (int)response.StatusCode;
-                    await log.WriteLineAsync("SearchOrderLines start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
-                    await log.WriteLineAsync("SearchOrderLines request body=" + query);
+                    //await log.WriteLineAsync("SearchOrderLines start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                    //await log.WriteLineAsync("SearchOrderLines request body=" + query);
                     string responseString = await response.Content.ReadAsStringAsync();
                     if (statusCode == 200)
                     {
@@ -114,26 +119,28 @@ namespace Com.Tradecloud1.SDK.Client
                     }
                 }
 
-                async Task SendOrderIndicators(string purchaseOrderNumber, string position, StreamWriter log)
+                async Task SetDeliveryScheduleStatus(string orderId, string orderLinePosition, StreamWriter log)
                 {                
-                    var jsonOrderIndicators = jsonOrderIndicatorsTemplate
-                        .Replace("{companyId}", buyerId)                    
-                        .Replace("{purchaseOrderNumber}", purchaseOrderNumber)
-                        .Replace("{position}", position);
-                    var content = new StringContent(jsonOrderIndicators, Encoding.UTF8, "application/json");
+                    var setDeliveryScheduleUrl = setDeliveryScheduleUrlTemplate
+                        .Replace("{id}", orderId)                    
+                        .Replace("{position}", orderLinePosition);
+                    
+                    // Assumes delivery schedule position is the same as order line position
+                    var jsonDeliverySchedule = jsonDeliveryScheduleTemplate.Replace("{position}", orderLinePosition);
+                    var content = new StringContent(jsonDeliverySchedule, Encoding.UTF8, "application/json");
 
                     var start = DateTime.Now;
                     var watch = System.Diagnostics.Stopwatch.StartNew();
-                    var response = await httpClient.PostAsync(sendOrderIndicatorsUrl, content);
+                    var response = await httpClient.PostAsync(setDeliveryScheduleUrl, content);
                     watch.Stop();
 
                     var statusCode = (int)response.StatusCode;
-                    await log.WriteLineAsync("SendOrderIndicators purchaseOrderNumber=" + purchaseOrderNumber + " position=" + position + " start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                    await log.WriteLineAsync("SetDeliverySchedule orderId=" + orderId + " orderLinePosition=" + orderLinePosition + " start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                     if (statusCode == 400)
-                        await log.WriteLineAsync("SendOrderIndicators request body=" + jsonOrderIndicators); 
+                        await log.WriteLineAsync("SetDeliverySchedule request body=" + jsonDeliverySchedule); 
                     string responseString = await response.Content.ReadAsStringAsync();
                     if (statusCode != 200)
-                        await log.WriteLineAsync("SendOrderIndicators response body=" +  responseString);
+                        await log.WriteLineAsync("SetDeliverySchedule response body=" +  responseString);
                 }
             }
         }
