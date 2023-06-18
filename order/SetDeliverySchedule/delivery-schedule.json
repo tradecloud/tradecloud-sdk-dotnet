@@ -1,0 +1,10 @@
+{
+    "deliverySchedule": [
+      {
+        "position": "0001",
+        "status": "Shipped",
+        "etd": "2019-12-31",
+        "eta": "2019-12-31"
+      }
+    ]
+}
