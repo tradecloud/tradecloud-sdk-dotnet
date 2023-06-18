@@ -1,0 +1,10 @@
+{
+    "email": "marcel+voortman@tradecloud.nl",
+    "plainPassword": "SecretSecret1",
+    "userId": "5cff97b3-3fdc-46ed-90e4-f529d8aac8d3",
+    "userRoles": ["admin"],
+    "companyRoles": [
+      "buyer"
+    ],
+    "companyId": "7091d1c3-6a84-4480-be26-8c45b8e59daa"
+  }
