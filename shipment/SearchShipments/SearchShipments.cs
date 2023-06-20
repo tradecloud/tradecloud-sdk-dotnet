@@ -19,20 +19,31 @@ namespace Com.Tradecloud1.SDK.Client
 
         const string jsonContentWithSingleQuotes = 
             @"{
-                `filters`: {
-                    `supplierShipment`: {
-                        `companyIds`: [
-                            <supplierCompanyId>
+                'query': 'S-100567',
+                'filters': {
+                    'supplierShipment': {
+                        'companyIds': [
+                            '2d31de68-8925-44c1-8f58-2144d564ecb4',
+                            '09484ff6-e0f0-510b-819f-5fa3ed780726'
                         ]
                     },
-                    `buyerShipment`: {
-                        `companyIds`: [
-                            <buyerCompanyId>
+                    'buyerShipment': {
+                        'companyIds': [
+                            '2d31de68-8925-44c1-8f58-2144d564ecb4',
+                            '09484ff6-e0f0-510b-819f-5fa3ed780726'
                         ]
+                    },
+                    'loadCarriers': {
+                        'containerNumber': 'BICU1234565',
+                        'packageSSCC': '(00)008012349999999997'
+                    },
+                    'lines': {
+                        'purchaseOrderNumber': 'PO-123',
+                        'purchaseOrderLinePosition': '001'
                     }
                 },
-                `offset`: 0,
-                `limit`: 10
+                'offset': 0,
+                'limit': 10
             }";
 
         static async Task Main(string[] args)
@@ -47,7 +58,7 @@ namespace Com.Tradecloud1.SDK.Client
             async Task SearchShipments(string accessToken)
             {                
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-                var jsonContent = jsonContentWithSingleQuotes.Replace("`", "\"");
+                var jsonContent = jsonContentWithSingleQuotes.Replace("'", "\"");
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                 var watch = System.Diagnostics.Stopwatch.StartNew();
