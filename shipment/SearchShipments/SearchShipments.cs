@@ -19,20 +19,25 @@ namespace Com.Tradecloud1.SDK.Client
 
         const string jsonContentWithSingleQuotes = 
             @"{
-                `filters`: {
-                    `supplierShipment`: {
-                        `companyIds`: [
+                'filters': {
+                    'supplierShipment': {
+                        'companyIds': [
                             <supplierCompanyId>
                         ]
                     },
-                    `buyerShipment`: {
-                        `companyIds`: [
+                    'buyerShipment': {
+                        'companyIds': [
                             <buyerCompanyId>
                         ]
                     }
+                    'lines': {
+                        'purchaseOrderNumber': '<purchaseOrderNumber>',
+                        'purchaseOrderLinePosition': '<purchaseOrderLinePosition>'
+                    },
+                    'lastUpdatedSince': '2021-04-23T10:01:53.812Z'
                 },
-                `offset`: 0,
-                `limit`: 10
+                'offset': 0,
+                'limit': 10
             }";
 
         static async Task Main(string[] args)
@@ -47,7 +52,7 @@ namespace Com.Tradecloud1.SDK.Client
             async Task SearchShipments(string accessToken)
             {                
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
-                var jsonContent = jsonContentWithSingleQuotes.Replace("`", "\"");
+                var jsonContent = jsonContentWithSingleQuotes.Replace("'", "\"");
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                 var watch = System.Diagnostics.Stopwatch.StartNew();
