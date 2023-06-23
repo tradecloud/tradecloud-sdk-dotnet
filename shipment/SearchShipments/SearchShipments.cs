@@ -29,6 +29,14 @@ namespace Com.Tradecloud1.SDK.Client
                         'companyIds': [
                             <buyerCompanyId>
                         ]
+                    },
+                    'loadCarriers': {
+                        'containerNumber': 'BICU1234565',
+                        'packageSSCC': '(00)008012349999999997'
+                    },
+                    'lines': {
+                        'purchaseOrderNumber': 'PO-123',
+                        'purchaseOrderLinePosition': '001'
                     }
                     'lines': {
                         'purchaseOrderNumber': '<purchaseOrderNumber>',

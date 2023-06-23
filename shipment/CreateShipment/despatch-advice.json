@@ -1,0 +1,143 @@
+{
+  "header": {
+    "supplierHeader": {
+      "companyId": "1f61e695-7545-5670-9384-58e8b1f263e6",
+      "despatchAdviceNumber": "DA123456789",
+      "shipmentNumber": "SN123456789",
+      "invoiceNumbers": [
+        "invoice-12345"
+      ],
+      "contacts": [
+        {
+          "userId": "00f03b98-2511-489f-9695-13791b3f66b6",
+          "email": "contact@yourcompany.com",
+          "firstName": "firstName",
+          "lastName": "lastName",
+          "position": "position",
+          "phoneNumber": "phoneNumber"
+        }
+      ]
+    },
+    "buyerHeader": {
+      "companyId": "f56aa4ce-8ec8-5197-bc26-77716a58add7",
+      "contacts": [
+        {
+          "userId": "00f03b98-2511-489f-9695-13791b3f66b6",
+          "email": "contact@yourcompany.com",
+          "firstName": "firstName",
+          "lastName": "lastName",
+          "position": "position",
+          "phoneNumber": "phoneNumber"
+        }
+      ],
+      "purchaseOrderTerms": {
+        "incotermsCode": "CIF",
+        "incoterms": "ECT Rotterdam",
+        "paymentTermsCode": "30D",
+        "paymentTerms": "30 days"
+      }
+    },
+    "shipment": {
+      "identifiers": {
+        "billOfLadingNumber": "BOL123456789",
+        "imoNumber": "IMO123456789",
+        "carrierShipmentNumber": "CSN123456789",
+        "trackingNumber": "1Z662F416878787827"
+      },
+      "transportMode": "Road transport",
+      "departure": {
+        "location": {
+          "locationType": "PlaceOfDestination",
+          "id": "123",
+          "idScheme": "GLN",
+          "names": [
+            "My Company Warehouse",
+            "Dock 12"
+          ],
+          "addressLines": [
+            "Street 123",
+            "Area 52"
+          ],
+          "postalCode": "1234 AB",
+          "city": "Rotterdam",
+          "countryCodeIso2": "NL"
+        },
+        "etdDate": "2019-12-31",
+        "atdDate": "2019-12-31"
+      },
+      "destinations": [
+        {
+          "location": {
+            "locationType": "PlaceOfDestination",
+            "id": "123",
+            "idScheme": "GLN",
+            "names": [
+              "My Company Warehouse",
+              "Dock 12"
+            ],
+            "addressLines": [
+              "Street 123",
+              "Area 52"
+            ],
+            "postalCode": "1234 AB",
+            "city": "Rotterdam",
+            "countryCodeIso2": "NL"
+          },
+          "etaStartDate": "2019-12-31",
+          "etaStartTime": "12:13:14",
+          "etaEndDate": "2019-12-31",
+          "etaEndTime": "12:13:14",
+          "ataDate": "2019-12-31",
+          "etdDate": "2019-12-31",
+          "atdDate": "2019-12-31"
+        }
+      ]
+    }
+  },
+  "loadCarriers": [
+    {
+      "containerNumber": "BICU1234565",
+      "containerSizeAndType": "45G1",
+      "packageSSCC": "(00)008012349999999997",
+      "packageType": "8A",
+      "lines": [
+        {
+          "despatchAdviceLinePosition": "01",
+          "purchaseOrderNumber": "PO123456789",
+          "purchaseOrderLinePosition": "0001",
+          "deliverySchedulePosition": "01",
+          "item": {
+            "buyerItemNumber": "12345",
+            "buyerItemRevision": "v2",
+            "buyerItemName": "Round tube ø60x45",
+            "supplierItemNumber": "67890",
+            "supplierItemRevision": "v2",
+            "supplierItemName": "Round tube ø60x45",
+            "purchaseUnitOfMeasureIso": "PCE"
+          },
+          "despatchQuantity": 1234.56,
+          "backorderQuantity": 1234.56
+        }
+      ]
+    }
+  ],
+  "lines": [
+    {
+      "despatchAdviceLinePosition": "02",
+      "purchaseOrderNumber": "PO123456789",
+      "purchaseOrderLinePosition": "0002",
+      "deliverySchedulePosition": "02",
+      "item": {
+        "buyerItemNumber": "12345",
+        "buyerItemRevision": "v2",
+        "buyerItemName": "Round tube ø60x45",
+        "supplierItemNumber": "67890",
+        "supplierItemRevision": "v2",
+        "supplierItemName": "Round tube ø60x45",
+        "purchaseUnitOfMeasureIso": "PCE"
+      },
+      "despatchQuantity": 1234.56,
+      "backorderQuantity": 1234.56
+    }
+  ]
+}
