@@ -1,0 +1,21 @@
+{
+    "newUserId": "5cff97b3-3fdc-46ed-90e4-f529d8aac8d3",
+    "email": "marcel+voortman@tradecloud1.com",
+    "companyId": "7091d1c3-6a84-4480-be26-8c45b8e59daa",
+    "companyName": "Voortman",
+    "roles": [
+      "admin"
+    ],
+    "companyRoles": [
+      "buyer"
+    ],
+    "profile": {
+      "firstName": "Marcel",
+      "lastName": "Matthijs"
+    },
+    "settings": {
+      "notificationInterval": "realtime",
+      "languageCode": "en",
+      "unassignedTasksSubscription": false
+    }
+  }

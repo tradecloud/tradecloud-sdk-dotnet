@@ -1,0 +1,8 @@
+{
+    "deliverySchedule": [
+      {
+        "position": "{position}",
+        "status": "Open"
+      }
+    ]
+}

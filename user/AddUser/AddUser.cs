@@ -9,20 +9,20 @@ namespace Com.Tradecloud1.SDK.Client
     class AddUser
     {           
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
-        const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
+        const string authenticationUrl = "https://tc-8934-sap-update-delivery-schedule.t.tradecloud1.com/v2/authentication/";
         // Fill in mandatory username
-        const string username = "";
+        const string username = "supportuser@tradecloud1.com";
         // Fill in mandatory password
-        const string password = "";
+        const string password = "SupportSecret1";
 
         //  https://swagger-ui.s.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/user/private/specs.yaml#/user/addUserRoute
-        const string addUserUrl = "https://api.accp.tradecloud1.com/v2/user/add";
+        const string addUserUrl = "https://tc-8934-sap-update-delivery-schedule.t.tradecloud1.com/v2/user/add";
                         
         static async Task Main(string[] args)
         {
             Console.WriteLine("Tradecloud add user example.");
             
-            var jsonContent = File.ReadAllText(@"user.json");
+            var jsonContent = File.ReadAllText(@"marcel-voortman.json");
 
             HttpClient httpClient = new HttpClient();
             var authenticationClient = new Authentication(httpClient, authenticationUrl);
