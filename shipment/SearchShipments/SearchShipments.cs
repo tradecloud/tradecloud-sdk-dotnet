@@ -19,28 +19,26 @@ namespace Com.Tradecloud1.SDK.Client
 
         const string jsonContentWithSingleQuotes = 
             @"{
-                'query': 'S-100567',
                 'filters': {
                     'supplierShipment': {
                         'companyIds': [
-                            '2d31de68-8925-44c1-8f58-2144d564ecb4',
-                            '09484ff6-e0f0-510b-819f-5fa3ed780726'
+                            <supplierCompanyId>
                         ]
                     },
                     'buyerShipment': {
                         'companyIds': [
-                            '2d31de68-8925-44c1-8f58-2144d564ecb4',
-                            '09484ff6-e0f0-510b-819f-5fa3ed780726'
+                            <buyerCompanyId>
                         ]
                     },
                     'loadCarriers': {
-                        'containerNumber': 'BICU1234565',
-                        'packageSSCC': '(00)008012349999999997'
+                        'containerNumber': '<containerNumber>',
+                        'packageSSCC': '<packageSSCC>'
                     },
                     'lines': {
-                        'purchaseOrderNumber': 'PO-123',
-                        'purchaseOrderLinePosition': '001'
-                    }
+                        'purchaseOrderNumber': '<purchaseOrderNumber>',
+                        'purchaseOrderLinePosition': '<purchaseOrderLinePosition>'
+                    },
+                    'lastUpdatedSince': '2021-04-23T10:01:53.812Z'
                 },
                 'offset': 0,
                 'limit': 10
