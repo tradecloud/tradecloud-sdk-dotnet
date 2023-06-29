@@ -10,16 +10,16 @@ namespace Com.Tradecloud1.SDK.Client
     {   
         const bool useToken = false;
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
-        const string authenticationUrl = "https://tc-8934-sap-update-delivery-schedule.t.tradecloud1.com/v2/authentication/";
+        const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
 
         // Fill in mandatory username
 
-        const string username = "supportuser@tradecloud1.com";
+        const string username = "";
         // Fill in mandatory password
-        const string password = "SupportSecret1";
+        const string password = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderByBuyerRoute
-        const string fetchPurchaseOrderUrl = "https://tc-8934-sap-update-delivery-schedule.t.tradecloud1.com/v2/sap-soap-connector/company/7091d1c3-6a84-4480-be26-8c45b8e59daa/order/8500014430/fetch";
+        const string fetchPurchaseOrderUrl = "https://api.accp.tradecloud1.com/v2/sap-soap-connector/company/7091d1c3-6a84-4480-be26-8c45b8e59daa/order/8500014430/fetch";
         
         static async Task Main(string[] args)
         {
