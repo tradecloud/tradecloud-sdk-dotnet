@@ -1,0 +1,15 @@
+{
+    "order": {
+        "companyId": "{companyId}",
+        "buyerAccountNumber": "{buyerAccountNumber}",
+        "purchaseOrderNumber": "{purchaseOrderNumber}"
+    },
+    "lines": [
+        {
+            "purchaseOrderLinePosition": "{purchaseOrderLinePosition}",
+            "indicators": {
+                "accepted": true
+            }            
+        }
+    ]
+}
