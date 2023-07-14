@@ -1,3 +1,2 @@
 purchaseOrderNumber,purchaseOrderLinePosition,confirmedDate,confirmedQuantity,confirmedNetPrice
-PUR23-SCNL-003546,10,2023-04-22,700,125.00
-PUR23-SCNL-003546,20,2023-04-21,750,124.04
+PO123456789,10,2023-04-22,700,125.00
