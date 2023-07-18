@@ -1,0 +1,40 @@
+{
+    "method": "POST",
+    "webhookUrl": "https://orderwebhook.mycompany.com",
+    "basicAuthCredentials": {
+      "username": "MyCompany",
+      "password": "ReallyStrongPassword123"
+    },
+    "enabledEventNames": [
+      "CompletedOrderLinesRevertedByBuyer",
+      "OrderLinesIssuedByBuyer",
+      "OrderLinesCompletedByBuyer",
+      "OrderLinesConfirmedBySupplier",
+      "OrderContactReassignedByBuyer",
+      "OrderContactReassignedBySupplier",
+      "OrderCustomLabelsUpdatedByBuyer",
+      "OrderCustomLabelsUpdatedBySupplier",
+      "OrderChangesProposalApprovedByBuyer",
+      "OrderChangesProposalRejectedByBuyer",
+      "OrderChangesProposedBySupplier",
+      "OrderIssuedByBuyer",
+      "OrderLinesAcceptedBySupplier",
+      "OrderLinesCancelledByBuyer",
+      "OrderLinesCancelledBySupplier",
+      "OrderLinesItemDetailsChangedBySupplier",
+      "OrderLinesRejectedBySupplier",
+      "OrderLinesReopenRequestApprovedByBuyer",
+      "OrderLinesReopenRequestApprovedBySupplier",
+      "OrderLinesReopenRequestedByBuyer",
+      "OrderLinesReopenRequestedBySupplier",
+      "OrderLinesReopenRequestRejectedByBuyer",
+      "OrderLinesReopenRequestRejectedBySupplier",
+      "OrderLinesUpdatedByBuyer",
+      "OrderLinesUpdatedBySupplier",
+      "OrderLinesReissuedByBuyer",
+      "OrderResentByBuyer",
+      "OrderResentBySupplier",
+      "OrderSynced"
+    ],
+    "simpleDeliverySchedule": false
+}
