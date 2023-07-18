@@ -8,7 +8,8 @@ A Tradecloud user with `admin` role and `buyer` company role
 
 ## Configure
 
-Configure the constants in the source code.
+- configure the constants in the source code and
+- configure `settings.json`
 
 ## Run
 
