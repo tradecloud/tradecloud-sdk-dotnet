@@ -6,13 +6,14 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
+using System.Threading;
 
 namespace Com.Tradecloud1.SDK.Client
 {
     class CloseOrderTasks
     {   
         const bool dryRun = true;
-        const string accessToken = "";
+        const string refreshToken = ""; // TODO implement
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/workflow/private/specs.yaml#/workflow/closeOrderTasks
         const string closeOrderTasksUrl = "https://api.accp.tradecloud1.com/v2/workflow/order/close";
@@ -21,6 +22,7 @@ namespace Com.Tradecloud1.SDK.Client
         {
             Console.WriteLine("Close orders batch.");
 
+            string accessToken = "";
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);            
 
@@ -30,7 +32,8 @@ namespace Com.Tradecloud1.SDK.Client
                 {
                     string lastOrderId = null;
                     OrderTasks orderTasks = null;
-                    while (!reader.EndOfStream)
+                    var success = true;
+                    while (!reader.EndOfStream && success)
                     {   
                         var line = reader.ReadLine();
                         var values = line.Split(',');
@@ -40,7 +43,7 @@ namespace Com.Tradecloud1.SDK.Client
                         if (currentOrderId != lastOrderId) {
                             if (orderTasks != null)
                             {
-                                await CloseOrderTasks(orderTasks, log); 
+                                success = await CloseOrderTasks(orderTasks, log); 
                             }
 
                             orderTasks = new OrderTasks
@@ -60,26 +63,29 @@ namespace Com.Tradecloud1.SDK.Client
                 }
             }
 
-            async Task CloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
+            async Task<Boolean> CloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
             {  
+                var success = false;
                 if (dryRun) 
                 {
-                    await DryRunCloseOrderTasks(orderTasks, log);
+                    success = await DryRunCloseOrderTasks(orderTasks, log);
                 }
                 else
                 {
-                    await RealRunCloseOrderTasks(orderTasks, log);
+                    success = await RealRunCloseOrderTasks(orderTasks, log);
                 }
+                return success;
             }
 
-            async Task DryRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
+            async Task<Boolean>  DryRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
             {
                 string json = JsonConvert.SerializeObject(orderTasks, Formatting.Indented);
                 Console.WriteLine("DryRunCloseOrderTasks " + json);
                 await log.WriteLineAsync("DryRunCloseOrderTasks " + json);
+                return true;
             }
 
-            async Task RealRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log)
+            async Task<Boolean> RealRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log)
             {                
                 string json = JsonConvert.SerializeObject(orderTasks, Formatting.Indented);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -95,9 +101,12 @@ namespace Com.Tradecloud1.SDK.Client
                 await log.WriteLineAsync(summary);
 
                 string responseString = await response.Content.ReadAsStringAsync();
-                if (statusCode != 200) {
+                if (statusCode == 200 || statusCode == 500) {
+                    return true;
+                } else {                    
                     Console.WriteLine("RealRunCloseOrderTasks response body=" +  responseString);
                     await log.WriteLineAsync("RealRunCloseOrderTasks response body=" +  responseString);
+                    return false;
                 }         
             }
         }
