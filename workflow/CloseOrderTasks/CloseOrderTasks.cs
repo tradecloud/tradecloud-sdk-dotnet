@@ -13,18 +13,22 @@ namespace Com.Tradecloud1.SDK.Client
     class CloseOrderTasks
     {   
         const bool dryRun = true;
-        const string refreshToken = ""; // TODO implement
+        static string accessToken = ""; // required when not setting a refresh token
+        static string refreshToken = ""; // required when the script is expected to take > 10 mins.
+
+         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
+        const string authenticationUrl = "https://api.tradecloud1.com/v2/authentication/";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/workflow/private/specs.yaml#/workflow/closeOrderTasks
-        const string closeOrderTasksUrl = "https://api.accp.tradecloud1.com/v2/workflow/order/close";
+        const string closeOrderTasksUrl = "https://api.tradecloud1.com/v2/workflow/order/close";
 
         static async Task Main(string[] args)
         {
             Console.WriteLine("Close orders batch.");
 
-            string accessToken = "";
             HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);            
+            var authenticationClient = new Authentication(httpClient, authenticationUrl);
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
             using(var log = new StreamWriter("close-order-tasks.log", append: true) )
             {
@@ -63,29 +67,49 @@ namespace Com.Tradecloud1.SDK.Client
                 }
             }
 
-            async Task<Boolean> CloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
+            async Task<bool> CloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
             {  
-                var success = false;
                 if (dryRun) 
                 {
-                    success = await DryRunCloseOrderTasks(orderTasks, log);
+                    await DryRunCloseOrderTasks(orderTasks, log);
+                    return true;
                 }
                 else
                 {
-                    success = await RealRunCloseOrderTasks(orderTasks, log);
+                    var statusCode = await RealRunCloseOrderTasks(orderTasks, log);
+                    
+                    if (statusCode == 401 && refreshToken != "")
+                    {                            
+                        // Refresh access and refresh tokens
+                        (accessToken, refreshToken) = await authenticationClient.Refresh(refreshToken);
+                        httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                        // Retry once with refreshed access token
+                        statusCode = await RealRunCloseOrderTasks(orderTasks, log);
+                    }
+                    if (statusCode == 500)
+                    {
+                        // Expected time out when closing more than a few tasks
+                        // Retry once to be sure, which should be quick
+                        statusCode = await RealRunCloseOrderTasks(orderTasks, log);
+                    }
+
+                    // In case of not found the batch will continue
+                    if (statusCode == 200 || statusCode == 404)
+                       return true;
+                    else
+                       return false; 
                 }
-                return success;
             }
 
-            async Task<Boolean>  DryRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
+            async Task<int>  DryRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
             {
                 string json = JsonConvert.SerializeObject(orderTasks, Formatting.Indented);
                 Console.WriteLine("DryRunCloseOrderTasks " + json);
                 await log.WriteLineAsync("DryRunCloseOrderTasks " + json);
-                return true;
+                return 200;
             }
 
-            async Task<Boolean> RealRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log)
+            async Task<int> RealRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log)
             {                
                 string json = JsonConvert.SerializeObject(orderTasks, Formatting.Indented);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -101,13 +125,11 @@ namespace Com.Tradecloud1.SDK.Client
                 await log.WriteLineAsync(summary);
 
                 string responseString = await response.Content.ReadAsStringAsync();
-                if (statusCode == 200 || statusCode == 500) {
-                    return true;
-                } else {                    
+                if (statusCode != 200) {
                     Console.WriteLine("RealRunCloseOrderTasks response body=" +  responseString);
                     await log.WriteLineAsync("RealRunCloseOrderTasks response body=" +  responseString);
-                    return false;
-                }         
+                }   
+                return statusCode;      
             }
         }
     }
