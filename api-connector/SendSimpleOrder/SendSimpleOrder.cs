@@ -11,6 +11,8 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class SendSimpleOrder
     {   
+        const string fileName = "simple-order.json"; // or "minimal-simple-order.json", "simple-order.xml", "minimal-simple-order.xml"
+        const string contentType = "application/json"; // or "application/xml"
         const bool useToken = true;
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
@@ -26,7 +28,7 @@ namespace Com.Tradecloud1.SDK.Client
         {
             Console.WriteLine("Tradecloud send simple order example.");
 
-            var jsonContent = File.ReadAllText(@"simple-order.json");
+            var jsonContent = File.ReadAllText(@fileName);
 
             HttpClient httpClient = new HttpClient();
             if (useToken)
@@ -44,7 +46,7 @@ namespace Com.Tradecloud1.SDK.Client
 
             async Task SendSimpleOrder()
             {                
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                var content = new StringContent(jsonContent, Encoding.UTF8, contentType);
 
                 var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -56,7 +58,7 @@ namespace Com.Tradecloud1.SDK.Client
                 if (statusCode == 400)
                      Console.WriteLine("SendSimpleOrder request body=" + jsonContent); 
                 string responseString = await response.Content.ReadAsStringAsync();
-                if (statusCode == 200)
+                if (statusCode == 200 && contentType == "application/json")
                     Console.WriteLine("SendSimpleOrder response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
                 else
                     Console.WriteLine("SendSimpleOrder response body=" +  responseString);
