@@ -128,7 +128,7 @@
       "purchaseOrderLinePosition": "0002",
       "deliverySchedulePosition": "02",
       "item": {
-        "buyerItemNumber": "12345",
+        "buyerItemNumber": "2222",
         "buyerItemRevision": "v2",
         "buyerItemName": "Round tube ø60x45",
         "supplierItemNumber": "67890",

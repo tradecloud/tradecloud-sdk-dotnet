@@ -9,26 +9,25 @@ using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class SendOrder
+    class UpsertShipment
     {   
-        const string fileName = "order.json"; // or "minimal-order.json", "order.xml", "minimal-order.xml"
-        const string contentType = "application/json"; // or "application/xml"
         const bool useToken = true;
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
+
         // Fill in mandatory username
         const string username = "";
         // Fill in mandatory password
         const string password = "";
 
-        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderByBuyerRoute
-        const string sendOrderUrl = "https://api.accp.tradecloud1.com/v2/api-connector/order";
+        // https://swagger-ui.test.tradecloud1.com/?url=https://api.test.tradecloud1.com/v2/shipment/private/specs.yaml#/shipment/createShipmentBySupplier
+        const string upsertShipmentUrl = "https://api.accp.tradecloud1.com/v2/shipment/despatch-advice";
         
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud send order example.");
+            Console.WriteLine("Tradecloud upsert shipment based on despatch advice by supplier example.");
 
-            var jsonContent = File.ReadAllText(@fileName);
+            var jsonContent = File.ReadAllText(@"despatch-advice.json");
 
             HttpClient httpClient = new HttpClient();
             if (useToken)
@@ -42,26 +41,26 @@ namespace Com.Tradecloud1.SDK.Client
                 var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
             }
-            await SendOrder();
+            await UpsertShipment();
 
-            async Task SendOrder()
+            async Task UpsertShipment()
             {                
-                var content = new StringContent(jsonContent, Encoding.UTF8, contentType);
+                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                 var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                var response = await httpClient.PostAsync(sendOrderUrl, content);
+                var response = await httpClient.PostAsync(upsertShipmentUrl, content);
                 watch.Stop();
 
                 var statusCode = (int)response.StatusCode;
-                Console.WriteLine("SendOrder start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                Console.WriteLine("UpsertShipment start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                 if (statusCode == 400)
-                     Console.WriteLine("SendOrder request body=" + jsonContent); 
+                     Console.WriteLine("UpsertShipment request body=" + jsonContent); 
                 string responseString = await response.Content.ReadAsStringAsync();
-                if (statusCode == 200 && contentType == "application/json")
-                    Console.WriteLine("SendOrder response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
+                if (statusCode == 200)
+                    Console.WriteLine("UpsertShipment response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
                 else
-                    Console.WriteLine("SendOrder response body=" +  responseString);
+                    Console.WriteLine("UpsertShipment response body=" +  responseString);
             }
         }
     }

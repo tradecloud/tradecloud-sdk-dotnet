@@ -9,25 +9,26 @@ using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class CreateShipment
+    class SendSimpleOrder
     {   
+        const string fileName = "simple-order.json"; // or "minimal-simple-order.json", "simple-order.xml", "minimal-simple-order.xml"
+        const string contentType = "application/json"; // or "application/xml"
         const bool useToken = true;
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
-
         // Fill in mandatory username
         const string username = "";
         // Fill in mandatory password
         const string password = "";
 
-        // https://swagger-ui.test.tradecloud1.com/?url=https://api.test.tradecloud1.com/v2/shipment/private/specs.yaml#/shipment/createShipmentBySupplier
-        const string createShipmentUrl = "https://api.accp.tradecloud1.com/v2/shipment/despatch-advice";
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderByBuyerRoute
+        const string sendSimpleOrderUrl = "https://api.accp.tradecloud1.com/v2/api-connector/order/simple";
         
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud create shipment based on despatch advice by supplier example.");
+            Console.WriteLine("Tradecloud send simple order example.");
 
-            var jsonContent = File.ReadAllText(@"despatch-advice.json");
+            var jsonContent = File.ReadAllText(@fileName);
 
             HttpClient httpClient = new HttpClient();
             if (useToken)
@@ -41,26 +42,26 @@ namespace Com.Tradecloud1.SDK.Client
                 var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
             }
-            await CreateShipment();
+            await SendSimpleOrder();
 
-            async Task CreateShipment()
+            async Task SendSimpleOrder()
             {                
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                var content = new StringContent(jsonContent, Encoding.UTF8, contentType);
 
                 var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                var response = await httpClient.PostAsync(createShipmentUrl, content);
+                var response = await httpClient.PostAsync(sendSimpleOrderUrl, content);
                 watch.Stop();
 
                 var statusCode = (int)response.StatusCode;
-                Console.WriteLine("CreateShipment start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                Console.WriteLine("SendSimpleOrder start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                 if (statusCode == 400)
-                     Console.WriteLine("CreateShipment request body=" + jsonContent); 
+                     Console.WriteLine("SendSimpleOrder request body=" + jsonContent); 
                 string responseString = await response.Content.ReadAsStringAsync();
-                if (statusCode == 200)
-                    Console.WriteLine("CreateShipment response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
+                if (statusCode == 200 && contentType == "application/json")
+                    Console.WriteLine("SendSimpleOrder response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
                 else
-                    Console.WriteLine("CreateShipment response body=" +  responseString);
+                    Console.WriteLine("SendSimpleOrder response body=" +  responseString);
             }
         }
     }
