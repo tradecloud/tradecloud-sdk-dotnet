@@ -45,7 +45,7 @@
             "countryCodeIso2": "NL",
             "countryName": "The Netherlands"
         },
-        "purchaseOrderNumber": "PO0123456789",
+        "purchaseOrderNumber": "PO01234567892",
         "description": "Any buyer custom text about this order",
         "destination": {
             "code": "001",
@@ -135,45 +135,15 @@
                 "serialNumber": "0x0000000000028000",
                 "batchNumber": "#18001"
             },
-            "deliverySchedule": [
-                {
-                    "position": "0001",
-                    "date": "2023-11-01",
-                    "quantity": 1111.11,
-                    "transportMode": "Ship 0001"
-                },
-                {
-                    "position": "0002",
-                    "date": "2023-11-02",
-                    "quantity": 2222.22,
-                    "status": "ReadyToShip",
-                    "transportMode": "Ship 0002"
-                },
-                {
-                    "position": "0003",
-                    "date": "2023-11-03",
-                    "quantity": 3333.33,
-                    "status": "Shipped"
-                },
-                {
-                    "position": "0004",
-                    "date": "2023-11-04",
-                    "quantity": 4444.44,
-                    "status": "Delivered"
-                }
-            ],
-            "deliveryHistory": [
-                {
-                    "position": "0001",
-                    "date": "2023-11-01",
-                    "quantity": 1111.11
-                },
-                {
-                    "position": "0002",
-                    "date": "2023-11-02",
-                    "quantity": 2222.22
-                }
-            ],
+            "scheduledDelivery": {
+                "date": "2023-11-01",
+                "quantity": 1111.11,
+                "transportMode": "Ship 0001"
+            },
+            "actualDelivery": {
+                "date": "2023-11-01",
+                "quantity": 1111.11
+            },
             "prices": {
                 "grossPrice": {
                     "priceInTransactionCurrency": {
@@ -191,34 +161,6 @@
                 "priceUnitOfMeasureIso": "PCE",
                 "priceUnitQuantity": 100
             },                        
-            "chargeLines": [
-                {
-                    "position": "01",
-                    "chargeTypeCode": "FC",
-                    "chargeDescription": "Description 1",
-                    "quantity": 1,
-                    "price": {
-                        "priceInTransactionCurrency": {
-                            "value": 1.23,
-                            "currencyIso": "EUR"
-                        }
-                    },
-                    "priceUnitOfMeasureIso": "PCE"
-                },
-                {
-                    "position": "02",
-                    "chargeTypeCode": "FC",
-                    "chargeDescription": "Description 2",
-                    "quantity": 1,
-                    "price": {
-                        "priceInTransactionCurrency": {
-                            "value": 4.56,
-                            "currencyIso": "EUR"
-                        }
-                    },
-                    "priceUnitOfMeasureIso": "PCE"
-                }
-            ],
             "terms": {
                 "contractNumber": "123456789",
                 "contractPosition": "0001"
@@ -258,6 +200,77 @@
                 "another line label"
             ],
             "reason": "Issue reason/remark"
+        },{
+            "position": "0002",
+            "item": {
+                "number": "12345",
+                "name": "Round tube ø60x45",
+                "purchaseUnitOfMeasureIso": "PCE"
+            },
+            "scheduledDelivery": {
+                "date": "2023-11-02",
+                "quantity": 2222.22,
+                "status": "ReadyToShip",
+                "transportMode": "Ship 0002"
+            },
+            "actualDelivery": {
+                "date": "2023-11-02",
+                "quantity": 2222.22
+            },
+            "prices": {
+                "netPrice": {
+                    "priceInTransactionCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    }
+                },
+                "priceUnitOfMeasureIso": "PCE",
+                "priceUnitQuantity": 100
+            }
+        },{
+            "position": "0003",
+            "item": {
+                "number": "12345",
+                "name": "Round tube ø60x45",
+                "purchaseUnitOfMeasureIso": "PCE"
+            },
+            "scheduledDelivery": {
+                "date": "2023-11-03",
+                "quantity": 3333.33,
+                "status": "Shipped"
+            },
+            "prices": {
+                "netPrice": {
+                    "priceInTransactionCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    }
+                },
+                "priceUnitOfMeasureIso": "PCE",
+                "priceUnitQuantity": 100
+            }
+        },{
+            "position": "0004",
+            "item": {
+                "number": "12345",
+                "name": "Round tube ø60x45",
+                "purchaseUnitOfMeasureIso": "PCE"
+            },
+            "scheduledDelivery": {
+                "date": "2023-11-04",
+                "quantity": 4444.44,
+                "status": "Delivered"
+            },
+            "prices": {
+                "netPrice": {
+                    "priceInTransactionCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    }
+                },
+                "priceUnitOfMeasureIso": "PCE",
+                "priceUnitQuantity": 100
+            }
         }
     ],
     "erpIssueDateTime": "2019-12-31T10:11:12",
