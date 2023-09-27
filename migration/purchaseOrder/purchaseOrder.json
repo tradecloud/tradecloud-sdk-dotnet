@@ -8,7 +8,16 @@
       "name": "Kramp Nederland",
       "role": "legacy_company_role_supplier",
       "status": "legacy_company_status_active",
-      "archived": false
+      "archived": false,
+      "meta": {
+        "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source": {
+          "traceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "companyId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        },
+        "createdDateTime": "2019-12-31T10:11:12.123Z"
+      }
     },
     "customer": {
       "companyId": "f56aa4ce-8ec8-5197-bc26-77716a58add7",
@@ -16,10 +25,19 @@
       "name": "Agrifac Machinery B.V.",
       "role": "legacy_company_role_customer",
       "status": "legacy_company_status_active",
-      "archived": false
+      "archived": false,
+      "meta": {
+        "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "source": {
+          "traceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+          "companyId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        },
+        "createdDateTime": "2019-12-31T10:11:12.123Z"
+      }
     },
-    "archived": true,
-    "cancelled": true,
+    "archived": false,
+    "cancelled": false,
     "lines": [
       {
         "lineId": "3fa85f64-5717-4562-b3fc-2c963f66afa7",
