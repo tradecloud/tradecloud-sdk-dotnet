@@ -6,7 +6,7 @@ namespace Com.Tradecloud1.SDK.Client
     {           
         static void Main(string[] args)
         {
-            Console.WriteLine("Tradecloud Business Central Connector.");
+            Console.WriteLine("Tradecloud Business Central Connector!");
         }
     }
 }
