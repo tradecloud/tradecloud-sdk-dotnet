@@ -22,17 +22,23 @@ jobs:
           dotnet-version: '6.0.x'
           include-prerelease: true
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      #- name: Build with dotnet
+      # run: dotnet build --configuration Release
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1.0.3
+
+      - name: Build Specific Project
+        run: msbuild tradecloud-sdk-dotnet.sln /p:Configuration=Release /t:Build /restore /p:BuildProjectReferences=true /p:DeployOnBuild=false /p:PublishProfile=
+        if: contains(github.event.head_commit.modified, 'bc-connector/')
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/bc-connector
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ${{env.DOTNET_ROOT}}/bc-connector
 
   deploy:
     runs-on: ubuntu-latest
