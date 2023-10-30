@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 namespace Com.Tradecloud1.SDK.Client
 {
     // WARN: this script will confirm order lines, which cannot be reverted. 
-    class SendOrderResponseBatch
+    class SendOrderResponseAcceptCsvBatch
     {
         const bool dryRun = true;
         const string delimiter = ",";
@@ -38,7 +38,7 @@ namespace Com.Tradecloud1.SDK.Client
             var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = delimiter, Encoding = Encoding.UTF8 };
 
             using (var log = new StreamWriter("order-response-batch.log", append: true))
-            using (var reader = new StreamReader("Confirmed orders SCNL Wave 3 14072023.csv"))
+            using (var reader = new StreamReader("order-line-confirmations.csv"))
             using (var csvReader = new CsvReader(reader, config))
             {
                 csvReader.Context.RegisterClassMap<OrderLineResponseMap>();
