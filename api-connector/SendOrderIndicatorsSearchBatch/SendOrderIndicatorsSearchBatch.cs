@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class SendOrderIndicatorsBatch
+    class SendOrderIndicatorsSearchBatch
     {
         const bool dryRun = true;
         const string accessToken = "";
