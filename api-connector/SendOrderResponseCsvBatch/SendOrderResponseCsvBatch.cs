@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 namespace Com.Tradecloud1.SDK.Client
 {
     // WARN: this script will confirm order lines, which cannot be reverted. 
-    class SendOrderResponseBatch
+    class SendOrderResponseCsvBatch
     {
         const bool dryRun = true;
         const string delimiter = ";";
