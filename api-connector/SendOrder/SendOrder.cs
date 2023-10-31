@@ -14,8 +14,10 @@ namespace Com.Tradecloud1.SDK.Client
         const string fileName = "order.json"; // or "minimal-order.json", "order.xml", "minimal-order.xml"
         const string contentType = "application/json"; // or "application/xml"
         const bool useToken = true;
+
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
+
         // Fill in mandatory username
         const string username = "";
         // Fill in mandatory password
