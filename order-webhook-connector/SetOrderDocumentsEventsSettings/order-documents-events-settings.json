@@ -1,0 +1,14 @@
+{
+  "method": "POST",
+  "webhookUrl": "https://orderwebhook.mycompany.com",
+  "basicAuthCredentials": {
+    "username": "MyCompany",
+    "password": "ReallyStrongPassword123"
+  },
+  "bearerToken": "REALLY-LONG-TOKEN-ABCDEFGHIJKLMOPQRSTUVW",
+  "format": "JSON",
+  "enabledEventNames": [
+    "OrderDocumentsAttachedByBuyer",
+    "OrderDocumentsAttachedBySupplier"
+  ]
+}
