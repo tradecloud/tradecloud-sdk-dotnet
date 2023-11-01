@@ -2,6 +2,8 @@ using System;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
@@ -37,13 +39,19 @@ namespace Com.Tradecloud1.SDK.Client
                 var jsonContent = jsonContentWithSingleQuotes.Replace("`", "\"");
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
+                var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
                 var response = await httpClient.PostAsync(getUserByEmailUrl, content);
                 watch.Stop();
-                Console.WriteLine("FindUserByEmail StatusCode: " + (int)response.StatusCode + " ElapsedMilliseconds: " + watch.ElapsedMilliseconds);
+
+                var statusCode = (int)response.StatusCode;
+                Console.WriteLine("FindUserByEmail start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
 
                 string responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("FindUserByEmail Body: " +  responseString);  
+                if (statusCode == 200)
+                    Console.WriteLine("FindUserByEmail response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
+                else
+                    Console.WriteLine("FindUserByEmail response body=" +  responseString);
             }
         }
     }

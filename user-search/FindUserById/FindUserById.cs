@@ -31,12 +31,20 @@ namespace Com.Tradecloud1.SDK.Client
             async Task findUserByIdRequest(string accessToken)
             {                
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                
+                var start = DateTime.Now;
+                var watch = System.Diagnostics.Stopwatch.StartNew();
                 var response = await httpClient.GetAsync(findUserByIdUrl);
+                watch.Stop();
 
-                Console.WriteLine("FindUserById StatusCode: " + (int)response.StatusCode);
+                var statusCode = (int)response.StatusCode;
+                Console.WriteLine("FindUserById start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
 
                 string responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("FindUserById Content: " +  JValue.Parse(responseString).ToString(Formatting.Indented));   
+                if (statusCode == 200)
+                    Console.WriteLine("FindUserById response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
+                else
+                    Console.WriteLine("FindUserById response body=" +  responseString);
             }
         }
     }

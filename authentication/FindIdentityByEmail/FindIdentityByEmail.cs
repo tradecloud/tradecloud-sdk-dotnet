@@ -21,7 +21,7 @@ namespace Com.Tradecloud1.SDK.Client
 
         const string jsonContentWithSingleQuotes = 
             @"{
-               `email`: `peter@alphareel.be`
+               `email`: `<email>`
             }";
 
         static async Task Main(string[] args)
@@ -29,9 +29,8 @@ namespace Com.Tradecloud1.SDK.Client
             Console.WriteLine("Tradecloud find identity by email example.");
             
             HttpClient httpClient = new HttpClient();
-            //var authenticationClient = new Authentication(httpClient, authenticationUrl);
-            //var (accessToken, refreshToken)  = await authenticationClient.Login(username, password);
-            var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJuYW1lIjoibWFyY2VsQHRyYWRlY2xvdWQxLmNvbSIsInVzZXJJZCI6ImYxY2YzNDA0LTMxMTktNDllYi05NGNlLTkxYWU0ZTY1NTc5ZCIsInVzZXJSb2xlcyI6WyJzdXBwb3J0Il0sImNvbXBhbnlSb2xlcyI6W10sImF1dGhvcml6ZWRDb21wYW55SWRzIjpbXSwiY29tcGFueUlkIjoiMDY4OTNiYmEtZTEzMS00MjY4LTg3YzktN2ZhZTY0ZTE2ZWU5IiwidHdvRkFFbmFibGVkIjp0cnVlLCJ0d29GQUVuZm9yY2VkIjp0cnVlLCJzdGF0dXMiOiJhdXRoZW50aWNhdGVkIiwiaWRlbnRpdHlQcm92aWRlciI6InRyYWRlY2xvdWQifSwiZXhwIjoxNjk4MzIyNjM5fQ.UqdivGEXudk08gPTfNKQXwtksDhz9aLvjig3d-sPIsQ";
+            var authenticationClient = new Authentication(httpClient, authenticationUrl);
+            var (accessToken, refreshToken)  = await authenticationClient.Login(username, password);
             await FindIdentityByEmailRequest(accessToken);
 
             async Task FindIdentityByEmailRequest(string accessToken)
