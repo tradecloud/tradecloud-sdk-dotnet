@@ -2,6 +2,8 @@ using System;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
@@ -59,13 +61,20 @@ namespace Com.Tradecloud1.SDK.Client
                 var jsonContent = jsonContentWithSingleQuotes.Replace("'", "\"");
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
+                var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
                 var response = await httpClient.PostAsync(getUserByEmailUrl, content);
-                watch.Stop();
-                Console.WriteLine("SearchShipments StatusCode: " + (int)response.StatusCode + " ElapsedMilliseconds: " + watch.ElapsedMilliseconds);
+                watch.Stop();                
 
+                var statusCode = (int)response.StatusCode;
+                Console.WriteLine("SearchShipments start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                //if (statusCode == 400)
+                     Console.WriteLine("SearchShipments request body=" + jsonContent); 
                 string responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("SearchShipments Body: " +  responseString);  
+                if (statusCode == 200)
+                    Console.WriteLine("SearchShipments response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
+                else
+                    Console.WriteLine("SearchShipments response body=" +  responseString);
             }
         }
     }
