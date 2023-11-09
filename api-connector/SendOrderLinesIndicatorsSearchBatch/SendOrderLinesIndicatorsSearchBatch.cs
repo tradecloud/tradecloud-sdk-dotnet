@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class SendOrderIndicatorsSearchBatch
+    class SendOrderLinesIndicatorsSearchBatch
     {
         const bool dryRun = true;
         const string accessToken = "";
@@ -33,9 +33,6 @@ namespace Com.Tradecloud1.SDK.Client
                 'status': {
                     'processStatus': ['Completed'],
                     'logisticsStatus': ['Open']
-                },
-                'indicators': {
-                    'deliveryOverdue': true
                 }
             },
             'sort':[{'field':'buyerOrder.purchaseOrderNumber','order':'asc'}],
@@ -47,41 +44,42 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud send indicators batch.");
+            Console.WriteLine("Tradecloud send order lines indicators search batch.");
              var jsonOrderIndicatorsTemplate = File.ReadAllText(@"order-indicators-template.json");
 
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-            using (var log = new StreamWriter("send_order_indicators_search_batch.log", append: true))
+            using (var log = new StreamWriter("send_order_lines_indicators_search_batch.log", append: true))
             {
                 int offset = 0;
                 int total = limit;
                 while (total > offset && offset < maxTotal)                
                 {
-                    var queryResult = await SearchOrders(offset, log);
+                    var queryResult = await SearchOrderLines(offset, log);
                     if (queryResult != null)
                     {
                         total = ((int)queryResult["total"]);
                         await log.WriteLineAsync("total=" + total + " offset=" + offset);
                         offset += limit;
 
-                        foreach (var order in queryResult.First.Values())
+                        foreach (var orderLine in queryResult.First.Values())
                         {
-                            string purchaseOrderNumber = order["buyerOrder"]["purchaseOrderNumber"].ToString();
-                            string processStatus = order["status"]["processStatus"].ToString();
-                            string logisticsStatus = order["status"]["logisticsStatus"].ToString();
-                            string deliveryOverdue = order["indicators"]["deliveryOverdue"].ToString();
+                            string purchaseOrderNumber = orderLine["buyerOrder"]["purchaseOrderNumber"].ToString();
+                            string position = orderLine["buyerLine"]["position"].ToString();
+                            string processStatus = orderLine["status"]["processStatus"].ToString();
+                            string logisticsStatus = orderLine["status"]["logisticsStatus"].ToString();
+                            string deliveryOverdue = orderLine["indicators"]["deliveryOverdue"].ToString();
 
-                            if (!position.StartsWith("0") && processStatus == "Completed" && logisticsStatus == "Open")
+                            if (processStatus == "Completed" && logisticsStatus == "Open")
                             {                                
                                 if (dryRun) 
                                 {
-                                    await log.WriteLineAsync("purchaseOrderNumber=" + purchaseOrderNumber + " processStatus=" + processStatus + " logisticsStatus=" + logisticsStatus + " deliveryOverdue=" + deliveryOverdue);
+                                    await log.WriteLineAsync("purchaseOrderNumber=" + purchaseOrderNumber + " position=" + position + " processStatus=" + processStatus + " logisticsStatus=" + logisticsStatus + " deliveryOverdue=" + deliveryOverdue);
                                 }
                                 else
                                 {
-                                    await SendOrderIndicators(purchaseOrderNumber, log);
+                                    await SendOrderLineIndicators(purchaseOrderNumber, position, log);
                                 }
                             }
                         }
@@ -91,7 +89,7 @@ namespace Com.Tradecloud1.SDK.Client
                     }
                 }
 
-                async Task<JObject> SearchOrders(int offset, StreamWriter log)
+                async Task<JObject> SearchOrderLines(int offset, StreamWriter log)
                 {
                     var queryTemplate = queryTemplateWithSingleQuotes.Replace("'", "\"");
                     var query = queryTemplate
@@ -103,7 +101,7 @@ namespace Com.Tradecloud1.SDK.Client
 
                     var start = DateTime.Now;
                     var watch = System.Diagnostics.Stopwatch.StartNew();
-                    var response = await httpClient.PostAsync(orderSearchUrl, content);
+                    var response = await httpClient.PostAsync(orderLineSearchUrl, content);
                     watch.Stop();
 
                     var statusCode = (int)response.StatusCode;
@@ -121,11 +119,12 @@ namespace Com.Tradecloud1.SDK.Client
                     }
                 }
 
-                async Task SendOrderIndicators(string purchaseOrderNumber, StreamWriter log)
+                async Task SendOrderLineIndicators(string purchaseOrderNumber, string position, StreamWriter log)
                 {                
                     var jsonOrderIndicators = jsonOrderIndicatorsTemplate
                         .Replace("{companyId}", buyerId)                    
-                        .Replace("{purchaseOrderNumber}", purchaseOrderNumber);
+                        .Replace("{purchaseOrderNumber}", purchaseOrderNumber)
+                        .Replace("{position}", position);
                     var content = new StringContent(jsonOrderIndicators, Encoding.UTF8, "application/json");
 
                     var start = DateTime.Now;
@@ -134,7 +133,7 @@ namespace Com.Tradecloud1.SDK.Client
                     watch.Stop();
 
                     var statusCode = (int)response.StatusCode;
-                    await log.WriteLineAsync("SendOrderIndicators purchaseOrderNumber=" + purchaseOrderNumber + " start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                    await log.WriteLineAsync("SendOrderIndicators purchaseOrderNumber=" + purchaseOrderNumber + " position=" + position + " start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                     if (statusCode == 400)
                         await log.WriteLineAsync("SendOrderIndicators request body=" + jsonOrderIndicators); 
                     string responseString = await response.Content.ReadAsStringAsync();

@@ -12,10 +12,11 @@ using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    // WARN: this script will cancel, complete or deliver orders, which cannot be reverted. 
-    class SendOrderIndicatorsCsvBatch
+    // WARN: this script will cancel, complete or deliver order lines, which cannot be reverted. 
+    class SendOrderLineIndicatorsCsvBatch
     {
         const bool dryRun = true;
+        const string delimiter = "-";
         const string buyerId = "";
         const string accessToken = "";
 
@@ -24,36 +25,37 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud send order indicators CVS batch.");
+            Console.WriteLine("Tradecloud send order line indicators CVS batch.");
 
             var jsonOrderIndicatorsTemplate = File.ReadAllText(@"order-indicators-template.json");
 
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { IgnoreBlankLines = true, Encoding = Encoding.UTF8 };
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = delimiter, Encoding = Encoding.UTF8 };
 
             using (var log = new StreamWriter("send_indicators_csv_batch.log", append: true))
-            using (var reader = new StreamReader("orders.csv"))
+            using (var reader = new StreamReader("order-lines.csv"))
             using (var csvReader = new CsvReader(reader, config))
             {
-                csvReader.Context.RegisterClassMap<OrderMap>();
-                var orders = csvReader.GetRecords<Order>();
-                foreach (var order in orders)
+                csvReader.Context.RegisterClassMap<OrderLineMap>();
+                var orderLines = csvReader.GetRecords<OrderLine>();
+                foreach (var orderLine in orderLines)
                 {                  
-                    await SendOrderIndicators(order.purchaseOrderNumber.Trim(), log);
+                    await SendOrderLineIndicators(orderLine.purchaseOrderNumber, orderLine.position, log);
                 }
             }
 
-            async Task SendOrderIndicators(string purchaseOrderNumber, StreamWriter log)
+            async Task SendOrderLineIndicators(string purchaseOrderNumber, string position, StreamWriter log)
             {                
                 var jsonOrderIndicators = jsonOrderIndicatorsTemplate
                     .Replace("{companyId}", buyerId)                    
-                    .Replace("{purchaseOrderNumber}", purchaseOrderNumber);
+                    .Replace("{purchaseOrderNumber}", purchaseOrderNumber)
+                    .Replace("{position}", position);
 
                 if (dryRun) 
                 {
-                    await log.WriteLineAsync("SendOrderIndicators dry run purchaseOrderNumber=" + purchaseOrderNumber + " content=" + jsonOrderIndicators);
+                    await log.WriteLineAsync("SendOrderLineIndicators dry run purchaseOrderNumber=" + purchaseOrderNumber + " position=" + position + " content=" + jsonOrderIndicators);
                 }    
                 else
                 {
@@ -64,25 +66,26 @@ namespace Com.Tradecloud1.SDK.Client
                     watch.Stop();
 
                     var statusCode = (int)response.StatusCode;
-                    await log.WriteLineAsync("SendOrderIndicators purchaseOrderNumber=" + purchaseOrderNumber + " start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                    await log.WriteLineAsync("SendOrderLineIndicators purchaseOrderNumber=" + purchaseOrderNumber + " position=" + position + " start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                     if (statusCode == 400)
-                        await log.WriteLineAsync("SendOrderIndicators request body=" + jsonOrderIndicators); 
+                        await log.WriteLineAsync("SendOrderLineIndicators request body=" + jsonOrderIndicators); 
                     string responseString = await response.Content.ReadAsStringAsync();
                     if (statusCode != 200)
-                        await log.WriteLineAsync("SendOrderIndicators response body=" +  responseString);
+                        await log.WriteLineAsync("SendOrderLineIndicators response body=" +  responseString);
                 }
             }
         }
     }
 
-    public class Order
+    public class OrderLine
     {
         public string purchaseOrderNumber { get; set; }
+        public string position { get; set; }
     }
 
-    public sealed class OrderMap : ClassMap<Order>
+    public sealed class OrderLineMap : ClassMap<OrderLine>
     {
-        public OrderMap()
+        public OrderLineMap()
         {
             AutoMap(CultureInfo.InvariantCulture);
         }
