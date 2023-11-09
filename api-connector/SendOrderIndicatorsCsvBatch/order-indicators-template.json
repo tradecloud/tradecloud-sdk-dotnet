@@ -1,17 +1,12 @@
 {
     "order": {
         "companyId": "{companyId}",
-        "purchaseOrderNumber": "{purchaseOrderNumber}"
-    },
-    "lines": [
-        {
-            "position": "{position}",
-            "indicators": {
-                "shipped": false,
-                "delivered": false,
-                "completed": false,
-                "cancelled": false
-            }
+        "purchaseOrderNumber": "{purchaseOrderNumber}",
+        "indicators": {
+            "shipped": false,
+            "delivered": false,
+            "completed": false,
+            "cancelled": false
         }
-    ]
+    }
 }
