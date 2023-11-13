@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class CleanOrderLines
+    class CleanSearchOrderLines
     {   
         const bool dryRun = true;
         const string buyerId = "";
@@ -18,7 +18,7 @@ namespace Com.Tradecloud1.SDK.Client
         // Fill in mandatory username
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order-search/specs.yaml#/order-search
-        const string orderLineSearchUrl = "https://api.accp.tradecloud1.com/v2/order-line-search/search";
+        const string orderLineSearchUrl = "https://api.tradecloud1.com/v2/order-line-search/search";
         
         // Fill in the search query
         const string searchBodyTemplate = @"{
@@ -46,7 +46,7 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud clean order lines.");
+            Console.WriteLine("Tradecloud clean order lines based on order lines search.");
             
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);            
@@ -65,10 +65,10 @@ namespace Com.Tradecloud1.SDK.Client
                     foreach (var line in queryResult.First.Values())
                     {
                         var purchaseOrderNumber = line["buyerOrder"]["purchaseOrderNumber"].ToString();
-                        var linePostion = line["buyerLine"]["position"].ToString();
-                        if (!linePostion.StartsWith("0"))
+                        var linePosition = line["buyerLine"]["position"].ToString();
+                        if (!linePosition.StartsWith("0"))
                         {
-                            await DeleteOrderLine(purchaseOrderNumber, linePostion);
+                            await DeleteOrderLine(purchaseOrderNumber, linePosition);
                         }                        
                     }
                 }
