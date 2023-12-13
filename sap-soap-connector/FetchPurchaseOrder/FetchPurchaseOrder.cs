@@ -19,7 +19,7 @@ namespace Com.Tradecloud1.SDK.Client
         const string password = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderByBuyerRoute
-        const string fetchPurchaseOrderUrl = "https://api.accp.tradecloud1.com/v2/sap-soap-connector/company/7091d1c3-6a84-4480-be26-8c45b8e59daa/order/8500014430/fetch";
+        const string fetchPurchaseOrderUrl = "https://api.accp.tradecloud1.com/v2/sap-soap-connector/company/{companyId}/order/{purchaseOrderNumber}/fetch";
         
         static async Task Main(string[] args)
         {

@@ -28,6 +28,9 @@ namespace Com.Tradecloud1.SDK.Client
                 'status': {
                     'processStatus': ['Issued'],
                     'logisticsStatus': ['Delivered']
+                },
+                'indicators': {
+                    'deliveryOverdue': true
                 }
             },
             'sort':[{'field':'buyerOrder.purchaseOrderNumber','order':'asc'}],
@@ -64,12 +67,18 @@ namespace Com.Tradecloud1.SDK.Client
                             string position = order["buyerLine"]["position"].ToString();
                             string processStatus = order["status"]["processStatus"].ToString();
                             string logisticsStatus = order["status"]["logisticsStatus"].ToString();
-                            await log.WriteLineAsync("purchaseOrderNumber=" + purchaseOrderNumber + " position=" + position + " processStatus=" + processStatus + " logisticsStatus=" + logisticsStatus);
+                            string deliveryOverdue = order["indicators"]["deliveryOverdue"].ToString();
 
-                            if (purchaseOrderNumber != currentPurchaseOrderNumber) 
+                            // Skip corrupted SAP positions without leading zero's 
+                            if (position.StartsWith("0")) 
                             {
-                                 await RefetchOrders(purchaseOrderNumber, log);
-                                 currentPurchaseOrderNumber = purchaseOrderNumber;
+                                await log.WriteLineAsync("purchaseOrderNumber=" + purchaseOrderNumber + " position=" + position + " processStatus=" + processStatus + " logisticsStatus=" + logisticsStatus + " deliveryOverdue=" + deliveryOverdue);
+
+                                if (purchaseOrderNumber != currentPurchaseOrderNumber) 
+                                {
+                                    await RefetchOrders(purchaseOrderNumber, log);
+                                    currentPurchaseOrderNumber = purchaseOrderNumber;
+                                }
                             }
                         }
                     }

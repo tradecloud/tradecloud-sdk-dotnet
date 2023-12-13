@@ -28,6 +28,9 @@ namespace Com.Tradecloud1.SDK.Client
                 'status': {
                     'processStatus': ['Issued'],
                     'logisticsStatus': ['Open']
+                },
+                'indicators': {
+                    'deliveryOverdue': true
                 }
             },
             'sort':[{'field':'buyerOrder.purchaseOrderNumber','order':'asc'}],
