@@ -2,4 +2,4 @@ bin
 obj
 .vscode/
 scratch*
-*.sln
+*.log
