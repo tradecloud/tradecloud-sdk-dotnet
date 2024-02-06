@@ -1,0 +1,29 @@
+{
+    "order": {
+        "companyId": "{companyId}",
+        "buyerAccountNumber": "{buyerAccountNumber}",
+        "purchaseOrderNumber": "{purchaseOrderNumber}"
+    },
+    "lines": [
+        {
+            "purchaseOrderLinePosition": "{purchaseOrderLinePosition}",
+            "deliverySchedule": [
+                {
+                    "position": "{deliveryLinePosition}",
+                    "date": "{confirmedDate}",
+                    "quantity": {confirmedQuantity}
+                }
+            ],
+            "prices": {
+                "netPrice": {
+                    "priceInTransactionCurrency": {
+                        "value": {confirmedNetPriceValue},
+                        "currencyIso": "{confirmedNetPriceCurrencyIso}"
+                    }
+                },
+                "priceUnitOfMeasureIso": "{priceUnitOfMeasureIso}",
+                "priceUnitQuantity": {priceUnitQuantity}
+            }
+        }
+    ]
+}
