@@ -1,14 +1,12 @@
 ﻿namespace Com.Tradecloud1.SDK.SendOrderResponseSearchBatch;
 
 using System;
-using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 // WARN: this script will confirm order lines, which cannot be reverted. 
 class SendOrderResponseSearchBatch
@@ -61,15 +59,29 @@ class SendOrderResponseSearchBatch
                     foreach (var orderLine in orderLineSearchView.Data)
                     {
                         if (orderLine.Status.ProcessStatus == "Confirmed" &&
-                            orderLine.Status.LogisticsStatus == "Open")
+                            orderLine.Status.LogisticsStatus == "Open" &&
+                            orderLine.DeliverySchedule.Count == 2)
                         {
-                            if (dryRun)
+                            if (orderLine.DeliverySchedule[0].Position == null &&
+                            orderLine.DeliverySchedule[1].Position == null &&
+                            orderLine.DeliverySchedule[0].Date == orderLine.DeliverySchedule[1].Date &&
+                            orderLine.DeliverySchedule[0].Quantity == orderLine.DeliverySchedule[1].Quantity)
                             {
-                                await log.WriteLineAsync("orderLine: " + JsonConvert.SerializeObject(orderLine));
-                            }
-                            else
-                            {
-                                //await SendOrderResponse(purchaseOrderNumber, position, log);
+                                if (dryRun)
+                                {
+                                    await log.WriteLineAsync("orderLine: " + JsonConvert.SerializeObject(orderLine));
+                                }
+                                else
+                                {
+                                    // var orderResponse = new OrderResponse {
+                                    //     Order =  new OrderResponseOrder {
+
+                                    //     },
+                                    //     Lines = new OrderResponseLine 
+                                    // }        
+
+                                    //await SendOrderResponse(purchaseOrderNumber, position, log);
+                                }
                             }
                         }
                     }
