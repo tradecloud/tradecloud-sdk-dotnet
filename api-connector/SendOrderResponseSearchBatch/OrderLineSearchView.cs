@@ -1,6 +1,5 @@
 namespace Com.Tradecloud1.SDK.SendOrderResponseSearchBatch;
 
-using System;
 using System.Collections.Generic;
 
 public class OrderLineSearchView
@@ -35,13 +34,6 @@ public class SupplierOrder
 public class BuyerLine
 {
     public string Position { get; set; }
-}
-
-public class DeliveryLine
-{
-    public string Position { get; set; }
-    public string Date { get; set; }
-    public decimal Quantity { get; set; }
 }
 
 public class LineStatus

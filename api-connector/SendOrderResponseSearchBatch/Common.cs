@@ -1,5 +1,12 @@
 namespace Com.Tradecloud1.SDK.SendOrderResponseSearchBatch;
 
+public class DeliveryLine
+{
+    public string Position { get; set; }
+    public string Date { get; set; }
+    public decimal Quantity { get; set; }
+}
+
 public class Prices
 {
     public Price GrossPrice { get; set; }
