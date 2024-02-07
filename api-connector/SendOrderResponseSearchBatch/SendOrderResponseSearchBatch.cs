@@ -1,12 +1,14 @@
 ﻿namespace Com.Tradecloud1.SDK.SendOrderResponseSearchBatch;
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 // WARN: this script will confirm order lines, which cannot be reverted. 
 class SendOrderResponseSearchBatch
@@ -15,8 +17,8 @@ class SendOrderResponseSearchBatch
     const string buyerId = "";
     const string buyerAccountNumber = "";
     const string accessToken = "";
-    const string orderLineSearchUrl = "https://api.tradecloud1.com/v2/order-line-search/search";
-    const string sendOrderResponseUrl = "https://api.tradecloud1.com/v2/api-connector/order-response";
+    const string orderLineSearchUrl = "https://api.accp.tradecloud1.com/v2/order-line-search/search";
+    const string sendOrderResponseUrl = "https://api.accp.tradecloud1.com/v2/api-connector/order-response";
 
     // Fill in the search query
     const string queryTemplateWithSingleQuotes = @"{
@@ -63,25 +65,43 @@ class SendOrderResponseSearchBatch
                             orderLine.DeliverySchedule.Count == 2)
                         {
                             if (orderLine.DeliverySchedule[0].Position == null &&
-                            orderLine.DeliverySchedule[1].Position == null &&
+                            orderLine.DeliverySchedule[1].Position == "0001" &&
                             orderLine.DeliverySchedule[0].Date == orderLine.DeliverySchedule[1].Date &&
                             orderLine.DeliverySchedule[0].Quantity == orderLine.DeliverySchedule[1].Quantity)
                             {
-                                if (dryRun)
+                                var orderResponse = new OrderResponse
                                 {
-                                    await log.WriteLineAsync("orderLine: " + JsonConvert.SerializeObject(orderLine));
-                                }
-                                else
-                                {
-                                    // var orderResponse = new OrderResponse {
-                                    //     Order =  new OrderResponseOrder {
+                                    Order = new OrderResponseOrder
+                                    {
+                                        CompanyId = orderLine.SupplierOrder.CompanyId,
+                                        BuyerAccountNumber = buyerAccountNumber,
+                                        PurchaseOrderNumber = orderLine.BuyerOrder.purchaseOrderNumber
+                                    },
+                                    Lines = new List<OrderResponseLine> {
+                                       new OrderResponseLine
+                                       {
+                                            PurchaseOrderLinePosition = orderLine.BuyerLine.Position,
+                                            SalesOrderNumber = orderLine.SupplierLine.SalesOrderNumber,
+                                            SalesOrderLinePosition = orderLine.SupplierLine.Position,
+                                            DeliverySchedule = new List<DeliveryLine> {
+                                                new DeliveryLine
+                                                {
+                                                    Position = "0",
+                                                    Date = orderLine.DeliverySchedule[0].Date,
+                                                    Quantity = orderLine.DeliverySchedule[0].Quantity
+                                                }
+                                            },
+                                            Prices = orderLine.Prices,
+                                            Reason = "Merged duplicate delivery lines."
+                                       }
+                                    }
+                                };
 
-                                    //     },
-                                    //     Lines = new OrderResponseLine 
-                                    // }        
-
-                                    //await SendOrderResponse(purchaseOrderNumber, position, log);
-                                }
+                                //if (orderLine.BuyerOrder.purchaseOrderNumber == "2208525" && orderLine.BuyerLine.Position == "2")
+                                //{
+                                await log.WriteLineAsync("SendOrderResponse orderLine: " + JsonConvert.SerializeObject(orderLine));
+                                await SendOrderResponse(orderResponse, log);
+                                //}
                             }
                         }
                     }
@@ -108,8 +128,8 @@ class SendOrderResponseSearchBatch
             watch.Stop();
 
             var statusCode = (int)response.StatusCode;
-            await log.WriteLineAsync("SearchOrderLines start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
-            await log.WriteLineAsync("SearchOrderLines request body=" + query);
+            //await log.WriteLineAsync("SearchOrderLines start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+            //await log.WriteLineAsync("SearchOrderLines request body=" + query);
             string responseContent = await response.Content.ReadAsStringAsync();
             if (statusCode == 200)
             {
@@ -123,42 +143,28 @@ class SendOrderResponseSearchBatch
             }
         }
 
-        // async Task SendOrderResponse(OrderLineResponse orderLineResponse, StreamWriter log)
-        // {
-        //     var jsonOrderResponse = jsonOrderResponseTemplate
-        //         .Replace("{companyId}", orderLineResponse.companyId)
-        //         .Replace("{buyerAccountNumber}", orderLineResponse.buyerAccountNumber)
-        //         .Replace("{purchaseOrderNumber}", orderLineResponse.purchaseOrderNumber)
-        //         .Replace("{purchaseOrderLinePosition}", orderLineResponse.purchaseOrderLinePosition)
-        //         .Replace("{deliveryLinePosition}", orderLineResponse.deliveryLinePosition)
-        //         .Replace("{confirmedDate}", orderLineResponse.confirmedDate)
-        //         .Replace("{confirmedQuantity}", orderLineResponse.confirmedQuantity)
-        //         .Replace("{confirmedNetPriceValue}", orderLineResponse.confirmedNetPrice)
-        //         .Replace("{confirmedNetPriceCurrencyIso}", orderLineResponse.currencyIso)
-        //         .Replace("{priceUnitOfMeasureIso}", orderLineResponse.priceUnitOfMeasureIso)
-        //         .Replace("{priceUnitQuantity}", orderLineResponse.priceUnitQuantity);
+        async Task SendOrderResponse(OrderResponse orderResponse, StreamWriter log)
+        {
+            var requestJson = JsonConvert.SerializeObject(orderResponse, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            if (dryRun)
+            {
+                await log.WriteLineAsync("SendOrderResponse requestJson: " + requestJson);
+            }
+            else
+            {
+                var requestContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
 
-        //     if (dryRun)
-        //     {
-        //         await log.WriteLineAsync("SendOrderResponse dry run jsonOrderResponse=" + jsonOrderResponse);
-        //     }
-        //     else
-        //     {
-        //         var content = new StringContent(jsonOrderResponse, Encoding.UTF8, "application/json");
+                var start = DateTime.Now;
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                var response = await httpClient.PostAsync(sendOrderResponseUrl, requestContent);
+                watch.Stop();
 
-        //         var start = DateTime.Now;
-        //         var watch = System.Diagnostics.Stopwatch.StartNew();
-        //         var response = await httpClient.PostAsync(sendOrderResponseUrl, content);
-        //         watch.Stop();
-
-        //         var statusCode = (int)response.StatusCode;
-        //         await log.WriteLineAsync("SendOrderResponse orderLineId=" + orderLineResponse.orderLineId + " start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
-        //         if (statusCode == 400)
-        //             await log.WriteLineAsync("SendOrderResponse request body=" + jsonOrderResponse);
-        //         string responseString = await response.Content.ReadAsStringAsync();
-        //         if (statusCode != 200)
-        //             await log.WriteLineAsync("SendOrderResponse response body=" + responseString);
-        //     }
-        // }
+                var statusCode = (int)response.StatusCode;
+                await log.WriteLineAsync("SendOrderResponse request: " + requestJson + ", start: " + start + ", elapsed: " + watch.ElapsedMilliseconds + "ms, status: " + statusCode + ", reason: " + response.ReasonPhrase);
+                string responseContent = await response.Content.ReadAsStringAsync();
+                if (statusCode != 200)
+                    await log.WriteLineAsync("SendOrderResponse response: " + responseContent);
+            }
+        }
     }
 }

@@ -15,6 +15,7 @@ public class OrderLineView
     public BuyerOrder BuyerOrder { get; set; }
     public SupplierOrder SupplierOrder { get; set; }
     public BuyerLine BuyerLine { get; set; }
+    public SupplierLine SupplierLine { get; set; }
     public List<DeliveryLine> DeliverySchedule { get; set; }
     public Prices Prices { get; set; }
     public LineStatus Status { get; set; }
@@ -26,6 +27,7 @@ public class BuyerOrder
     public string CompanyId { get; set; }
     public string purchaseOrderNumber { get; set; }
 }
+
 public class SupplierOrder
 {
     public string CompanyId { get; set; }
@@ -33,6 +35,12 @@ public class SupplierOrder
 
 public class BuyerLine
 {
+    public string Position { get; set; }
+}
+
+public class SupplierLine
+{
+    public string SalesOrderNumber { get; set; }
     public string Position { get; set; }
 }
 
