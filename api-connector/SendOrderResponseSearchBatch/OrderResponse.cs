@@ -18,5 +18,9 @@ public class OrderResponseOrder
 public class OrderResponseLine
 {
     public string PurchaseOrderLinePosition { get; set; }
-    public List<DeliveryLine> DeliverySchedule { get; set; } // Confirmed delivery schedule
+    public string SalesOrderNumber { get; set; }
+    public string SalesOrderLinePosition { get; set; }
+    public List<DeliveryLine> DeliverySchedule { get; set; }
+    public Prices Prices { get; set; }
+    public string Reason { get; set; }
 }
