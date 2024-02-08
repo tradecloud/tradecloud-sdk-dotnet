@@ -31,8 +31,11 @@ namespace Com.Tradecloud1.SDK.Client
                     'companyId': ['{supplierId}']
                 },              
                 'status': {
-                    'processStatus': ['Completed'],
+                    'processStatus': ['Confirmed'],
                     'logisticsStatus': ['Open']
+                },
+                'indicators': {
+                    'deliveryOverdue': true
                 }
             },
             'sort':[{'field':'buyerOrder.purchaseOrderNumber','order':'asc'}],
@@ -45,7 +48,7 @@ namespace Com.Tradecloud1.SDK.Client
         static async Task Main(string[] args)
         {
             Console.WriteLine("Tradecloud send order lines indicators search batch.");
-             var jsonOrderIndicatorsTemplate = File.ReadAllText(@"order-indicators-template.json");
+            var jsonOrderLinesIndicatorsTemplate = File.ReadAllText(@"order-lines-indicators-template.json");
 
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
@@ -54,7 +57,7 @@ namespace Com.Tradecloud1.SDK.Client
             {
                 int offset = 0;
                 int total = limit;
-                while (total > offset && offset < maxTotal)                
+                while (total > offset && offset < maxTotal)
                 {
                     var queryResult = await SearchOrderLines(offset, log);
                     if (queryResult != null)
@@ -67,24 +70,26 @@ namespace Com.Tradecloud1.SDK.Client
                         {
                             string purchaseOrderNumber = orderLine["buyerOrder"]["purchaseOrderNumber"].ToString();
                             string position = orderLine["buyerLine"]["position"].ToString();
+                            string itemNumber = orderLine["buyerLine"]["item"]["number"].ToString();
                             string processStatus = orderLine["status"]["processStatus"].ToString();
                             string logisticsStatus = orderLine["status"]["logisticsStatus"].ToString();
                             string deliveryOverdue = orderLine["indicators"]["deliveryOverdue"].ToString();
 
-                            if (processStatus == "Completed" && logisticsStatus == "Open")
-                            {                                
-                                if (dryRun) 
+                            if (processStatus == "Confirmed" && logisticsStatus == "Open" && itemNumber == "DELIVERY ON PALLET")
+                            {
+                                if (dryRun)
                                 {
-                                    await log.WriteLineAsync("purchaseOrderNumber=" + purchaseOrderNumber + " position=" + position + " processStatus=" + processStatus + " logisticsStatus=" + logisticsStatus + " deliveryOverdue=" + deliveryOverdue);
+                                    await log.WriteLineAsync("purchaseOrderNumber=" + purchaseOrderNumber + " position=" + position + " itemNumber=" + itemNumber + " processStatus=" + processStatus + " logisticsStatus=" + logisticsStatus + " deliveryOverdue=" + deliveryOverdue);
                                 }
                                 else
                                 {
-                                    await SendOrderLineIndicators(purchaseOrderNumber, position, log);
+                                    await SendOrderLinesIndicators(purchaseOrderNumber, position, log);
                                 }
                             }
                         }
                     }
-                    else {
+                    else
+                    {
                         total = 0;
                     }
                 }
@@ -119,13 +124,13 @@ namespace Com.Tradecloud1.SDK.Client
                     }
                 }
 
-                async Task SendOrderLineIndicators(string purchaseOrderNumber, string position, StreamWriter log)
-                {                
-                    var jsonOrderIndicators = jsonOrderIndicatorsTemplate
-                        .Replace("{companyId}", buyerId)                    
+                async Task SendOrderLinesIndicators(string purchaseOrderNumber, string position, StreamWriter log)
+                {
+                    var jsonOrderLinesIndicators = jsonOrderLinesIndicatorsTemplate
+                        .Replace("{companyId}", buyerId)
                         .Replace("{purchaseOrderNumber}", purchaseOrderNumber)
                         .Replace("{position}", position);
-                    var content = new StringContent(jsonOrderIndicators, Encoding.UTF8, "application/json");
+                    var content = new StringContent(jsonOrderLinesIndicators, Encoding.UTF8, "application/json");
 
                     var start = DateTime.Now;
                     var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -133,12 +138,12 @@ namespace Com.Tradecloud1.SDK.Client
                     watch.Stop();
 
                     var statusCode = (int)response.StatusCode;
-                    await log.WriteLineAsync("SendOrderIndicators purchaseOrderNumber=" + purchaseOrderNumber + " position=" + position + " start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                    await log.WriteLineAsync("SendOrderLinesIndicators purchaseOrderNumber=" + purchaseOrderNumber + " position=" + position + " start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                     if (statusCode == 400)
-                        await log.WriteLineAsync("SendOrderIndicators request body=" + jsonOrderIndicators); 
+                        await log.WriteLineAsync("SendOrderLinesIndicators request body=" + jsonOrderLinesIndicators);
                     string responseString = await response.Content.ReadAsStringAsync();
                     if (statusCode != 200)
-                        await log.WriteLineAsync("SendOrderIndicators response body=" +  responseString);
+                        await log.WriteLineAsync("SendOrderLinesIndicators response body=" + responseString);
                 }
             }
         }
