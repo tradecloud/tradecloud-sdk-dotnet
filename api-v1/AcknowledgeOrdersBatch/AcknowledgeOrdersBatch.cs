@@ -47,7 +47,11 @@ namespace Com.Tradecloud1.SDK.Client
                     {
                         string purchaseOrderId = unackedOrder["id"].ToString();
                         string versionHash = unackedOrder["versionHash"].ToString();
-                        await AcknowledgeOrder(purchaseOrderId, versionHash, log);
+                        string status = unackedOrder["status"].ToString();
+                        if (status != "open")
+                        {
+                            await AcknowledgeOrder(purchaseOrderId, versionHash, log);
+                        }
                     }
                 }
 
