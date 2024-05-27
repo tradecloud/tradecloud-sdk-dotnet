@@ -19,11 +19,11 @@ namespace Com.Tradecloud1.SDK.Client
         //const int supplierCodeLength = 10;
         static readonly string[] statuses = {"open", "inconsistent", "confirmed", "overdue", "approved", "shipped"};
 
-        const string getCompanyUrlTemplate = "https://portal.tradecloud.nl/api/v1/company/tenant/{tenantId}/code/{code}";
-        const string migrateCompanyUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{supplierId}";
-        const string migrateUsersUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{supplierId}/users";
-        const string migrateOrderUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/order/{orderId}";
-        const string searchOrdersUrlTemplate = "https://portal.tradecloud.nl/api/v1/purchaseOrder?tenantId={tenantId}&supplierId={supplierId}&status={status}&archived=false&page={page}&limit={limit}";
+        const string getCompanyUrlTemplate = "https://accp.tradecloud.nl/api/v1/company/tenant/{tenantId}/code/{code}";
+        const string migrateCompanyUrlTemplate = "https://accp.tradecloud.nl/api/v1/admin/migrate/company/{supplierId}";
+        const string migrateUsersUrlTemplate = "https://accp.tradecloud.nl/api/v1/admin/migrate/company/{supplierId}/users";
+        const string migrateOrderUrlTemplate = "https://accp.tradecloud.nl/api/v1/admin/migrate/order/{orderId}";
+        const string searchOrdersUrlTemplate = "https://accp.tradecloud.nl/api/v1/purchaseOrder?tenantId={tenantId}&supplierId={supplierId}&status={status}&archived=false&page={page}&limit={limit}";
         const string searchPageSize = "100";
         
         static async Task Main(string[] args)

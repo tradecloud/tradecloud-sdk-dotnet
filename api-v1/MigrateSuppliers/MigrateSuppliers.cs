@@ -19,10 +19,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         const string tenantId = "";
 
-        const string getCompanyUrlTemplate = "https://portal.tradecloud.nl/api/v1/company/tenant/{tenantId}/code/{code}";
-        const string migrateCompanyUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{companyId}";
-        const string migrateUsersUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{companyId}/users";
-        const string migrateOrdersUrlTemplate = "https://portal.tradecloud.nl/api/v1/admin/migrate/company/{companyId}/orders";
+        const string getCompanyUrlTemplate = "https://accp.tradecloud.nl/api/v1/company/tenant/{tenantId}/code/{code}";
+        const string migrateCompanyUrlTemplate = "https://accp.tradecloud.nl/api/v1/admin/migrate/company/{companyId}";
+        const string migrateUsersUrlTemplate = "https://accp.tradecloud.nl/api/v1/admin/migrate/company/{companyId}/users";
+        const string migrateOrdersUrlTemplate = "https://accp.tradecloud.nl/api/v1/admin/migrate/company/{companyId}/orders";
 
         static async Task Main(string[] args)
         {
