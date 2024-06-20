@@ -15,7 +15,7 @@ namespace Com.Tradecloud1.SDK.Client
         // Fill in mandatory password
         const string password = "";
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/company/private/specs.yaml#/company/upsertAccountRoute
-        const string addCompanyUrl = "https://api.accp.tradecloud1.com/v2/company/";
+        const string upsertAccountUrl = "https://api.accp.tradecloud1.com/v2/company/{companyId}/account;
 
         static async Task Main(string[] args)
         {
@@ -34,7 +34,7 @@ namespace Com.Tradecloud1.SDK.Client
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                var response = await httpClient.PostAsync(addCompanyUrl, content);
+                var response = await httpClient.PostAsync(upsertAccountUrl, content);
                 watch.Stop();
 
                 Console.WriteLine("UpsertAccount StatusCode: " + (int)response.StatusCode + " ElapsedMilliseconds: " + watch.ElapsedMilliseconds);
