@@ -10,13 +10,13 @@ using System.Threading;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class CloseOrderTasks
-    {   
+    class CloseOrderTasksCsvBatch
+    {
         const bool dryRun = true;
         static string accessToken = ""; // required when not setting a refresh token
         static string refreshToken = ""; // required when the script is expected to take > 10 mins.
 
-         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.tradecloud1.com/v2/authentication/";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/workflow/private/specs.yaml#/workflow/closeOrderTasks
@@ -30,30 +30,31 @@ namespace Com.Tradecloud1.SDK.Client
             var authenticationClient = new Authentication(httpClient, authenticationUrl);
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-            using(var log = new StreamWriter("close-order-tasks.log", append: true) )
+            using (var log = new StreamWriter("close-order-tasks.log", append: true))
             {
-                using(var reader = new StreamReader("close-order-tasks.csv"))
+                using (var reader = new StreamReader("close-order-tasks.csv"))
                 {
                     string lastOrderId = null;
                     OrderTasks orderTasks = null;
                     var success = true;
                     while (!reader.EndOfStream && success)
-                    {   
+                    {
                         var line = reader.ReadLine();
                         var values = line.Split(',');
                         var currentOrderId = values[1];
-                        var currentTaskId =  values[0];
+                        var currentTaskId = values[0];
 
-                        if (currentOrderId != lastOrderId) {
+                        if (currentOrderId != lastOrderId)
+                        {
                             if (orderTasks != null)
                             {
-                                success = await CloseOrderTasks(orderTasks, log); 
+                                success = await CloseOrderTasks(orderTasks, log);
                             }
 
                             orderTasks = new OrderTasks
                             {
                                 orderId = currentOrderId,
-                                taskIds = new List<string> { currentTaskId } 
+                                taskIds = new List<string> { currentTaskId }
                             };
 
                             lastOrderId = currentOrderId;
@@ -61,15 +62,15 @@ namespace Com.Tradecloud1.SDK.Client
                         else
                         {
                             orderTasks.taskIds.Add(currentTaskId);
-                        }                        
+                        }
                     }
                     await CloseOrderTasks(orderTasks, log);
                 }
             }
 
-            async Task<bool> CloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
-            {  
-                if (dryRun) 
+            async Task<bool> CloseOrderTasks(OrderTasks orderTasks, StreamWriter log)
+            {
+                if (dryRun)
                 {
                     await DryRunCloseOrderTasks(orderTasks, log);
                     return true;
@@ -77,9 +78,9 @@ namespace Com.Tradecloud1.SDK.Client
                 else
                 {
                     var statusCode = await RealRunCloseOrderTasks(orderTasks, log);
-                    
+
                     if (statusCode == 401 && refreshToken != "")
-                    {                            
+                    {
                         // Refresh access and refresh tokens
                         (accessToken, refreshToken) = await authenticationClient.Refresh(refreshToken);
                         httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
@@ -95,13 +96,13 @@ namespace Com.Tradecloud1.SDK.Client
 
                     // In case of not found the batch will continue
                     if (statusCode == 200 || statusCode == 404)
-                       return true;
+                        return true;
                     else
-                       return false; 
+                        return false;
                 }
             }
 
-            async Task<int>  DryRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log) 
+            async Task<int> DryRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log)
             {
                 string json = JsonConvert.SerializeObject(orderTasks, Formatting.Indented);
                 Console.WriteLine("DryRunCloseOrderTasks " + json);
@@ -110,7 +111,7 @@ namespace Com.Tradecloud1.SDK.Client
             }
 
             async Task<int> RealRunCloseOrderTasks(OrderTasks orderTasks, StreamWriter log)
-            {                
+            {
                 string json = JsonConvert.SerializeObject(orderTasks, Formatting.Indented);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -120,16 +121,17 @@ namespace Com.Tradecloud1.SDK.Client
                 watch.Stop();
 
                 var statusCode = (int)response.StatusCode;
-                var summary = "RealRunCloseOrderTasks start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase + " json=" + json;
+                var summary = "RealRunCloseOrderTasks start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase + " json=" + json;
                 Console.WriteLine(summary);
                 await log.WriteLineAsync(summary);
 
                 string responseString = await response.Content.ReadAsStringAsync();
-                if (statusCode != 200) {
-                    Console.WriteLine("RealRunCloseOrderTasks response body=" +  responseString);
-                    await log.WriteLineAsync("RealRunCloseOrderTasks response body=" +  responseString);
-                }   
-                return statusCode;      
+                if (statusCode != 200)
+                {
+                    Console.WriteLine("RealRunCloseOrderTasks response body=" + responseString);
+                    await log.WriteLineAsync("RealRunCloseOrderTasks response body=" + responseString);
+                }
+                return statusCode;
             }
         }
     }
