@@ -6,9 +6,10 @@
     "password": "ReallyStrongPassword123"
   },
   "bearerToken": "REALLY-LONG-TOKEN-ABCDEFGHIJKLMOPQRSTUVW",
-  "format": "tXML",
-  "simpleDeliverySchedule": true,
+  "format": "JSON",
+  "singleDeliveryPerOrderLine": false,
   "enabledEventNames": [
+    "CancelledOrderLinesRevertedByBuyer",
     "CompletedOrderLinesRevertedByBuyer",
     "OrderLinesIssuedByBuyer",
     "OrderLinesCompletedByBuyer",
