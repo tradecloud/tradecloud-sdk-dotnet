@@ -18,12 +18,12 @@ In the source code:
 - fill in the environment (one of `accp` or `portal` for production)
 - fill in the date from and date to
 - fill in the file name to save the export to
- 
+
 ## Run
 
 ``` shell
-➜  api-v1 git:(master) ✗ cd ExportOrderLines 
-➜  ExportOrderLines git:(master) ✗ dotnet run
+➜  tradecloud-sdk-dotnet git:(master) cd api-v1/ExportOrderLines 
+➜  ExportOrderLines git:(master) dotnet run
 Tradecloud export order lines example.
 Reached end of pages at page 1
 ```
