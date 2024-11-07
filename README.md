@@ -4,44 +4,18 @@ The .NET SDK can help you to develop a Tradecloud API v2 client and webhook serv
 
 ## Prerequisites
 
-[.NET Core (Runtime or SDK) 6.0](https://dotnet.microsoft.com/download/dotnet/6.0)
+Download and install [.NET Core (either Runtime or SDK) 8.0](https://dotnet.microsoft.com/download/dotnet-core/8.0)
 
-## Clone
+## Clone the repository
 
-```
-➜ git clone https://github.com/tradecloud/tradecloud-sdk-dotnet.git
-➜ cd tradecloud-sdk-dotnet
-```
-
-## Update
-
-```
-➜ git fetch
-➜ git pull
+``` shell
+git clone https://github.com/tradecloud/tradecloud-sdk-dotnet.git
+cd tradecloud-sdk-dotnet
 ```
 
-## Examples
-[Authentication](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/authentication)
-- Basic authentication, retrieving access and refresh tokens
-- Refresh the access token using the refresh token
-- Logout
-- Add identity
+## Update the repository
 
-[API Connector](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/api-connector)
-- Send order
-- Send order documents
-- Send order response
-
-[Object Storage](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/object-storage)
-- Get document meta data
-- Upload document
-
-[Order Search](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/order-search)
-- Get order by id
-
-[User](https://github.com/tradecloud/tradecloud-sdk-dotnet/tree/master/user)
-- Add user
-- Get user by email
-- Update user roles
-
-Send a request to support if you need any new example.
+``` shell
+git fetch
+git pull
+```

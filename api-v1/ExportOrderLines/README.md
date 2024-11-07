@@ -22,7 +22,7 @@ In the source code:
 ## Run
 
 ``` shell
-➜  tradecloud-sdk-dotnet git:(master) cd api-v1/ExportOrderLines 
+➜  api-v1 git:(master) cd ExportOrderLines 
 ➜  ExportOrderLines git:(master) dotnet run
 Tradecloud export order lines example.
 Reached end of pages at page 1
