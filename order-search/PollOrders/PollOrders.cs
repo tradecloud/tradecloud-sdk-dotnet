@@ -23,9 +23,7 @@ namespace Com.Tradecloud1.SDK.Client
         // Fill in the search query
         const string jsonContentWithSingleQuotes = @"{
             'filters': {
-                'buyerOrder': {
-                    'companyId': '09484ff6-e0f0-510b-819f-5fa3ed780726'
-                },
+                'companyId': '09484ff6-e0f0-510b-819f-5fa3ed780726'
                 'status': {
                     'processStatus': [
                         'Issued'
@@ -40,7 +38,7 @@ namespace Com.Tradecloud1.SDK.Client
                         'Shipped'
                     ]
                 },
-                'lastUpdatedAfter': '2021-04-23T10:01:53.812Z'
+                'lastUpdatedAfter': '2024-11-12T10:01:53.812Z'
             }
             'offset': 0,
             'limit': 0
@@ -48,7 +46,7 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud search orders example.");
+            Console.WriteLine("Tradecloud poll orders example.");
 
             HttpClient httpClient = new HttpClient();
             if (useToken)
