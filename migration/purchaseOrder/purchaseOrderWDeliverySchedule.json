@@ -1,0 +1,205 @@
+{
+  "orderId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "code": "PO0123456790b",
+  "supplier": {
+    "companyId": "1f61e695-7545-5670-9384-58e8b1f263e6",
+    "tenantId": "f56aa4ce-8ec8-5197-bc26-77716a58add7",
+    "code": "540830",
+    "name": "Kramp Nederland",
+    "role": "legacy_company_role_supplier",
+    "status": "legacy_company_status_active",
+    "archived": false,
+    "meta": {
+      "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "source": {
+        "traceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "companyId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      },
+      "createdDateTime": "2019-12-31T10:11:12.123Z"
+    }
+  },
+  "customer": {
+    "companyId": "f56aa4ce-8ec8-5197-bc26-77716a58add7",
+    "code": "Agrifac",
+    "name": "Agrifac Machinery B.V.",
+    "role": "legacy_company_role_customer",
+    "status": "legacy_company_status_active",
+    "archived": false,
+    "meta": {
+      "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "source": {
+        "traceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "companyId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      },
+      "createdDateTime": "2019-12-31T10:11:12.123Z"
+    }
+  },
+  "archived": false,
+  "cancelled": false,
+  "lines": [
+    {
+      "lineId": "3fa85f64-5717-4562-b3fc-2c963f66afa7",
+      "code": "some-integer-1",
+      "row": 10,
+      "delivered": false,
+      "archived": false,
+      "cancelled": false,
+      "reopened": false,
+      "rejected": false,
+      "approved": false,
+      "agreed": true,
+      "shippable": false,
+      "mustApproveOrRejectOnceConfirmed": false,
+      "noDeliveryExpected": false,
+      "status": "legacy_purchase_order_line_status_confirmed",
+      "itemCode": "itemCode",
+      "itemName": "itemName",
+      "itemRevision": "itemRevision",
+      "itemDescription": "itemDescription",
+      "supplierItemCode": "supplierItemCode",
+      "supplierItemName": "supplierItemName",
+      "quantityRequested": 2,
+      "quantityConfirmed": 1,
+      "purchaseUnit": "PCE",
+      "grossPurchasePriceRequested": {
+        "value": 20,
+        "currencyIso": "EUR"
+      },
+      "grossPurchasePriceConfirmed": {
+        "value": 10,
+        "currencyIso": "EUR"
+      },
+      "discountPercentageRequested": 50,
+      "discountPercentageConfirmed": 25,
+      "netPurchasePriceRequested": {
+        "value": 10,
+        "currencyIso": "EUR"
+      },
+      "netPurchasePriceConfirmed": {
+        "value": 7.5,
+        "currencyIso": "EUR"
+      },
+      "priceUnit": "PCE",
+      "priceUnitQuantityRequested": 1,
+      "deliveryDateTimeRequested": "2022-08-31T23:00:00Z",
+      "deliveryDateTimeConfirmed": "2022-09-01T23:00:00Z",
+      "properties": [
+        {
+          "key": "key",
+          "value": "value"
+        }
+      ],
+      "externalCreatedDateTime": "2019-12-31T10:11:12.123Z",
+      "frameworkContractCode": "frameworkContractCode",
+      "frameworkContractRow": "frameworkContractRow",
+      "firstConfirmedDateTime": "2019-12-31T10:11:12.123Z",
+      "productionStartDate": "2019-12-31T10:11:12.123Z",
+      "supplierLineDescription": "supplierLineDescription",
+      "description": "line description"
+    },
+    {
+      "lineId": "3fa85f64-5717-4562-b3fc-2c963f66afa8",
+      "code": "some-integer-2",
+      "row": 11,
+      "delivered": false,
+      "archived": false,
+      "cancelled": false,
+      "reopened": false,
+      "rejected": false,
+      "approved": false,
+      "agreed": true,
+      "shippable": false,
+      "mustApproveOrRejectOnceConfirmed": false,
+      "noDeliveryExpected": false,
+      "status": "legacy_purchase_order_line_status_confirmed",
+      "itemCode": "itemCode",
+      "itemName": "itemName",
+      "itemRevision": "itemRevision",
+      "itemDescription": "itemDescription",
+      "supplierItemCode": "supplierItemCode",
+      "supplierItemName": "supplierItemName",
+      "quantityRequested": 4,
+      "quantityConfirmed": 2,
+      "purchaseUnit": "PCE",
+      "grossPurchasePriceRequested": {
+        "value": 40,
+        "currencyIso": "EUR"
+      },
+      "grossPurchasePriceConfirmed": {
+        "value": 20,
+        "currencyIso": "EUR"
+      },
+      "discountPercentageRequested": 50,
+      "discountPercentageConfirmed": 25,
+      "netPurchasePriceRequested": {
+        "value": 20,
+        "currencyIso": "EUR"
+      },
+      "netPurchasePriceConfirmed": {
+        "value": 15,
+        "currencyIso": "EUR"
+      },
+      "priceUnit": "PCE",
+      "priceUnitQuantityRequested": 1,
+      "deliveryDateTimeRequested": "2022-09-01T23:00:00Z",
+      "deliveryDateTimeConfirmed": "2022-09-02T23:00:00Z",
+      "properties": [
+        {
+          "key": "key",
+          "value": "value"
+        }
+      ],
+      "externalCreatedDateTime": "2019-12-31T10:11:12.123Z",
+      "frameworkContractCode": "frameworkContractCode",
+      "frameworkContractRow": "frameworkContractRow",
+      "firstConfirmedDateTime": "2019-12-31T10:11:12.123Z",
+      "productionStartDate": "2019-12-31T10:11:12.123Z",
+      "supplierLineDescription": "supplierLineDescription",
+      "description": "line description"
+    }
+  ],
+  "description": "order description",
+  "supplierDescription": "supplierDescription",
+  "deliverToWarehouseCode": "deliverToWarehouseCode",
+  "deliveryAddress": {
+    "name": "name",
+    "name2": "name2",
+    "name3": "name3",
+    "line1": "line1",
+    "line2": "line2",
+    "line3": "line3",
+    "zipCode": "zipCode",
+    "city": "city",
+    "stateCode": "stateCode",
+    "countryCode": "countryCode"
+  },
+  "externalCreatedDateTime": "2019-12-31T10:11:12.123Z",
+  "paymentTerms": "paymentTerms",
+  "relationManager": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa8",
+    "companyId": "f56aa4ce-8ec8-5197-bc26-77716a58add7",
+    "email": "frankjan@tradecloud1.com",
+    "name": "Frank-Jan Evers"
+  },
+  "status": "legacy_purchase_order_status_confirmed",
+  "paymentTermsCode": "paymentTermsCode",
+  "incotermsCode": "incotermsCode",
+  "incoterms": "incoterms",
+  "properties": [
+    {
+      "key": "key",
+      "value": "value"
+    }
+  ],
+  "meta": {
+    "messageId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "source": {
+      "traceId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "userId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "companyId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+    "createdDateTime": "2019-12-31T10:11:12.123Z"
+  }
+}

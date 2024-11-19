@@ -1,0 +1,13 @@
+{
+  "whitelistedConnectorLegacyTenantIds": [],
+  "whitelistedMigrationLegacyCompanyIds": ["supplier-uuid"],
+  "customCompanyIdMappings": {
+    "tenant-uuid": "tc1-company-uuid",
+    "supplier-uuid": "tc1-company-uuid"
+  },
+  "exactGlobeLegacyTenantIds": ["tenant-uuid"],
+  "schedulePositionFromRowLegacyTenantIds": [],
+  "sapLegacyTenantIds": [],
+  "autoConfirmTenantIds": [],
+  "groupOrderDeliveriesTenantIds": ["tenant-uuid"]
+}
