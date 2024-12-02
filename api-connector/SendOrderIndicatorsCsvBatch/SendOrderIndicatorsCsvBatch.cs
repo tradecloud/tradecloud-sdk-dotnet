@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 using CsvHelper;
 using CsvHelper.Configuration;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
