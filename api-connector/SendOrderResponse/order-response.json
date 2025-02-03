@@ -2,7 +2,7 @@
     "order": {
         "buyerAccountNumber": "340760",
         "purchaseOrderNumber": "PO0123456789",
-        "description": "Any supplier custom text about this order",                
+        "description": "Any supplier custom text about this order",
         "indicators": {
             "accepted": false,
             "rejected": false,
@@ -26,7 +26,7 @@
     },
     "lines": [
         {
-            "purchaseOrderLinePosition": "0001",
+            "purchaseOrderLinePosition": "00010",
             "salesOrderNumber": "SO123456789",
             "salesOrderLinePosition": "0001",
             "description": "Any supplier text about this line",
@@ -41,40 +41,40 @@
             },
             "deliverySchedule": [
                 {
-                  "position": "0001",
-                  "date": "2021-11-01",
-                  "quantity": 1234.56
-              },
-              {
-                  "position": "0002",
-                  "date": "2021-11-02",
-                  "quantity": 1234.56
-              },
-              {
-                  "position": "0003",
-                  "date": "2021-11-03",
-                  "quantity": 1234.56
-              },
-              {
-                  "date": "2021-11-03",
-                  "quantity": 1234.56
-              }
+                    "position": "0001",
+                    "date": "2025-05-01",
+                    "quantity": 1234.56
+                },
+                {
+                    "position": "0002",
+                    "date": "2025-05-02",
+                    "quantity": 1234.56
+                },
+                {
+                    "position": "0003",
+                    "date": "2025-05-03",
+                    "quantity": 1234.56
+                },
+                {
+                    "date": "2025-05-04",
+                    "quantity": 1234.56
+                }
             ],
             "prices": {
                 "grossPrice": {
                     "priceInTransactionCurrency": {
-                        "value": 1235,
+                        "value": 98.625,
                         "currencyIso": "EUR"
                     }
                 },
                 "discountPercentage": 25,
                 "netPrice": {
                     "priceInTransactionCurrency": {
-                        "value": 1235,
+                        "value": 78.90,
                         "currencyIso": "EUR"
                     }
                 },
-                "priceUnitOfMeasureIso": "PCE",
+                "priceUnitOfMeasureIso": "M",
                 "priceUnitQuantity": 100
             },
             "chargeLines": [
@@ -125,15 +125,15 @@
             },
             "properties": [
                 {
-                "key": "color",
-                "value": "red"
+                    "key": "color",
+                    "value": "red"
                 }
             ],
             "documents": [],
             "notes": [
                 "one note",
                 "another note"
-            ],  
+            ],
             "reason": "Order response reason/remark"
         }
     ],

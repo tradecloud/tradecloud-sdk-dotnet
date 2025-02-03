@@ -17,7 +17,7 @@
     },
     "lines": [
         {
-            "position": "0001",
+            "position": "00010",
             "item": {
                 "number": "12345",
                 "name": "Round tube ø60x45",
@@ -26,19 +26,19 @@
             "deliverySchedule": [
                 {
                     "position": "0001",
-                    "date": "2022-04-01",
+                    "date": "2025-05-01",
                     "quantity": 1234.56
                 }
             ],
             "prices": {
                 "netPrice": {
                     "priceInTransactionCurrency": {
-                        "value": 1234.56,
+                        "value": 78.90,
                         "currencyIso": "EUR"
                     }
                 },
-                "priceUnitOfMeasureIso": "PCE",
-                "priceUnitQuantity": 1
+                "priceUnitOfMeasureIso": "M",
+                "priceUnitQuantity": 100
             }
         }
     ]
