@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class ReindexUser
+    class ReindexOrder
     {
-        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/user/private/specs.yaml#/user/reindexForEntityIds
-        const string reindexUserUrl = "https://api.accp.tradecloud1.com/v2/user/reindex";
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order/private/specs.yaml#/order/reindexForEntityIds
+        const string reindexOrderUrl = "https://api.accp.tradecloud1.com/v2/order/reindex";
 
         // Check/amend mandatory user id
         const string jsonContentWithSingleQuotes =
@@ -18,7 +18,7 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud reindex user example.");
+            Console.WriteLine("Tradecloud reindex order example.");
 
             HttpClient httpClient = new HttpClient();
             var accessToken = "";
@@ -31,12 +31,12 @@ namespace Com.Tradecloud1.SDK.Client
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                var response = await httpClient.PostAsync(reindexUserUrl, content);
+                var response = await httpClient.PostAsync(reindexOrderUrl, content);
                 watch.Stop();
-                Console.WriteLine("ReindexUser StatusCode: " + (int)response.StatusCode + " ElapsedMilliseconds: " + watch.ElapsedMilliseconds);
+                Console.WriteLine("ReindexOrder StatusCode: " + (int)response.StatusCode + " ElapsedMilliseconds: " + watch.ElapsedMilliseconds);
 
                 string responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("ReindexUser Body: " + responseString);
+                Console.WriteLine("ReindexOrder Body: " + responseString);
             }
         }
     }
