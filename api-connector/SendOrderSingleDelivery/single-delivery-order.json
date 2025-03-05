@@ -1,0 +1,241 @@
+{
+    "order": {
+        "companyId": "00f03b98-2511-489f-9695-13791b3f66b6",
+        "buyerParty": {
+            "id": "123",
+            "idScheme": "GLN",
+            "names": [
+                "My Company Warehouse",
+                "Dock 12"
+            ],
+            "addressLines": [
+                "Street 123",
+                "Area 52"
+            ],
+            "postalCode": "1234 AB",
+            "city": "Rotterdam",
+            "countryCodeIso2": "NL",
+            "countryName": "The Netherlands"
+        },
+        "buyerAccountingParty": {
+            "id": "123",
+            "idScheme": "GLN",
+            "names": [
+                "My Company Warehouse",
+                "Dock 12"
+            ],
+            "addressLines": [
+                "Street 123",
+                "Area 52"
+            ],
+            "postalCode": "1234 AB",
+            "city": "Rotterdam",
+            "countryCodeIso2": "NL",
+            "countryName": "The Netherlands"
+        },
+        "supplierAccountNumber": "12345",
+        "supplierParty": {
+            "id": "123",
+            "idScheme": "GLN",
+            "names": [
+                "My Company Warehouse",
+                "Dock 12"
+            ],
+            "addressLines": [
+                "Street 123",
+                "Area 52"
+            ],
+            "postalCode": "1234 AB",
+            "city": "Rotterdam",
+            "countryCodeIso2": "NL",
+            "countryName": "The Netherlands"
+        },
+        "purchaseOrderNumber": "PO123456789",
+        "description": "Any custom text about this order",
+        "destination": {
+            "code": "001",
+            "names": [
+                "My Company Warehouse",
+                "Dock 12"
+            ],
+            "addressLines": [
+                "Street 123",
+                "Area 52"
+            ],
+            "postalCode": "1234 AB",
+            "city": "Rotterdam",
+            "countryCodeIso2": "NL",
+            "locationType": "warehouse",
+            "countryName": "The Netherlands"
+        },
+        "terms": {
+            "incotermsCode": "CIF",
+            "incoterms": "ECT Rotterdam",
+            "paymentTermsCode": "30D",
+            "paymentTerms": "30 days"
+        },
+        "indicators": {
+            "confirmed": false,
+            "shipped": false,
+            "delivered": false,
+            "completed": false,
+            "cancelled": false,
+            "cancelLineWhenMissing": false,
+            "autoConfirm": false
+        },
+        "properties": [
+            {
+                "key": "color",
+                "value": "red"
+            }
+        ],
+        "documents": [
+            {
+                "code": "123456789",
+                "revision": "B",
+                "name": "Tradecloud API Manual",
+                "objectId": "00f03b98-2511-489f-9695-13791b3f66b6",
+                "url": "https://my-company.com/storage/my_file.pdf",
+                "type": "General",
+                "description": "General document"
+            }
+        ],
+        "notes": [
+            "one note",
+            "another note"
+        ],
+        "labels": [
+            "first label for this order",
+            "second label for this order"
+        ],
+        "contact": {
+            "email": "contact@yourcompany.com"
+        },
+        "supplierContact": {
+            "email": "contact@yourcompany.com"
+        },
+        "orderType": "Purchase"
+    },
+    "lines": [
+        {
+            "position": "0002",
+            "originalPosition": "0001",
+            "row": "1",
+            "description": "Anything about this line",
+            "item": {
+                "number": "12345",
+                "revision": "v2",
+                "name": "Round tube ø60x45",
+                "description": "Very nice round tube ø60 x 45",
+                "purchaseUnitOfMeasureIso": "PCE",
+                "supplierItemNumber": "67890",
+                "dimensions": [
+                    {
+                        "attribute": "mass",
+                        "measure": 5,
+                        "unitOfMeasureUnece": "KGM"
+                    }
+                ]
+            },
+            "itemDetails": {
+                "countryOfOriginCodeIso2": "NL",
+                "combinedNomenclatureCode": "6406 10 10",
+                "netWeight": 41.241,
+                "netWeightUnitOfMeasureIso": "KG",
+                "dangerousGoodsCodeUnece": "0060",
+                "serialNumber": "0x0000000000028000",
+                "batchNumber": "#18001"
+            },
+            "scheduledDelivery": {
+                "date": "2019-12-31",
+                "quantity": 1234.56,
+                "transportMode": "Road transport"
+            },
+            "actualDelivery": {
+                "date": "2019-12-31",
+                "quantity": 1234.56
+            },
+            "prices": {
+                "grossPrice": {
+                    "priceInTransactionCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    },
+                    "priceInBaseCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    }
+                },
+                "discountPercentage": 50,
+                "netPrice": {
+                    "priceInTransactionCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    },
+                    "priceInBaseCurrency": {
+                        "value": 1234.56,
+                        "currencyIso": "EUR"
+                    }
+                },
+                "priceUnitOfMeasureIso": "PCE",
+                "priceUnitQuantity": 100
+            },
+            "terms": {
+                "contractNumber": "123456789",
+                "contractPosition": "0001"
+            },
+            "projectNumber": "PROJ12345",
+            "productionNumber": "PROD12345",
+            "salesOrderNumber": "SO123456789",
+            "indicators": {
+                "confirmed": false,
+                "requestReconfirmation": false,
+                "shipped": false,
+                "delivered": false,
+                "completed": false,
+                "cancelled": false,
+                "proposeWhenAccepted": false
+            },
+            "properties": [
+                {
+                    "key": "color",
+                    "value": "red"
+                }
+            ],
+            "documents": [
+                {
+                    "code": "123456789",
+                    "revision": "B",
+                    "name": "Tradecloud API Manual",
+                    "objectId": "00f03b98-2511-489f-9695-13791b3f66b6",
+                    "url": "https://my-company.com/storage/my_file.pdf",
+                    "type": "General",
+                    "description": "General document"
+                }
+            ],
+            "notes": [
+                "one note",
+                "another note"
+            ],
+            "labels": [
+                "first label for this line",
+                "second label for this line"
+            ],
+            "reason": "Production schedule changed",
+            "certification": {
+                "typeCode": "C",
+                "type": "Class Certificate",
+                "classificationSocietyCode": "LR",
+                "classificationSociety": "Lloyd's Register"
+            }
+        }
+    ],
+    "erpIssueDateTime": "2019-12-31T10:11:12",
+    "erpIssuedBy": {
+        "email": "contact@yourcompany.com"
+    },
+    "erpLastChangeDateTime": "2019-12-31T10:11:12",
+    "erpLastChangedBy": {
+        "email": "contact@yourcompany.com"
+    }
+}
