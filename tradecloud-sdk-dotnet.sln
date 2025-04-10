@@ -161,8 +161,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MigrateSuppliers", "api-v1\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MigrateSupplierIds", "api-v1\MigrateSupplierIds\MigrateSupplierIds.csproj", "{5DD10745-F22F-4578-B8B6-4BCA565DAA5F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MigrateSuppliers (1)", "api-v1\MigrateSuppliers\MigrateSuppliers.csproj", "{D1BEC4B9-0786-43D7-8658-5B7CE43C077A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArchiveOrderLine", "api-v1\ArchiveOrderLine\ArchiveOrderLine.csproj", "{AE0784BB-D12F-45F8-A423-C2FF7A57B965}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "company", "company", "{150D56F4-5FBA-4140-9510-7E83377BE74D}"
@@ -189,7 +187,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CleanCsvOrderLines", "order
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sap-soap-connector", "sap-soap-connector", "{08EFD49A-5E40-48D5-B8C8-4396B8346B0C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SetSettings", "sap-soap-connector\SetSettings\SetSettings.csproj", "{145F6BEC-7955-4459-8299-BF63521B6251}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SetSapSettings", "sap-soap-connector\SetSettings\SetSettings.csproj", "{145F6BEC-7955-4459-8299-BF63521B6251}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RefetchOrders", "sap-soap-connector\RefetchOrders\RefetchOrders.csproj", "{D0D59283-E2E8-4AA7-9CEC-C14C7E707CC0}"
 EndProject
@@ -207,7 +205,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sci-connector", "sci-connec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SendOrder", "sci-connector\SendOrder\SendOrder.csproj", "{47115606-1DD2-4B5D-B045-548658735CD9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SetSettings", "sci-connector\SetSettings\SetSettings.csproj", "{A502483C-DF59-47F1-953B-888A861AD5BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SetSciSettings", "sci-connector\SetSettings\SetSettings.csproj", "{A502483C-DF59-47F1-953B-888A861AD5BF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SendOrderWithFile", "sci-connector\SendOrderWithFile\SendOrderWithFile.csproj", "{4761EEA2-DB1F-4491-9E38-081311FE3292}"
 EndProject

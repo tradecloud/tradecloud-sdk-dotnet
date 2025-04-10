@@ -1,0 +1,42 @@
+{
+  "order": {
+    "companyId": "f56aa4ce-8ec8-5197-bc26-77716a58add7",
+    "supplierAccountNumber": "540830",
+    "purchaseOrderNumber": "{purchaseOrderNumber}",
+    "destination": {
+      "code": "001",
+      "names": ["My Company Warehouse"],
+      "addressLines": ["Street 123"],
+      "postalCode": "1234 AB",
+      "city": "Rotterdam",
+      "countryCodeIso2": "NL"
+    }
+  },
+  "lines": [
+    {
+      "position": "00010",
+      "item": {
+        "number": "12345",
+        "name": "Round tube ø60x45",
+        "purchaseUnitOfMeasureIso": "PCE"
+      },
+      "deliverySchedule": [
+        {
+          "position": "0001",
+          "date": "2025-05-01",
+          "quantity": 1234.56
+        }
+      ],
+      "prices": {
+        "netPrice": {
+          "priceInTransactionCurrency": {
+            "value": 78.9,
+            "currencyIso": "EUR"
+          }
+        },
+        "priceUnitOfMeasureIso": "M",
+        "priceUnitQuantity": 100
+      }
+    }
+  ]
+}
