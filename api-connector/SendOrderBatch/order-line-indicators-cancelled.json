@@ -1,0 +1,14 @@
+{
+  "order": {
+    "companyId": "f56aa4ce-8ec8-5197-bc26-77716a58add7",
+    "purchaseOrderNumber": "{purchaseOrderNumber}"
+  },
+  "lines": [
+    {
+      "position": "00010",
+      "indicators": {
+        "cancelled": true
+      }
+    }
+  ]
+}
