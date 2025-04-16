@@ -87,7 +87,7 @@ namespace Com.Tradecloud1.SDK.Client
                 }
                 
                 // Await order service processing before cancelling as the API connector checks if the order exists
-                var awaitTime = 1000 + poNumbers.Count * 100;         
+                var awaitTime = 1000 + poNumbers.Count * 50;         
                 Console.WriteLine($"{LogTimestamp()} Awaiting order service processing for company {companyId} before cancelling... {awaitTime} ms");
                 await Task.Delay(awaitTime);
                 
