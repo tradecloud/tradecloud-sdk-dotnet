@@ -6,19 +6,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
+
+using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace Com.Tradecloud1.SDK.Client
 {
     class SendOrderBatch
     {   
+        const bool dryRun = true;
         const string accessToken = "";
+        const int ordersPerCompany = 10;
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderByBuyerRoute
         const string sendOrderUrl = "https://api.test.tradecloud1.com/v2/api-connector/order";
     
-        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderIndicatorsByBuyerRoute
-        const string sendOrderIndicatorsUrl = "https://api.test.tradecloud1.com/v2/api-connector/order/indicators";
-
         // Company IDs for testing
         static readonly List<string> companyIds = new List<string>
         {
@@ -26,20 +29,21 @@ namespace Com.Tradecloud1.SDK.Client
             "09484ff6-e0f0-510b-819f-5fa3ed780726",   // Voortman
             "ddd9cea1-510d-583c-8367-464172f98034"    // Rubitech
         };
-
-        // Helper method for logging with timestamp
-        static string LogTimestamp() => $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}]";
+        
+        // Semaphore to control CSV file access
+        static SemaphoreSlim csvSemaphore = new SemaphoreSlim(1, 1);
+        
+        // Semaphore to control log file access
+        static SemaphoreSlim logSemaphore = new SemaphoreSlim(1, 1);
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine($"{LogTimestamp()} Tradecloud send order batch.");
-            var orderJsonContent = File.ReadAllText("minimal-order.json");
-            var orderIndicatorsJsonContent = File.ReadAllText("order-line-indicators-cancelled.json");
+            Console.WriteLine("Tradecloud send order batch.");
 
-            var random = new Random();
-            // Number of orders per company
-            int ordersPerCompany = 1000;
+            var orderJsonContentTemplate = File.ReadAllText("order.json");            
+
             // Generate unique PO numbers for each company
+            var random = new Random();
             var purchaseOrderNumbersByCompany = companyIds.ToDictionary(
                 companyId => companyId,
                 companyId => Enumerable.Range(1, ordersPerCompany)
@@ -47,97 +51,134 @@ namespace Com.Tradecloud1.SDK.Client
                     .ToList()
             );
 
-            Console.WriteLine($"{LogTimestamp()} Testing {companyIds.Count} companies in parallel with {ordersPerCompany} orders each");
-            foreach (var companyId in companyIds)
+            // Initialize the CSV file with headers
+            using (var writer = new StreamWriter("orders.csv", false))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
-                var poNumbers = purchaseOrderNumbersByCompany[companyId];
-                Console.WriteLine($"{LogTimestamp()} Company {companyId}: {poNumbers.Count()} orders, " + 
-                    $"first 3: {string.Join(", ", poNumbers.Take(3))}, " + 
-                    $"last 3: {string.Join(", ", poNumbers.TakeLast(3))}");
+                csv.WriteHeader<Order>();
+                csv.NextRecord();
             }
-
-            HttpClient httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
             
-            try {
+            using (var log = new StreamWriter("send_order_batch.log", append: true))
+            {
+                Console.WriteLine($"Testing {companyIds.Count} companies in parallel with {ordersPerCompany} orders each");
+                foreach (var companyId in companyIds)
+                {
+                    var poNumbers = purchaseOrderNumbersByCompany[companyId];
+                    await WriteToLogAsync(log, $"Company {companyId}: {poNumbers.Count()} orders, " + 
+                        $"first 3: {string.Join(", ", poNumbers.Take(3))}, " + 
+                        $"last 3: {string.Join(", ", poNumbers.TakeLast(3))}");
+                }
+
+                HttpClient httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                
                 var watch = System.Diagnostics.Stopwatch.StartNew();
                 
                 // Process each company in parallel
                 await Task.WhenAll(companyIds.Select(companyId => 
-                    ProcessCompany(companyId, purchaseOrderNumbersByCompany[companyId])
+                    ProcessCompany(companyId, purchaseOrderNumbersByCompany[companyId], log, httpClient)
                 ));
                 
                 watch.Stop();
-                Console.WriteLine($"{LogTimestamp()} All companies processed, took: {watch.ElapsedMilliseconds} ms");
-            }
-            catch (Exception ex) {
-                httpClient.CancelPendingRequests();
-                Console.WriteLine($"{LogTimestamp()} Exception: {ex}");
+                await WriteToLogAsync(log, $"All companies processed, took: {watch.ElapsedMilliseconds} ms");
             }
 
-            async Task ProcessCompany(string companyId, List<string> poNumbers)
+            async Task ProcessCompany(
+                string companyId, 
+                List<string> poNumbers, 
+                StreamWriter log, 
+                HttpClient httpClient)
             {
-                Console.WriteLine($"{LogTimestamp()} Starting processing for company {companyId}");
                 var companyWatch = System.Diagnostics.Stopwatch.StartNew();
                 
                 // Send orders for this company (serially within company)
                 foreach (var poNumber in poNumbers)
                 {
-                    await SendOrder(companyId, poNumber);
-                }
-                
-                // Await order service processing before cancelling as the API connector checks if the order exists
-                var awaitTime = 1000 + poNumbers.Count * 50;         
-                Console.WriteLine($"{LogTimestamp()} Awaiting order service processing for company {companyId} before cancelling... {awaitTime} ms");
-                await Task.Delay(awaitTime);
-                
-                // Send cancellations
-                foreach (var poNumber in poNumbers)
-                {
-                    await SendOrderIndicators(companyId, poNumber);
+                    bool success = await SendOrder(companyId, poNumber, log, httpClient);
+                    
+                    // Add to CSV file if the order was sent successfully
+                    if (success)
+                    {
+                        await AppendOrderToCsv(new Order { companyId = companyId, purchaseOrderNumber = poNumber });
+                    }
                 }
                 
                 companyWatch.Stop();
-                Console.WriteLine($"{LogTimestamp()} Company {companyId} processing complete, took: {companyWatch.ElapsedMilliseconds} ms");
+                await WriteToLogAsync(log, $"Company {companyId} processing complete, took: {companyWatch.ElapsedMilliseconds} ms");
             }
 
-           async Task SendOrder(string companyId, string purchaseOrderNumber)
-           {
-                var jsonContent = orderJsonContent
-                    .Replace("{purchaseOrderNumber}", purchaseOrderNumber)
-                    .Replace("{companyId}", companyId);
-                
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                var response = await httpClient.PostAsync(sendOrderUrl, content);
+            async Task<bool> SendOrder(string companyId, string purchaseOrderNumber, StreamWriter log, HttpClient httpClient)
+            {
+                var jsonContent = orderJsonContentTemplate
+                    .Replace("{companyId}", companyId)
+                    .Replace("{purchaseOrderNumber}", purchaseOrderNumber);
 
-                var statusCode = (int)response.StatusCode;
-                if (statusCode == 400) {
-                     Console.WriteLine($"{LogTimestamp()} SendOrder company={companyId} status={statusCode} request body={jsonContent}"); 
-                }                
-                if (statusCode != 200) {
-                    string responseString = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"{LogTimestamp()} SendOrder company={companyId} status={statusCode} response body={responseString}");
+                if (dryRun) 
+                {
+                    await WriteToLogAsync(log, $"SendOrder dry run companyId={companyId} purchaseOrderNumber={purchaseOrderNumber} content={jsonContent}");
+                    return true; // Assume success for dry run
+                }        
+                else
+                {
+                    var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                    var response = await httpClient.PostAsync(sendOrderUrl, content);
+
+                    var statusCode = (int)response.StatusCode;
+                    if (statusCode == 400) 
+                    {
+                        await WriteToLogAsync(log, $"SendOrder company={companyId} status={statusCode} request body={jsonContent}"); 
+                        return false;
+                    }                
+                    if (statusCode != 200) 
+                    {
+                        string responseString = await response.Content.ReadAsStringAsync();
+                        await WriteToLogAsync(log, $"SendOrder company={companyId} status={statusCode} response body={responseString}");
+                        return false;
+                    }
+                    
+                    return true; // Successfully sent
                 }
-           }
-
-           async Task SendOrderIndicators(string companyId, string purchaseOrderNumber)
-           {
-                var jsonContent = orderIndicatorsJsonContent
-                    .Replace("{purchaseOrderNumber}", purchaseOrderNumber)
-                    .Replace("{companyId}", companyId);
-                
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                var response = await httpClient.PostAsync(sendOrderIndicatorsUrl, content);
-
-                var statusCode = (int)response.StatusCode;
-                if (statusCode == 400) {
-                     Console.WriteLine($"{LogTimestamp()} SendOrderIndicators company={companyId} status={statusCode} request body={jsonContent}"); 
-                }                
-                if (statusCode != 200) {
-                    string responseString = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"{LogTimestamp()} SendOrderIndicators company={companyId} status={statusCode} response body={responseString}");
+            }
+            
+            async Task AppendOrderToCsv(Order order)
+            {
+                // Use semaphore to ensure only one thread writes to the file at a time
+                await csvSemaphore.WaitAsync();
+                try
+                {
+                    using (var writer = new StreamWriter("orders.csv", true))
+                    using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                    {
+                        csv.WriteRecord(order);
+                        csv.NextRecord();
+                    }
                 }
-           }
+                finally
+                {
+                    csvSemaphore.Release();
+                }
+            }
+            
+            async Task WriteToLogAsync(StreamWriter log, string message)
+            {
+                // Use semaphore to ensure only one thread writes to the log at a time
+                await logSemaphore.WaitAsync();
+                try
+                {
+                    await log.WriteLineAsync($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {message}");
+                }
+                finally
+                {
+                    logSemaphore.Release();
+                }
+            }
         }
+    }
+
+    public class Order
+    {
+        public string companyId { get; set; }
+        public string purchaseOrderNumber { get; set; }
     }
 }

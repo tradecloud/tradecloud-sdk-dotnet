@@ -1,0 +1,68 @@
+{
+  "order": {
+    "companyId": "{companyId}",
+    "purchaseOrderNumber": "{purchaseOrderNumber}"
+  },
+  "lines": [
+    {
+      "position": "00010",
+      "indicators": {
+        "cancelled": true
+      }
+    },
+    {
+      "position": "00020",
+      "indicators": {
+        "cancelled": true
+      }
+    },
+    {
+      "position": "00030",
+      "indicators": {
+        "cancelled": true
+      }
+    },
+    {
+      "position": "00040",
+      "indicators": {
+        "cancelled": true
+      }
+    },
+    {
+      "position": "00050",
+      "indicators": {
+        "cancelled": true
+      }
+    },
+    {
+      "position": "00060",
+      "indicators": {
+        "cancelled": true
+      }
+    },
+    {
+      "position": "00070",
+      "indicators": {
+        "cancelled": true
+      }
+    },
+    {
+      "position": "00080",
+      "indicators": {
+        "cancelled": true
+      }
+    },
+    {
+      "position": "00090",
+      "indicators": {
+        "cancelled": true
+      }
+    },
+    {
+      "position": "00100",
+      "indicators": {
+        "cancelled": true
+      }
+    }
+  ]
+}
