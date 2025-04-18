@@ -14,17 +14,16 @@ namespace Com.Tradecloud1.SDK.Client
     class SendOrderIndicatorsCsvBatch
     {
         const bool dryRun = true;
-        const string buyerId = "";
         const string accessToken = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderIndicatorsByBuyerRoute
-        const string sendOrderIndicatorsUrl = "https://api.accp.tradecloud1.com/v2/api-connector/order/indicators";
+        const string sendOrderIndicatorsUrl = "https://api.test.tradecloud1.com/v2/api-connector/order/indicators";
 
         static async Task Main(string[] args)
         {
             Console.WriteLine("Tradecloud send order indicators CVS batch.");
 
-            var jsonOrderIndicatorsTemplate = File.ReadAllText(@"order-indicators-template.json");
+            var orderIndicatorsJsonTemplate = File.ReadAllText(@"order-line-indicators-cancelled.json");
 
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
@@ -39,35 +38,36 @@ namespace Com.Tradecloud1.SDK.Client
                 var orders = csvReader.GetRecords<Order>();
                 foreach (var order in orders)
                 {                  
-                    await SendOrderIndicators(order.purchaseOrderNumber.Trim(), log);
+                    await SendOrderIndicators(order.companyId, order.purchaseOrderNumber, log);
                 }
             }
 
-            async Task SendOrderIndicators(string purchaseOrderNumber, StreamWriter log)
+            async Task SendOrderIndicators(string companyId, string purchaseOrderNumber, StreamWriter log)
             {                
-                var jsonOrderIndicators = jsonOrderIndicatorsTemplate
-                    .Replace("{companyId}", buyerId)                    
+                var jsonContent = orderIndicatorsJsonTemplate
+                    .Replace("{companyId}", companyId)                    
                     .Replace("{purchaseOrderNumber}", purchaseOrderNumber);
 
                 if (dryRun) 
                 {
-                    await log.WriteLineAsync("SendOrderIndicators dry run purchaseOrderNumber=" + purchaseOrderNumber + " content=" + jsonOrderIndicators);
+                    await log.WriteLineAsync($"SendOrderIndicators dry run companyId={companyId} purchaseOrderNumber={purchaseOrderNumber} content={jsonContent}");
                 }    
                 else
                 {
-                    var content = new StringContent(jsonOrderIndicators, Encoding.UTF8, "application/json");
+                    var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                     var start = DateTime.Now;
                     var watch = System.Diagnostics.Stopwatch.StartNew();
                     var response = await httpClient.PostAsync(sendOrderIndicatorsUrl, content);
                     watch.Stop();
 
                     var statusCode = (int)response.StatusCode;
-                    await log.WriteLineAsync("SendOrderIndicators purchaseOrderNumber=" + purchaseOrderNumber + " start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                     if (statusCode == 400)
-                        await log.WriteLineAsync("SendOrderIndicators request body=" + jsonOrderIndicators); 
-                    string responseString = await response.Content.ReadAsStringAsync();
+                        await log.WriteLineAsync("SendOrderIndicators request body=" + jsonContent);                     
                     if (statusCode != 200)
+                    {
+                        string responseString = await response.Content.ReadAsStringAsync();
                         await log.WriteLineAsync("SendOrderIndicators response body=" +  responseString);
+                    }
                 }
             }
         }
@@ -75,6 +75,7 @@ namespace Com.Tradecloud1.SDK.Client
 
     public class Order
     {
+        public string companyId { get; set; }
         public string purchaseOrderNumber { get; set; }
     }
 
