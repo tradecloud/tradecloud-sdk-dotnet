@@ -1,0 +1,18 @@
+{
+  "method": "POST",
+  "webhookUrl": "https://shipmentwebhook.mycompany.com",
+  "basicAuthCredentials": {
+    "username": "MyCompany",
+    "password": "ReallyStrongPassword123"
+  },
+  "enabledEventNames": [
+    "ShipmentIssuedBySupplier",
+    "ShipmentReissuedBySupplier",
+    "ShipmentApprovedByBuyer",
+    "ShipmentRejectedByBuyer",
+    "ShipmentHeaderUpdatedBySupplier",
+    "ShipmentDocumentAttachedByBuyer",
+    "ShipmentDocumentAttachedBySupplier",
+    "ShipmentResentByBuyer"
+  ]
+}
