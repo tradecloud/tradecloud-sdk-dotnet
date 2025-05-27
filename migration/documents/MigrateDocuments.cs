@@ -547,7 +547,7 @@ namespace Com.Tradecloud1.SDK.Client
         static async Task<bool> AttachDocumentToOrder(string orderId, string objectId, string title, StreamWriter log)
         {
             try
-            {                
+            {
                 var url = attachOrderDocumentUrlTemplate.Replace("{id}", orderId);
                 var attachRequest = new
                 {
