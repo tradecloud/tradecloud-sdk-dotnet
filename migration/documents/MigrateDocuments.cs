@@ -8,6 +8,7 @@ using System.Linq;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using DotNetEnv;
 
 namespace Com.Tradecloud1.SDK.Client
 {
@@ -43,22 +44,25 @@ namespace Com.Tradecloud1.SDK.Client
     class MigrateDocuments
     {
         const string legacyBaseUrl = "https://accp.tradecloud.nl/api/v1";
-        const string legacyUsername = "";
-        const string legacyPassword = "";
         const string baseUrl = "https://api.accp.tradecloud1.com/v2";
 
-        // Must be a buyer company admin, and not a support user, else object storage authorization will fail
-        const string accessToken = "";
-        const string buyerCompanyId = "";
-
-        // Set to true to perform a dry run (logs everything but doesn't upload/attach documents)
-        const bool dryRun = false;
+        // Configuration loaded from environment variables
+        static string legacyUsername;
+        static string legacyPassword;
+        static string accessToken;
+        static string buyerCompanyId;
+        static bool dryRun;
 
         static readonly HttpClient httpClient = new HttpClient();
         static readonly HttpClient legacyHttpClient = new HttpClient();
 
         // Fill all active orders in Tradecloud One
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order-search/private/specs.yaml#/order-search/searchRoute
         const string orderSearchUrl = baseUrl + "/order-search/search";
+
+        // Get the order by id in Tradecloud One
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order/specs.yaml#/order/getOrderByIdRoute
+        const string getOrderByIdUrl = baseUrl + "/order/{id}";
 
         // Find the legacy order by tenantId (buyer companyId) and code (purchaseOrderNumber)
         // https://accp.tradecloud.nl/api/v1/docs#!/Purchase_order_API/getOrderByCode
@@ -90,7 +94,35 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine($"Tradecloud document migration example - {(dryRun ? "DRY RUN MODE" : "LIVE MODE")}");
+            Console.WriteLine("Tradecloud document migration example");
+
+            // Load environment variables from .env file
+            Env.Load();
+
+            // Load configuration from environment variables
+            legacyUsername = Environment.GetEnvironmentVariable("LEGACY_USERNAME");
+            legacyPassword = Environment.GetEnvironmentVariable("LEGACY_PASSWORD");
+            accessToken = Environment.GetEnvironmentVariable("ACCESS_TOKEN");
+            buyerCompanyId = Environment.GetEnvironmentVariable("BUYER_COMPANY_ID");
+
+            // Parse DRY_RUN as boolean, default to true for safety
+            var raw = Environment.GetEnvironmentVariable("DRY_RUN");
+            dryRun = string.IsNullOrEmpty(raw) || raw.Equals("true", StringComparison.OrdinalIgnoreCase);
+
+            // Validate required configuration
+            if (string.IsNullOrEmpty(legacyUsername) ||
+                string.IsNullOrEmpty(legacyPassword) ||
+                string.IsNullOrEmpty(accessToken) ||
+                string.IsNullOrEmpty(buyerCompanyId))
+            {
+                Console.WriteLine("Error: Missing required environment variables. Please check your .env file.");
+                Console.WriteLine("Required variables: LEGACY_USERNAME, LEGACY_PASSWORD, ACCESS_TOKEN, BUYER_COMPANY_ID");
+                Environment.Exit(1);
+                return;
+            }
+
+            Console.WriteLine($"Running in {(dryRun ? "DRY RUN" : "LIVE")} mode");
+            Console.WriteLine($"Buyer company ID: {buyerCompanyId}");
 
             // Setup authentication for Tradecloud One API using access token
             httpClient.DefaultRequestHeaders.Authorization =
@@ -187,7 +219,7 @@ namespace Com.Tradecloud1.SDK.Client
                             companyId = new[] { buyerCompanyId }
                         },
                         // Active orders: process status = Issued, InProgress, Confirmed, Rejected
-                        // logistics status = Open, Produced, ReadyToShip, Shipped)
+                        // logistics status = Open, Produced, ReadyToShip, Shipped
                         status = new
                         {
                             processStatus = new[] { "Issued", "InProgress", "Confirmed", "Rejected" },
@@ -204,7 +236,6 @@ namespace Com.Tradecloud1.SDK.Client
 
                 var json = JsonConvert.SerializeObject(searchRequest);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-
                 var response = await httpClient.PostAsync(orderSearchUrl, content);
                 var responseString = await response.Content.ReadAsStringAsync();
 
@@ -290,19 +321,70 @@ namespace Com.Tradecloud1.SDK.Client
             }
         }
 
+        static async Task<JObject> GetOrderById(string orderId, StreamWriter log)
+        {
+            var url = getOrderByIdUrl.Replace("{id}", orderId);
+
+            try
+            {
+                var response = await httpClient.GetAsync(url);
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return JObject.Parse(responseString);
+                }
+                else
+                {
+                    await log.WriteLineAsync($"Failed to get order by ID: orderId={orderId}, response.StatusCode={response.StatusCode}");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                await log.WriteLineAsync($"Error getting order by ID: orderId={orderId}, error={ex.Message}");
+                return null;
+            }
+        }
+
+        static bool IsDocumentAlreadyMigrated(JObject legacyDoc, JArray tc1Documents, StreamWriter log)
+        {
+            //log.WriteLineAsync($"Checking if document is already migrated: legacyDoc={legacyDoc}, tc1Documents={tc1Documents}");
+            if (tc1Documents == null || tc1Documents.Count == 0) return false;
+
+            var legacyTitle = legacyDoc["title"]?.ToString();
+            if (string.IsNullOrEmpty(legacyTitle)) return false;
+
+            foreach (JObject tc1Doc in tc1Documents)
+            {
+                var tc1Name = tc1Doc["name"]?.ToString();
+
+                // Check if this document was already migrated by comparing filenames
+                if (tc1Name == legacyTitle)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         static async Task<int> MigrateOrderHeaderDocuments(JObject tc1Order, JObject legacyOrder, StreamWriter log)
         {
             var migratedCount = 0;
             var orderId = tc1Order["id"]?.ToString();
             var purchaseOrderNumber = tc1Order["buyerOrder"]["purchaseOrderNumber"]?.ToString();
 
-            // Check if TC1 order already has documents
-            var tc1Documents = tc1Order["buyerOrder"]["documents"] as JArray;
-            if (tc1Documents != null && tc1Documents.Count > 0)
+            // Get detailed order information to check existing documents
+            var detailedOrder = await GetOrderById(orderId, log);
+            if (detailedOrder == null)
             {
-                await log.WriteLineAsync($"Order: purchaseOrderNumber={purchaseOrderNumber} already has {tc1Documents.Count} documents, skipping header migration");
+                await log.WriteLineAsync($"Failed to get detailed order information: purchaseOrderNumber={purchaseOrderNumber}");
                 return 0;
             }
+
+            // Get existing TC1 documents from detailed order
+            var tc1Documents = detailedOrder["buyerOrder"]["documents"] as JArray;
 
             // Check legacy order for documents
             var legacyDocuments = legacyOrder["documents"] as JArray;
@@ -322,6 +404,13 @@ namespace Com.Tradecloud1.SDK.Client
                     var title = legacyDoc["title"]?.ToString();
                     var fileName = legacyDoc["filename"]?.ToString();
                     var mimeType = legacyDoc["mimeType"]?.ToString();
+
+                    // Check if this document is already migrated
+                    if (IsDocumentAlreadyMigrated(legacyDoc, tc1Documents, log))
+                    {
+                        await log.WriteLineAsync($"Document already migrated, skipping: purchaseOrderNumber={purchaseOrderNumber}, title={title}, filename={fileName}");
+                        continue;
+                    }
 
                     // Download legacy document (always do this to verify access)
                     var documentBytes = await DownloadLegacyDocument(legacyOrderId, fileId, true, log);
@@ -344,7 +433,7 @@ namespace Com.Tradecloud1.SDK.Client
                         if (string.IsNullOrEmpty(objectId)) continue;
 
                         // Attach to order
-                        attached = await AttachDocumentToOrder(orderId, objectId, title, log);
+                        attached = await AttachDocumentToOrder(orderId, purchaseOrderNumber, objectId, title, log);
                     }
 
                     if (attached)
@@ -368,7 +457,15 @@ namespace Com.Tradecloud1.SDK.Client
             var orderId = tc1Order["id"]?.ToString();
             var purchaseOrderNumber = tc1Order["buyerOrder"]["purchaseOrderNumber"]?.ToString();
 
-            var tc1Lines = tc1Order["lines"] as JArray;
+            // Get detailed order information to check existing documents
+            var detailedOrder = await GetOrderById(orderId, log);
+            if (detailedOrder == null)
+            {
+                await log.WriteLineAsync($"Failed to get detailed order information for lines: purchaseOrderNumber={purchaseOrderNumber}");
+                return 0;
+            }
+
+            var tc1Lines = detailedOrder["lines"] as JArray;
             var legacyLines = legacyOrder["lines"] as JArray;
 
             if (tc1Lines == null || legacyLines == null) return 0;
@@ -385,13 +482,8 @@ namespace Com.Tradecloud1.SDK.Client
                         continue;
                     }
 
-                    // Check if TC1 line already has documents
+                    // Get existing TC1 line documents from detailed order
                     var tc1LineDocuments = tc1Line["buyerLine"]["documents"] as JArray;
-                    if (tc1LineDocuments != null && tc1LineDocuments.Count > 0)
-                    {
-                        await log.WriteLineAsync($"Order line: purchaseOrderNumber={purchaseOrderNumber}, position={position} already has {tc1LineDocuments.Count} documents, skipping");
-                        continue;
-                    }
 
                     // Find corresponding legacy line by row (equivalent to TC1 position)
                     // TC1 positions are zero-padded (e.g., "00010"), legacy rows are not (e.g., "10")
@@ -438,6 +530,13 @@ namespace Com.Tradecloud1.SDK.Client
                             var title = legacyDoc["title"]?.ToString();
                             var mimeType = legacyDoc["mimeType"]?.ToString();
 
+                            // Check if this document is already migrated
+                            if (IsDocumentAlreadyMigrated(legacyDoc, tc1LineDocuments, log))
+                            {
+                                await log.WriteLineAsync($"Document already migrated, skipping: purchaseOrderNumber={purchaseOrderNumber}, position={position}, title={title}, filename={fileName}");
+                                continue;
+                            }
+
                             // Download legacy document (always do this to verify access)
                             var documentBytes = await DownloadLegacyDocument(legacyLineId, fileId, false, log);
                             if (documentBytes == null) continue;
@@ -459,7 +558,7 @@ namespace Com.Tradecloud1.SDK.Client
                                 if (string.IsNullOrEmpty(objectId)) continue;
 
                                 // Attach to order line
-                                attached = await AttachDocumentToOrderLine(orderId, position, objectId, title, log);
+                                attached = await AttachDocumentToOrderLine(orderId, purchaseOrderNumber, position, objectId, title, log);
                             }
 
                             if (attached)
@@ -544,7 +643,7 @@ namespace Com.Tradecloud1.SDK.Client
             }
         }
 
-        static async Task<bool> AttachDocumentToOrder(string orderId, string objectId, string title, StreamWriter log)
+        static async Task<bool> AttachDocumentToOrder(string orderId, string purchaseOrderNumber, string objectId, string title, StreamWriter log)
         {
             try
             {
@@ -571,24 +670,24 @@ namespace Com.Tradecloud1.SDK.Client
 
                 if (response.IsSuccessStatusCode)
                 {
-                    await log.WriteLineAsync($"Attached document to order: orderId={orderId}, objectId={objectId}, title={title}");
+                    await log.WriteLineAsync($"Attached document to order: purchaseOrderNumber={purchaseOrderNumber}, objectId={objectId}, title={title}");
                     return true;
                 }
                 else
                 {
                     var responseString = await response.Content.ReadAsStringAsync();
-                    await log.WriteLineAsync($"Failed to attach document to order: orderId={orderId}, objectId={objectId}, response.StatusCode={response.StatusCode}, responseString={responseString}");
+                    await log.WriteLineAsync($"Failed to attach document to order: purchaseOrderNumber={purchaseOrderNumber}, objectId={objectId}, response.StatusCode={response.StatusCode}, responseString={responseString}");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                await log.WriteLineAsync($"Error attaching document to order: orderId={orderId}, objectId={objectId}, error={ex.Message}");
+                await log.WriteLineAsync($"Error attaching document to order: purchaseOrderNumber={purchaseOrderNumber}, objectId={objectId}, error={ex.Message}");
                 return false;
             }
         }
 
-        static async Task<bool> AttachDocumentToOrderLine(string orderId, string position, string objectId, string title, StreamWriter log)
+        static async Task<bool> AttachDocumentToOrderLine(string orderId, string purchaseOrderNumber, string position, string objectId, string title, StreamWriter log)
         {
             try
             {
@@ -615,19 +714,19 @@ namespace Com.Tradecloud1.SDK.Client
 
                 if (response.IsSuccessStatusCode)
                 {
-                    await log.WriteLineAsync($"Attached document to order line: orderId={orderId}, position={position}, objectId={objectId}, title={title}");
+                    await log.WriteLineAsync($"Attached document to order line: purchaseOrderNumber={purchaseOrderNumber}, position={position}, objectId={objectId}, title={title}");
                     return true;
                 }
                 else
                 {
                     var responseString = await response.Content.ReadAsStringAsync();
-                    await log.WriteLineAsync($"Failed to attach document to order line: orderId={orderId}, position={position}, objectId={objectId}, response.StatusCode={response.StatusCode}, responseString={responseString}");
+                    await log.WriteLineAsync($"Failed to attach document to order line: purchaseOrderNumber={purchaseOrderNumber}, position={position}, objectId={objectId}, response.StatusCode={response.StatusCode}, responseString={responseString}");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                await log.WriteLineAsync($"Error attaching document to order line: orderId={orderId}, position={position}, objectId={objectId}, error={ex.Message}");
+                await log.WriteLineAsync($"Error attaching document to order line: purchaseOrderNumber={purchaseOrderNumber}, position={position}, objectId={objectId}, error={ex.Message}");
                 return false;
             }
         }

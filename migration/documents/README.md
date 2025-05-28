@@ -8,60 +8,89 @@ The migration process:
 
 1. **Find active orders** in Tradecloud One (orders with process status: Issued, InProgress, Confirmed, or Rejected; and logistics status: Open, Produced, ReadyToShip, or Shipped)
 2. **Find corresponding legacy orders** using the purchase order number
-3. **Migrate order header documents** if they don't already exist in TC1
-4. **Migrate order line documents** if they don't already exist in TC1
+3. **Get detailed order information** using the order ID to check existing documents
+4. **Migrate order header documents** that don't already exist in TC1 (checks each document individually)
+5. **Migrate order line documents** that don't already exist in TC1 (checks each document individually)
 
 For each document, the tool:
 
-- Downloads the document from the legacy system
+- Checks if the document is already migrated (by comparing title/filename and checking for migration description)
+- Downloads the document from the legacy system (only if not already migrated)
 - Uploads it to Tradecloud One object storage
 - Attaches it to the appropriate order or order line
 
+**Key Feature**: The tool only migrates documents that don't already exist, allowing it to be run multiple times safely without creating duplicates.
+
 ## Configuration
 
-Before running the migration, you need to configure the following constants in `MigrateDocuments.cs`:
+The migration tool uses environment variables for configuration. Before running the migration, you need to configure these variables using a `.env` file.
 
-### Legacy System Configuration
+### Setup Configuration
 
-```csharp
-const string legacyUsername = "your-legacy-username";
-const string legacyPassword = "your-legacy-password";
-```
+1. **Copy the example file**: Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
 
-### Tradecloud One Configuration
+2. **Edit the `.env` file** with your actual credentials and configuration:
 
-**Important**: The access token must be from a buyer company admin user, not a support user, otherwise object storage authorization will fail.
+   ```bash
+   # Legacy Tradecloud System Configuration
+   LEGACY_USERNAME=your-legacy-username@example.com
+   LEGACY_PASSWORD="password-with-\"quotes\"-and-special-chars"
 
-```csharp
-const string accessToken = "your-bearer-token";  // Must be buyer company admin
-```
+   # Tradecloud One Configuration
+   # Must be a buyer company admin token, not a support user token
+   ACCESS_TOKEN=your-bearer-token-here
 
-### Buyer Company Configuration
+   # Company Configuration
+   BUYER_COMPANY_ID=your-buyer-company-id
 
-```csharp
-const string buyerCompanyId = "your-buyer-company-id";
-```
+   # Migration Configuration
+   DRY_RUN=true
+   ```
 
-### Dry Run Configuration
+### Configuration Variables
 
-```csharp
-const bool dryRun = false;  // Set to true for testing (no uploads/attachments)
-```
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `LEGACY_USERNAME` | Username for legacy Tradecloud system | Yes |
+| `LEGACY_PASSWORD` | Password for legacy Tradecloud system | Yes |
+| `ACCESS_TOKEN` | Bearer token for Tradecloud One API (must be buyer company admin) | Yes |
+| `BUYER_COMPANY_ID` | Company ID of the buyer in Tradecloud One | Yes |
+| `DRY_RUN` | Set to `true` for testing (no uploads/attachments), `false` for live migration | No (defaults to `true`) |
+
+### Security Notes
+
+- The `.env` file is ignored by git to prevent accidentally committing credentials
+- Never commit actual credentials to the repository
+- The `.env.example` file contains placeholder values for reference
+- **Special Characters**: If your password contains special characters (quotes, spaces, etc.), wrap it in double quotes and escape internal quotes with backslashes:
+  ```bash
+  LEGACY_PASSWORD="password-with-\"quotes\"-and-special-chars"
+  ```
 
 ## Usage
 
-1. Configure the credentials and company ID as described above
-2. Build the project:
+1. **Configure environment variables** as described in the Configuration section above
+2. **Build the project**:
 
    ```bash
    dotnet build
    ```
 
-3. Run the migration:
+3. **Run the migration**:
 
    ```bash
    dotnet run
    ```
+
+The tool will automatically:
+
+- Load configuration from the `.env` file
+- Validate that all required variables are present
+- Display the current mode (DRY RUN or LIVE) and buyer company ID
+- Exit with an error if any required configuration is missing
 
 ### Dry Run Mode
 
@@ -90,10 +119,19 @@ The tool creates a detailed log file named `YYYYMMDD-HHMMSS-migrate-documents.lo
 
 ## Processing Logic
 
+### Document Duplication Prevention
+
+The tool uses a sophisticated approach to prevent document duplication:
+
+1. **Detailed Order Retrieval**: For each order, the tool fetches complete order details using `/v2/order/{id}` (not the search result) to ensure it has the most up-to-date document information
+2. **Individual Document Checking**: Each legacy document is checked against existing TC1 documents by comparing filenames
+3. **Skip Already Migrated**: Documents that already exist are skipped with logging
+4. **Process Only New Documents**: Only documents that don't already exist are downloaded, uploaded, and attached
+
 ### Document Location in JSON
 
-- **TC1 order header documents**: `order.buyerOrder.documents[]`
-- **TC1 order line documents**: `order.lines[].buyerLine.documents[]`
+- **TC1 order header documents**: `order.buyerOrder.documents[]` (from detailed order)
+- **TC1 order line documents**: `order.lines[].buyerLine.documents[]` (from detailed order)
 - **Legacy order header documents**: `order.documents[]`
 - **Legacy order line documents**: Retrieved via separate API call to `/purchaseOrderLine/{id}`
 
