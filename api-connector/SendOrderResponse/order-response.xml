@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SendOrderResponseBySupplier>
+	<order>
+		<companyId>1f61e695-7545-5670-9384-58e8b1f263e6</companyId>
+		<buyerAccountNumber>340760</buyerAccountNumber>
+		<purchaseOrderNumber>PO0123456789</purchaseOrderNumber>
+		<description>Any custom text about this order</description>
+		<indicators>
+			<accepted>false</accepted>
+			<rejected>false</rejected>
+			<cancelled>false</cancelled>
+		</indicators>
+		<property>
+			<key>color</key>
+			<value>red</value>
+		</property>
+		<document>
+			<code>123456789</code>
+			<revision>B</revision>
+			<name>Tradecloud API Manual</name>
+			<objectId>00f03b98-2511-489f-9695-13791b3f66b6</objectId>
+			<url>https://my-company.com/storage/my_file.pdf</url>
+			<type>General</type>
+			<description>General document</description>
+		</document>
+		<note>one note</note>
+		<note>another note</note>
+		<contact>
+			<email>eddie@tradecloud1.com</email>
+		</contact>
+	</order>
+	<line>
+		<purchaseOrderLinePosition>00010</purchaseOrderLinePosition>
+		<salesOrderNumber>SO123456789</salesOrderNumber>
+		<salesOrderLinePosition>0001</salesOrderLinePosition>
+		<description>Anything about this line</description>
+		<itemDetails>
+			<countryOfOriginCodeIso2>NL</countryOfOriginCodeIso2>
+			<combinedNomenclatureCode>6406 10 10</combinedNomenclatureCode>
+			<netWeight>41.241</netWeight>
+			<netWeightUnitOfMeasureIso>KG</netWeightUnitOfMeasureIso>
+			<dangerousGoodsCodeUnece>0060</dangerousGoodsCodeUnece>
+			<serialNumber>0x0000000000028000</serialNumber>
+			<batchNumber>#18001</batchNumber>
+		</itemDetails>
+		<deliveryScheduleLine>
+			<position>01</position>
+			<date>2025-05-01</date>
+			<quantity>1234.56</quantity>
+		</deliveryScheduleLine>
+		<chargeLine>
+			<position>001</position>
+			<chargeTypeCode>CL Type A</chargeTypeCode>
+			<chargeDescription>Additional coating</chargeDescription>
+			<quantity>2</quantity>
+			<price>
+				<priceInTransactionCurrency>
+					<value>1234.56</value>
+					<currencyIso>EUR</currencyIso>
+				</priceInTransactionCurrency>
+				<priceInBaseCurrency>
+					<value>1234.56</value>
+					<currencyIso>EUR</currencyIso>
+				</priceInBaseCurrency>
+			</price>
+			<priceUnitOfMeasureIso>PCE</priceUnitOfMeasureIso>
+		</chargeLine>
+		<prices>
+			<grossPrice>
+				<priceInTransactionCurrency>
+					<value>1234.56</value>
+					<currencyIso>EUR</currencyIso>
+				</priceInTransactionCurrency>
+				<priceInBaseCurrency>
+					<value>1234.56</value>
+					<currencyIso>EUR</currencyIso>
+				</priceInBaseCurrency>
+			</grossPrice>
+			<discountPercentage>50</discountPercentage>
+			<netPrice>
+				<priceInTransactionCurrency>
+					<value>1234.56</value>
+					<currencyIso>EUR</currencyIso>
+				</priceInTransactionCurrency>
+				<priceInBaseCurrency>
+					<value>1234.56</value>
+					<currencyIso>EUR</currencyIso>
+				</priceInBaseCurrency>
+			</netPrice>
+			<priceUnitOfMeasureIso>PCE</priceUnitOfMeasureIso>
+			<priceUnitQuantity>100</priceUnitQuantity>
+		</prices>
+		<indicators>
+			<accepted>false</accepted>
+			<rejected>false</rejected>
+			<cancelled>false</cancelled>
+		</indicators>
+		<property>
+			<key>color</key>
+			<value>red</value>
+		</property>
+		<document>
+			<code>123456789</code>
+			<revision>B</revision>
+			<name>Tradecloud API Manual</name>
+			<objectId>00f03b98-2511-489f-9695-13791b3f66b6</objectId>
+			<url>https://my-company.com/storage/my_file.pdf</url>
+			<type>General</type>
+			<description>General document</description>
+		</document>
+		<note>one note</note>
+		<note>another note</note>
+		<reason>Out of stock.</reason>
+	</line>
+	<erpResponseDateTime>2019-12-31T10:11:12</erpResponseDateTime>
+	<erpRespondedBy>
+		<email>contact@yourcompany.com</email>
+	</erpRespondedBy>
+</SendOrderResponseBySupplier>

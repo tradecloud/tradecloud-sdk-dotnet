@@ -10,9 +10,11 @@ using Newtonsoft.Json.Linq;
 namespace Com.Tradecloud1.SDK.Client
 {
     class SendOrderReponse
-    {   
+    {
+        const string fileName = "order-response.json"; // or "order-response.xml"
+        const string contentType = "application/json"; // or "application/xml"
         const bool useToken = true;
-         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
         // Fill in mandatory username
         const string username = "";
@@ -21,30 +23,30 @@ namespace Com.Tradecloud1.SDK.Client
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/supplier-endpoints/sendOrderResponseBySupplierRoute
         const string sendOrderResponseUrl = "https://api.accp.tradecloud1.com/v2/api-connector/order-response";
-        
+
         static async Task Main(string[] args)
         {
             Console.WriteLine("Tradecloud send order response example.");
 
-            var jsonContent = File.ReadAllText(@"order-response.json");
+            var jsonContent = File.ReadAllText(@fileName);
 
             HttpClient httpClient = new HttpClient();
             if (useToken)
             {
                 var authenticationClient = new Authentication(httpClient, authenticationUrl);
                 var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);            
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
             }
             else
             {
                 var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword);
             }
             await SendOrderResponse();
 
             async Task SendOrderResponse()
-            {                
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            {
+                var content = new StringContent(jsonContent, Encoding.UTF8, contentType);
 
                 var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -52,14 +54,14 @@ namespace Com.Tradecloud1.SDK.Client
                 watch.Stop();
 
                 var statusCode = (int)response.StatusCode;
-                Console.WriteLine("SendOrderResponse start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                Console.WriteLine("SendOrderResponse start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                 if (statusCode == 400)
-                     Console.WriteLine("SendOrderResponse request body=" + jsonContent); 
+                    Console.WriteLine("SendOrderResponse request body=" + jsonContent);
                 string responseString = await response.Content.ReadAsStringAsync();
-                if (statusCode == 200)
-                    Console.WriteLine("SendOrderResponse response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
+                if (statusCode == 200 && contentType == "application/json")
+                    Console.WriteLine("SendOrderResponse response body=" + JValue.Parse(responseString).ToString(Formatting.Indented));
                 else
-                    Console.WriteLine("SendOrderResponse response body=" +  responseString);
+                    Console.WriteLine("SendOrderResponse response body=" + responseString);
             }
         }
     }
