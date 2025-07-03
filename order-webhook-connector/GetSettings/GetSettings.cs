@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -36,7 +37,11 @@ namespace Com.Tradecloud1.SDK.Client
                 Console.WriteLine("GetSettings start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                 string responseString = await response.Content.ReadAsStringAsync();
                 if (statusCode == 200)
-                    Console.WriteLine("GetSettings response body=" + JValue.Parse(responseString).ToString(Formatting.Indented));
+                {
+                    var formattedJson = JValue.Parse(responseString).ToString(Formatting.Indented);
+                    File.WriteAllText("order-settings.json", formattedJson);
+                    Console.WriteLine("Response written to order-settings.json");
+                }
                 else
                     Console.WriteLine("GetSettings response body=" + responseString);
             }
