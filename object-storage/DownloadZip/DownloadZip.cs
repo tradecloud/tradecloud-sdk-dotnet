@@ -131,14 +131,18 @@ namespace Com.Tradecloud1.SDK.Client
         {
             var documents = new List<(string fileName, byte[] content, string description, bool isHeaderDocument)>();
 
-            // Header document
-            var headerContent = Encoding.UTF8.GetBytes($"ORDER HEADER DOCUMENT\nCreated: {DateTime.Now}\nThis is the main order document containing general terms and conditions.");
-            documents.Add(("order-header.txt", headerContent, "Order Header Document", true));
+            Console.WriteLine("Creating large test documents to test bandwidth limiting...");
 
-            // Line documents (one per line) - with some duplicate file names to test ZIP handling
+            // Header document - make it large (500 KB)
+            var headerContent = CreateLargeDocument("ORDER HEADER DOCUMENT", 500 * 1024); // 500 KB
+            documents.Add(("order-header.txt", headerContent, "Order Header Document", true));
+            Console.WriteLine($"Created header document: {headerContent.Length:N0} bytes");
+
+            // Line documents (one per line) - each 300-800 KB to test bandwidth limiting
             for (int i = 1; i <= 10; i++)
             {
-                var lineContent = Encoding.UTF8.GetBytes($"LINE {i:D2} DOCUMENT\nItem: ITEM-{i:D3}\nQuantity: {i * 2}\nSpecial instructions for line {i}\nTechnical specifications and delivery notes.");
+                var baseSizeKB = 300 + (i * 50); // 350KB, 400KB, 450KB, etc. up to 800KB
+                var lineContent = CreateLargeDocument($"LINE {i:D2} DOCUMENT", baseSizeKB * 1024);
 
                 // Create duplicate file names for some documents to test ZIP suffix handling
                 string fileName;
@@ -164,15 +168,69 @@ namespace Com.Tradecloud1.SDK.Client
                 }
 
                 documents.Add((fileName, lineContent, $"Line {i} Specifications", false));
+                Console.WriteLine($"Created line {i} document: {lineContent.Length:N0} bytes");
             }
 
+            var totalSize = documents.Sum(d => d.content.Length);
             Console.WriteLine($"Created {documents.Count} sample documents (1 header + 10 line documents)");
+            Console.WriteLine($"Total size: {totalSize:N0} bytes ({totalSize / 1024.0:F1} KB, {totalSize / (1024.0 * 1024.0):F1} MB)");
             Console.WriteLine("Duplicate file names created:");
             Console.WriteLine("- specification.txt (lines 1-3)");
             Console.WriteLine("- manual.pdf (lines 4-6)");
             Console.WriteLine("- drawing.dwg (lines 7-8)");
             Console.WriteLine("- Unique names (lines 9-10)");
+            Console.WriteLine("Large files should help test 1 MiB/s bandwidth limiting!");
             return documents;
+        }
+
+        static byte[] CreateLargeDocument(string baseText, int targetSizeBytes)
+        {
+            var content = new List<string>();
+            content.Add($"{baseText}\nCreated: {DateTime.Now}\n");
+            content.Add("=".PadRight(80, '=') + "\n");
+
+            // Add structured content to reach target size
+            var random = new Random(42); // Fixed seed for consistent results
+            var currentSize = 0;
+            var lineCount = 0;
+
+            while (currentSize < targetSizeBytes)
+            {
+                lineCount++;
+                var lineText = $"Line {lineCount:D6}: ";
+
+                // Add different types of content
+                switch (lineCount % 5)
+                {
+                    case 0:
+                        lineText += $"Technical specification: Item weight {random.Next(1, 100)}kg, dimensions {random.Next(10, 200)}x{random.Next(10, 200)}x{random.Next(10, 200)}mm";
+                        break;
+                    case 1:
+                        lineText += $"Quality control data: Batch {Guid.NewGuid()}, tested on {DateTime.Now.AddDays(-random.Next(1, 30)):yyyy-MM-dd}, result: PASS";
+                        break;
+                    case 2:
+                        lineText += $"Manufacturing details: Process temperature {random.Next(200, 500)}°C, pressure {random.Next(1, 10)} bar, duration {random.Next(30, 180)} minutes";
+                        break;
+                    case 3:
+                        lineText += $"Supply chain info: Supplier code SUP-{random.Next(1000, 9999)}, delivery date {DateTime.Now.AddDays(random.Next(1, 60)):yyyy-MM-dd}, priority level {random.Next(1, 5)}";
+                        break;
+                    case 4:
+                        lineText += $"Compliance data: Certificate {Guid.NewGuid()}, valid until {DateTime.Now.AddYears(1):yyyy-MM-dd}, standard ISO-{random.Next(9000, 9999)}";
+                        break;
+                }
+
+                // Add some random padding to vary line lengths
+                var padding = new string('*', random.Next(0, 50));
+                lineText += $" {padding}\n";
+
+                content.Add(lineText);
+                currentSize = Encoding.UTF8.GetByteCount(string.Join("", content));
+            }
+
+            content.Add("\n" + "=".PadRight(80, '=') + "\n");
+            content.Add($"Document end. Total lines: {lineCount}, Final size: {currentSize:N0} bytes\n");
+
+            return Encoding.UTF8.GetBytes(string.Join("", content));
         }
 
         static async Task<List<UploadedDocument>> UploadDocuments(HttpClient httpClient, List<(string fileName, byte[] content, string description, bool isHeaderDocument)> documents)
@@ -330,28 +388,54 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task DownloadDocumentsZip(HttpClient httpClient, List<string> objectIds)
         {
-            // Prepare ZIP download request - send plain array of objectIds
-            var json = JsonConvert.SerializeObject(objectIds.ToArray());
+            // Prepare ZIP download request with new API format
+            var fileName = $"order-documents-{DateTime.Now:yyyyMMdd-HHmmss}.zip";
+            var zipRequest = new
+            {
+                objectIds = objectIds.ToArray(),
+                filename = fileName
+            };
+
+            var json = JsonConvert.SerializeObject(zipRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            Console.WriteLine($"Requesting ZIP download for {objectIds.Count} documents...");
+            Console.WriteLine($"Requesting ZIP download for {objectIds.Count} documents with filename: {fileName}");
             var start = DateTime.Now;
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var requestWatch = System.Diagnostics.Stopwatch.StartNew();
             var response = await httpClient.PostAsync(downloadZipUrl, content);
-            watch.Stop();
+            var requestTime = requestWatch.ElapsedMilliseconds;
 
             var statusCode = (int)response.StatusCode;
-            Console.WriteLine($"DownloadZip request: status={statusCode}, elapsed={watch.ElapsedMilliseconds}ms");
+            Console.WriteLine($"DownloadZip request: status={statusCode}, request time={requestTime}ms");
 
             if (response.IsSuccessStatusCode)
             {
-                // Save the ZIP file
+                // Download and measure bandwidth
+                var downloadWatch = System.Diagnostics.Stopwatch.StartNew();
                 var zipBytes = await response.Content.ReadAsByteArrayAsync();
-                var fileName = $"order-documents-{DateTime.Now:yyyyMMdd-HHmmss}.zip";
+                downloadWatch.Stop();
+
+                var totalTime = requestWatch.ElapsedMilliseconds;
+                var downloadTime = downloadWatch.ElapsedMilliseconds;
+                var fileSizeBytes = zipBytes.Length;
+                var fileSizeKB = fileSizeBytes / 1024.0;
+                var fileSizeMB = fileSizeKB / 1024.0;
+
+                // Calculate bandwidth (bytes per second and MiB/s)
+                var totalTimeSeconds = totalTime / 1000.0;
+                var downloadTimeSeconds = downloadTime / 1000.0;
+                var totalBandwidthBps = totalTimeSeconds > 0 ? fileSizeBytes / totalTimeSeconds : 0;
+                var downloadBandwidthBps = downloadTimeSeconds > 0 ? fileSizeBytes / downloadTimeSeconds : 0;
+                var totalBandwidthMiBps = totalBandwidthBps / (1024.0 * 1024.0); // Convert to MiB/s
+                var downloadBandwidthMiBps = downloadBandwidthBps / (1024.0 * 1024.0); // Convert to MiB/s
 
                 await File.WriteAllBytesAsync(fileName, zipBytes);
 
-                Console.WriteLine($"Successfully downloaded ZIP file: {fileName} ({zipBytes.Length} bytes)");
+                Console.WriteLine($"Successfully downloaded ZIP file: {fileName}");
+                Console.WriteLine($"File size: {fileSizeBytes:N0} bytes ({fileSizeKB:F2} KB, {fileSizeMB:F2} MB)");
+                Console.WriteLine($"Total time: {totalTime}ms (request: {requestTime}ms, download: {downloadTime}ms)");
+                Console.WriteLine($"Total bandwidth: {totalBandwidthBps:F0} bytes/sec ({totalBandwidthMiBps:F3} MiB/s)");
+                Console.WriteLine($"Download bandwidth: {downloadBandwidthBps:F0} bytes/sec ({downloadBandwidthMiBps:F3} MiB/s)");
                 Console.WriteLine($"ZIP file contains {objectIds.Count} documents");
             }
             else
@@ -364,12 +448,12 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task TestConcurrentZipDownloads(HttpClient httpClient, List<string> objectIds)
         {
-            Console.WriteLine($"Starting 11 concurrent ZIP download requests...");
+            Console.WriteLine($"Starting 6 concurrent ZIP download requests (API limit: 5 concurrent per user)...");
 
-            // Create 11 concurrent download tasks
+            // Create 6 concurrent download tasks (should hit the 5 concurrent limit)
             var downloadTasks = new List<Task<(int requestNumber, int statusCode, long elapsedMs, int contentLength)>>();
 
-            for (int i = 1; i <= 11; i++)
+            for (int i = 1; i <= 6; i++)
             {
                 int requestNumber = i; // Capture for closure
                 downloadTasks.Add(DownloadZipConcurrent(httpClient, objectIds, requestNumber));
@@ -383,7 +467,7 @@ namespace Com.Tradecloud1.SDK.Client
 
             watch.Stop();
 
-            Console.WriteLine($"All 11 concurrent requests completed in {watch.ElapsedMilliseconds}ms");
+            Console.WriteLine($"All 6 concurrent requests completed in {watch.ElapsedMilliseconds}ms");
             Console.WriteLine("\nResults:");
 
             int successCount = 0;
@@ -399,7 +483,16 @@ namespace Com.Tradecloud1.SDK.Client
                     _ => "✗ ERROR"
                 };
 
-                Console.WriteLine($"Request {result.requestNumber:D2}: {result.statusCode} {status} - {result.elapsedMs}ms - {result.contentLength} bytes");
+                if (result.statusCode == 200 && result.contentLength > 0)
+                {
+                    var bandwidthBps = result.elapsedMs > 0 ? (result.contentLength * 1000.0) / result.elapsedMs : 0;
+                    var bandwidthMiBps = bandwidthBps / (1024.0 * 1024.0);
+                    Console.WriteLine($"Request {result.requestNumber:D2}: {result.statusCode} {status} - {result.elapsedMs}ms - {result.contentLength:N0} bytes - {bandwidthBps:F0} bytes/sec ({bandwidthMiBps:F3} MiB/s)");
+                }
+                else
+                {
+                    Console.WriteLine($"Request {result.requestNumber:D2}: {result.statusCode} {status} - {result.elapsedMs}ms - {result.contentLength} bytes");
+                }
 
                 switch (result.statusCode)
                 {
@@ -414,13 +507,44 @@ namespace Com.Tradecloud1.SDK.Client
             Console.WriteLine($"- Rate limited (429): {rateLimitedCount}");
             Console.WriteLine($"- Other errors: {otherErrorCount}");
 
+            // Calculate bandwidth statistics for successful downloads
+            var successfulResults = results.Where(r => r.statusCode == 200 && r.contentLength > 0 && r.elapsedMs > 0).ToList();
+            if (successfulResults.Any())
+            {
+                var bandwidths = successfulResults.Select(r => (r.contentLength * 1000.0) / r.elapsedMs).ToList();
+                var avgBandwidth = bandwidths.Average();
+                var minBandwidth = bandwidths.Min();
+                var maxBandwidth = bandwidths.Max();
+                var avgBandwidthMiBps = avgBandwidth / (1024.0 * 1024.0);
+                var minBandwidthMiBps = minBandwidth / (1024.0 * 1024.0);
+                var maxBandwidthMiBps = maxBandwidth / (1024.0 * 1024.0);
+
+                Console.WriteLine($"\nBandwidth Statistics (successful downloads):");
+                Console.WriteLine($"- Average: {avgBandwidth:F0} bytes/sec ({avgBandwidthMiBps:F3} MiB/s)");
+                Console.WriteLine($"- Minimum: {minBandwidth:F0} bytes/sec ({minBandwidthMiBps:F3} MiB/s)");
+                Console.WriteLine($"- Maximum: {maxBandwidth:F0} bytes/sec ({maxBandwidthMiBps:F3} MiB/s)");
+
+                // Check for potential bandwidth limiting (significant variation could indicate throttling)
+                var bandwidthVariation = (maxBandwidth - minBandwidth) / avgBandwidth;
+                if (bandwidthVariation > 0.5)
+                {
+                    Console.WriteLine($"⚠ Significant bandwidth variation detected ({bandwidthVariation:P1}) - possible bandwidth limiting");
+                }
+                else
+                {
+                    Console.WriteLine($"✓ Consistent bandwidth performance ({bandwidthVariation:P1} variation)");
+                }
+            }
+
             if (rateLimitedCount > 0)
             {
-                Console.WriteLine($"✓ Rate limiting is working - got {rateLimitedCount} 429 responses");
+                Console.WriteLine($"\n✓ Rate limiting is working - got {rateLimitedCount} 429 responses");
+                Console.WriteLine("✓ API correctly enforces 5 concurrent downloads per user limit");
             }
             else
             {
-                Console.WriteLine("⚠ No rate limiting detected - all requests succeeded");
+                Console.WriteLine("\n⚠ No rate limiting detected - all requests succeeded");
+                Console.WriteLine("⚠ Either rate limiting is not active or concurrent load was handled");
             }
         }
 
@@ -429,8 +553,15 @@ namespace Com.Tradecloud1.SDK.Client
         {
             try
             {
-                // Prepare ZIP download request - send plain array of objectIds
-                var json = JsonConvert.SerializeObject(objectIds.ToArray());
+                // Prepare ZIP download request with new API format
+                var fileName = $"concurrent-test-{requestNumber:D2}-{DateTime.Now:HHmmss}.zip";
+                var zipRequest = new
+                {
+                    objectIds = objectIds.ToArray(),
+                    filename = fileName
+                };
+
+                var json = JsonConvert.SerializeObject(zipRequest);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var watch = System.Diagnostics.Stopwatch.StartNew();
