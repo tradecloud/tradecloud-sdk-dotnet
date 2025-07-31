@@ -18,7 +18,7 @@ namespace Com.Tradecloud1.SDK.Client
         // Development: https://branch.d.tradecloud1.com
         // Test: https://api.test.tradecloud1.com  
         // Acceptance: https://api.accp.tradecloud1.com  
-        const string baseUrl = "https://tc-10397-download-zip.d.tradecloud1.com";
+        const string baseUrl = "https://tc-10397-download-zip-gcs-url.d.tradecloud1.com";
 
         // Authentication
         const string username = ""; // Fill in mandatory username
@@ -29,7 +29,7 @@ namespace Com.Tradecloud1.SDK.Client
         static readonly string sendOrderUrl = $"{baseUrl}/v2/api-connector/order";
         static readonly string uploadDocumentUrl = $"{baseUrl}/v2/object-storage/document";
         static readonly string attachOrderDocumentsUrl = $"{baseUrl}/v2/api-connector/order/documents";
-        static readonly string downloadZipUrl = $"{baseUrl}/v2/object-storage/documents/zip"; // New ZIP download endpoint
+        static readonly string downloadZipUrl = $"{baseUrl}/v2/object-storage/documents/zip";
 
         // Company and supplier info
         const string companyId = "f56aa4ce-8ec8-5197-bc26-77716a58add7";
@@ -73,12 +73,16 @@ namespace Com.Tradecloud1.SDK.Client
                     Console.WriteLine("\n=== Step 4: Attaching documents to order ===");
                     await AttachDocumentsToOrder(httpClient, purchaseOrder.Order.PurchaseOrderNumber, uploadedDocuments);
 
-                    // Step 5: Download all documents as ZIP
-                    Console.WriteLine("\n=== Step 5: Downloading documents as ZIP ===");
-                    await DownloadDocumentsZip(httpClient, uploadedDocuments.Select(d => d.ObjectId).ToList());
+                    // Step 5: Request ZIP download URL
+                    Console.WriteLine("\n=== Step 5: Requesting ZIP download URL ===");
+                    var downloadUrl = await RequestZipDownloadUrl(httpClient, uploadedDocuments.Select(d => d.ObjectId).ToList());
 
-                    // Step 6: Test concurrent downloads (rate limiting test)
-                    Console.WriteLine("\n=== Step 6: Testing concurrent ZIP downloads (rate limiting) ===");
+                    // Step 6: Download ZIP file using the URL
+                    Console.WriteLine("\n=== Step 6: Downloading ZIP file from URL ===");
+                    await DownloadZipFile(httpClient, downloadUrl, $"order-documents-{DateTime.Now:yyyyMMdd-HHmmss}.zip");
+
+                    // Step 7: Test concurrent downloads (rate limiting test)
+                    Console.WriteLine("\n=== Step 7: Testing concurrent ZIP downloads (rate limiting) ===");
                     await TestConcurrentZipDownloads(httpClient, uploadedDocuments.Select(d => d.ObjectId).ToList());
 
                     Console.WriteLine("\n=== Process completed successfully! ===");
@@ -386,10 +390,9 @@ namespace Com.Tradecloud1.SDK.Client
             }
         }
 
-        static async Task DownloadDocumentsZip(HttpClient httpClient, List<string> objectIds)
+        static async Task<string> RequestZipDownloadUrl(HttpClient httpClient, List<string> objectIds)
         {
-            // Prepare ZIP download request with new API format
-            var fileName = $"order-documents-{DateTime.Now:yyyyMMdd-HHmmss}.zip";
+            var fileName = $"order-documents-{DateTime.Now:yyyyMMdd-HHmmss}";
             var zipRequest = new
             {
                 objectIds = objectIds.ToArray(),
@@ -399,51 +402,66 @@ namespace Com.Tradecloud1.SDK.Client
             var json = JsonConvert.SerializeObject(zipRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            Console.WriteLine($"Requesting ZIP download for {objectIds.Count} documents with filename: {fileName}");
-            var start = DateTime.Now;
+            Console.WriteLine($"Requesting ZIP download URL for {objectIds.Count} documents with filename: {fileName}");
             var requestWatch = System.Diagnostics.Stopwatch.StartNew();
             var response = await httpClient.PostAsync(downloadZipUrl, content);
-            var requestTime = requestWatch.ElapsedMilliseconds;
+            requestWatch.Stop();
 
             var statusCode = (int)response.StatusCode;
-            Console.WriteLine($"DownloadZip request: status={statusCode}, request time={requestTime}ms");
+            var requestTime = requestWatch.ElapsedMilliseconds;
+            Console.WriteLine($"ZIP URL request: status={statusCode}, request time={requestTime}ms");
 
-            if (response.IsSuccessStatusCode)
-            {
-                // Download and measure bandwidth
-                var downloadWatch = System.Diagnostics.Stopwatch.StartNew();
-                var zipBytes = await response.Content.ReadAsByteArrayAsync();
-                downloadWatch.Stop();
-
-                var totalTime = requestWatch.ElapsedMilliseconds;
-                var downloadTime = downloadWatch.ElapsedMilliseconds;
-                var fileSizeBytes = zipBytes.Length;
-                var fileSizeKB = fileSizeBytes / 1024.0;
-                var fileSizeMB = fileSizeKB / 1024.0;
-
-                // Calculate bandwidth (bytes per second and MiB/s)
-                var totalTimeSeconds = totalTime / 1000.0;
-                var downloadTimeSeconds = downloadTime / 1000.0;
-                var totalBandwidthBps = totalTimeSeconds > 0 ? fileSizeBytes / totalTimeSeconds : 0;
-                var downloadBandwidthBps = downloadTimeSeconds > 0 ? fileSizeBytes / downloadTimeSeconds : 0;
-                var totalBandwidthMiBps = totalBandwidthBps / (1024.0 * 1024.0); // Convert to MiB/s
-                var downloadBandwidthMiBps = downloadBandwidthBps / (1024.0 * 1024.0); // Convert to MiB/s
-
-                await File.WriteAllBytesAsync(fileName, zipBytes);
-
-                Console.WriteLine($"Successfully downloaded ZIP file: {fileName}");
-                Console.WriteLine($"File size: {fileSizeBytes:N0} bytes ({fileSizeKB:F2} KB, {fileSizeMB:F2} MB)");
-                Console.WriteLine($"Total time: {totalTime}ms (request: {requestTime}ms, download: {downloadTime}ms)");
-                Console.WriteLine($"Total bandwidth: {totalBandwidthBps:F0} bytes/sec ({totalBandwidthMiBps:F3} MiB/s)");
-                Console.WriteLine($"Download bandwidth: {downloadBandwidthBps:F0} bytes/sec ({downloadBandwidthMiBps:F3} MiB/s)");
-                Console.WriteLine($"ZIP file contains {objectIds.Count} documents");
-            }
-            else
+            if (!response.IsSuccessStatusCode)
             {
                 var responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Failed to download ZIP: {responseString}");
-                throw new Exception($"Failed to download ZIP: {response.StatusCode} - {responseString}");
+                Console.WriteLine($"Failed to get ZIP download URL: {responseString}");
+                throw new Exception($"Failed to get ZIP download URL: {response.StatusCode} - {responseString}");
             }
+
+            // Parse the response to get download URL
+            var responseJson = await response.Content.ReadAsStringAsync();
+            var zipResponse = JsonConvert.DeserializeObject<CreateZipDownloadResponse>(responseJson);
+
+            Console.WriteLine($"Received download URL: {zipResponse.DownloadUrl}");
+
+            return zipResponse.DownloadUrl;
+        }
+
+        static async Task DownloadZipFile(HttpClient httpClient, string downloadUrl, string fileName)
+        {
+            Console.WriteLine($"Downloading ZIP file from provided URL to: {fileName}");
+            var downloadWatch = System.Diagnostics.Stopwatch.StartNew();
+            var downloadResponse = await httpClient.GetAsync(downloadUrl);
+            downloadWatch.Stop();
+
+            var downloadStatusCode = (int)downloadResponse.StatusCode;
+            var downloadTime = downloadWatch.ElapsedMilliseconds;
+            Console.WriteLine($"ZIP download: status={downloadStatusCode}, download time={downloadTime}ms");
+
+            if (!downloadResponse.IsSuccessStatusCode)
+            {
+                var downloadResponseString = await downloadResponse.Content.ReadAsStringAsync();
+                Console.WriteLine($"Failed to download ZIP file: {downloadResponseString}");
+                throw new Exception($"Failed to download ZIP file: {downloadResponse.StatusCode} - {downloadResponseString}");
+            }
+
+            var zipBytes = await downloadResponse.Content.ReadAsByteArrayAsync();
+            var fileSizeBytes = zipBytes.Length;
+            var fileSizeKB = fileSizeBytes / 1024.0;
+            var fileSizeMB = fileSizeKB / 1024.0;
+
+            // Calculate bandwidth metrics for the download
+            var downloadTimeSeconds = downloadTime / 1000.0;
+            var downloadBandwidthBps = downloadTimeSeconds > 0 ? fileSizeBytes / downloadTimeSeconds : 0;
+            var downloadBandwidthMiBps = downloadBandwidthBps / (1024.0 * 1024.0); // Convert to MiB/s
+
+            var fullFileName = $"{fileName}";
+            await File.WriteAllBytesAsync(fullFileName, zipBytes);
+
+            Console.WriteLine($"Successfully downloaded ZIP file: {fullFileName}");
+            Console.WriteLine($"File size: {fileSizeBytes:N0} bytes ({fileSizeKB:F2} KB, {fileSizeMB:F2} MB)");
+            Console.WriteLine($"Download time: {downloadTime}ms");
+            Console.WriteLine($"Download bandwidth: {downloadBandwidthBps:F0} bytes/sec ({downloadBandwidthMiBps:F3} MiB/s)");
         }
 
         static async Task TestConcurrentZipDownloads(HttpClient httpClient, List<string> objectIds)
@@ -553,8 +571,10 @@ namespace Com.Tradecloud1.SDK.Client
         {
             try
             {
-                // Prepare ZIP download request with new API format
-                var fileName = $"concurrent-test-{requestNumber:D2}-{DateTime.Now:HHmmss}.zip";
+                var totalWatch = System.Diagnostics.Stopwatch.StartNew();
+
+                // Step 1: Get download URL using the refactored function
+                var fileName = $"concurrent-test-{requestNumber:D2}-{DateTime.Now:HHmmss}";
                 var zipRequest = new
                 {
                     objectIds = objectIds.ToArray(),
@@ -564,20 +584,33 @@ namespace Com.Tradecloud1.SDK.Client
                 var json = JsonConvert.SerializeObject(zipRequest);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var watch = System.Diagnostics.Stopwatch.StartNew();
                 var response = await httpClient.PostAsync(downloadZipUrl, content);
-                watch.Stop();
-
                 var statusCode = (int)response.StatusCode;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    totalWatch.Stop();
+                    return (requestNumber, statusCode, totalWatch.ElapsedMilliseconds, 0);
+                }
+
+                // Parse the response to get download URL
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var zipResponse = JsonConvert.DeserializeObject<CreateZipDownloadResponse>(responseJson);
+
+                // Step 2: Download the ZIP file using the provided URL
+                var downloadResponse = await httpClient.GetAsync(zipResponse.DownloadUrl);
+                totalWatch.Stop();
+
+                var downloadStatusCode = (int)downloadResponse.StatusCode;
                 int contentLength = 0;
 
-                if (response.IsSuccessStatusCode)
+                if (downloadResponse.IsSuccessStatusCode)
                 {
-                    var zipBytes = await response.Content.ReadAsByteArrayAsync();
+                    var zipBytes = await downloadResponse.Content.ReadAsByteArrayAsync();
                     contentLength = zipBytes.Length;
                 }
 
-                return (requestNumber, statusCode, watch.ElapsedMilliseconds, contentLength);
+                return (requestNumber, downloadStatusCode, totalWatch.ElapsedMilliseconds, contentLength);
             }
             catch (Exception ex)
             {
@@ -594,5 +627,10 @@ namespace Com.Tradecloud1.SDK.Client
         public string FileName { get; set; }
         public string Description { get; set; }
         public bool IsHeaderDocument { get; set; }
+    }
+
+    public class CreateZipDownloadResponse
+    {
+        public string DownloadUrl { get; set; }
     }
 }
