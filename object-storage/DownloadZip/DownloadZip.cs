@@ -21,8 +21,8 @@ namespace Com.Tradecloud1.SDK.Client
         const string baseUrl = "https://tc-10397-download-zip-gcs-url.d.tradecloud1.com";
 
         // Authentication
-        const string username = ""; // Fill in mandatory username
-        const string password = ""; // Fill in mandatory password
+        const string username = "agrifac-integration@tradecloud1.com"; // Fill in mandatory username
+        const string password = "SecretSecret1"; // Fill in mandatory password
 
         // API URLs - constructed from baseUrl
         static readonly string authenticationUrl = $"{baseUrl}/v2/authentication/";
@@ -81,9 +81,9 @@ namespace Com.Tradecloud1.SDK.Client
                     Console.WriteLine("\n=== Step 6: Downloading ZIP file from URL ===");
                     await DownloadZipFile(httpClient, downloadUrl, $"order-documents-{DateTime.Now:yyyyMMdd-HHmmss}.zip");
 
-                    // Step 7: Test concurrent downloads (rate limiting test)
-                    Console.WriteLine("\n=== Step 7: Testing concurrent ZIP downloads (rate limiting) ===");
-                    await TestConcurrentZipDownloads(httpClient, uploadedDocuments.Select(d => d.ObjectId).ToList());
+                    // Step 7: Test concurrent requests (rate limiting test)
+                    //Console.WriteLine("\n=== Step 7: Testing concurrent ZIP requests (rate limiting) ===");
+                    //await TestConcurrentZipRequests(httpClient, uploadedDocuments.Select(d => d.ObjectId).ToList());
 
                     Console.WriteLine("\n=== Process completed successfully! ===");
                 }
@@ -183,7 +183,6 @@ namespace Com.Tradecloud1.SDK.Client
             Console.WriteLine("- manual.pdf (lines 4-6)");
             Console.WriteLine("- drawing.dwg (lines 7-8)");
             Console.WriteLine("- Unique names (lines 9-10)");
-            Console.WriteLine("Large files should help test 1 MiB/s bandwidth limiting!");
             return documents;
         }
 
@@ -392,7 +391,7 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task<string> RequestZipDownloadUrl(HttpClient httpClient, List<string> objectIds)
         {
-            var fileName = $"order-documents-{DateTime.Now:yyyyMMdd-HHmmss}";
+            var fileName = $"order-documents-{DateTime.Now:yyyyMMdd-HHmmss}.zip";
             var zipRequest = new
             {
                 objectIds = objectIds.ToArray(),
@@ -429,7 +428,7 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task DownloadZipFile(HttpClient httpClient, string downloadUrl, string fileName)
         {
-            Console.WriteLine($"Downloading ZIP file from provided URL to: {fileName}");
+            Console.WriteLine($"Downloading ZIP file from provided URL (will extract actual filename from response, fallback: {fileName})");
             var downloadWatch = System.Diagnostics.Stopwatch.StartNew();
             var downloadResponse = await httpClient.GetAsync(downloadUrl);
             downloadWatch.Stop();
@@ -453,35 +452,36 @@ namespace Com.Tradecloud1.SDK.Client
             // Calculate bandwidth metrics for the download
             var downloadTimeSeconds = downloadTime / 1000.0;
             var downloadBandwidthBps = downloadTimeSeconds > 0 ? fileSizeBytes / downloadTimeSeconds : 0;
-            var downloadBandwidthMiBps = downloadBandwidthBps / (1024.0 * 1024.0); // Convert to MiB/s
+            var downloadBandwidthMbps = downloadBandwidthBps * 8 / 1000000.0; // Convert to Mbps
 
-            var fullFileName = $"{fileName}";
-            await File.WriteAllBytesAsync(fullFileName, zipBytes);
+            // Extract filename from Content-Disposition header or fall back to provided filename
+            var actualFileName = GetFileNameFromResponse(downloadResponse, fileName);
+            await File.WriteAllBytesAsync(actualFileName, zipBytes);
 
-            Console.WriteLine($"Successfully downloaded ZIP file: {fullFileName}");
+            Console.WriteLine($"Successfully downloaded ZIP file: {actualFileName}");
             Console.WriteLine($"File size: {fileSizeBytes:N0} bytes ({fileSizeKB:F2} KB, {fileSizeMB:F2} MB)");
             Console.WriteLine($"Download time: {downloadTime}ms");
-            Console.WriteLine($"Download bandwidth: {downloadBandwidthBps:F0} bytes/sec ({downloadBandwidthMiBps:F3} MiB/s)");
+            Console.WriteLine($"Download bandwidth: {downloadBandwidthBps:F0} bytes/sec ({downloadBandwidthMbps:F2} Mbps)");
         }
 
-        static async Task TestConcurrentZipDownloads(HttpClient httpClient, List<string> objectIds)
+        static async Task TestConcurrentZipRequests(HttpClient httpClient, List<string> objectIds)
         {
-            Console.WriteLine($"Starting 6 concurrent ZIP download requests (API limit: 5 concurrent per user)...");
+            Console.WriteLine($"Starting 6 concurrent ZIP URL requests (API limit: 5 concurrent per user)...");
 
-            // Create 6 concurrent download tasks (should hit the 5 concurrent limit)
-            var downloadTasks = new List<Task<(int requestNumber, int statusCode, long elapsedMs, int contentLength)>>();
+            // Create 6 concurrent request tasks (should hit the 5 concurrent limit)
+            var requestTasks = new List<Task<(int requestNumber, int statusCode, long elapsedMs, string downloadUrl)>>();
 
             for (int i = 1; i <= 6; i++)
             {
                 int requestNumber = i; // Capture for closure
-                downloadTasks.Add(DownloadZipConcurrent(httpClient, objectIds, requestNumber));
+                requestTasks.Add(RequestZipConcurrent(httpClient, objectIds, requestNumber));
             }
 
             var start = DateTime.Now;
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            // Execute all downloads concurrently
-            var results = await Task.WhenAll(downloadTasks);
+            // Execute all requests concurrently
+            var results = await Task.WhenAll(requestTasks);
 
             watch.Stop();
 
@@ -501,16 +501,7 @@ namespace Com.Tradecloud1.SDK.Client
                     _ => "✗ ERROR"
                 };
 
-                if (result.statusCode == 200 && result.contentLength > 0)
-                {
-                    var bandwidthBps = result.elapsedMs > 0 ? (result.contentLength * 1000.0) / result.elapsedMs : 0;
-                    var bandwidthMiBps = bandwidthBps / (1024.0 * 1024.0);
-                    Console.WriteLine($"Request {result.requestNumber:D2}: {result.statusCode} {status} - {result.elapsedMs}ms - {result.contentLength:N0} bytes - {bandwidthBps:F0} bytes/sec ({bandwidthMiBps:F3} MiB/s)");
-                }
-                else
-                {
-                    Console.WriteLine($"Request {result.requestNumber:D2}: {result.statusCode} {status} - {result.elapsedMs}ms - {result.contentLength} bytes");
-                }
+                Console.WriteLine($"Request {result.requestNumber:D2}: {result.statusCode} {status} - {result.elapsedMs}ms");
 
                 switch (result.statusCode)
                 {
@@ -521,43 +512,40 @@ namespace Com.Tradecloud1.SDK.Client
             }
 
             Console.WriteLine($"\nSummary:");
-            Console.WriteLine($"- Successful downloads: {successCount}");
+            Console.WriteLine($"- Successful requests: {successCount}");
             Console.WriteLine($"- Rate limited (429): {rateLimitedCount}");
             Console.WriteLine($"- Other errors: {otherErrorCount}");
 
-            // Calculate bandwidth statistics for successful downloads
-            var successfulResults = results.Where(r => r.statusCode == 200 && r.contentLength > 0 && r.elapsedMs > 0).ToList();
+            // Calculate request time statistics for successful requests
+            var successfulResults = results.Where(r => r.statusCode == 200 && r.elapsedMs > 0).ToList();
             if (successfulResults.Any())
             {
-                var bandwidths = successfulResults.Select(r => (r.contentLength * 1000.0) / r.elapsedMs).ToList();
-                var avgBandwidth = bandwidths.Average();
-                var minBandwidth = bandwidths.Min();
-                var maxBandwidth = bandwidths.Max();
-                var avgBandwidthMiBps = avgBandwidth / (1024.0 * 1024.0);
-                var minBandwidthMiBps = minBandwidth / (1024.0 * 1024.0);
-                var maxBandwidthMiBps = maxBandwidth / (1024.0 * 1024.0);
+                var requestTimes = successfulResults.Select(r => r.elapsedMs).ToList();
+                var avgTime = requestTimes.Average();
+                var minTime = requestTimes.Min();
+                var maxTime = requestTimes.Max();
 
-                Console.WriteLine($"\nBandwidth Statistics (successful downloads):");
-                Console.WriteLine($"- Average: {avgBandwidth:F0} bytes/sec ({avgBandwidthMiBps:F3} MiB/s)");
-                Console.WriteLine($"- Minimum: {minBandwidth:F0} bytes/sec ({minBandwidthMiBps:F3} MiB/s)");
-                Console.WriteLine($"- Maximum: {maxBandwidth:F0} bytes/sec ({maxBandwidthMiBps:F3} MiB/s)");
+                Console.WriteLine($"\nRequest Time Statistics (successful requests):");
+                Console.WriteLine($"- Average: {avgTime:F0}ms");
+                Console.WriteLine($"- Minimum: {minTime}ms");
+                Console.WriteLine($"- Maximum: {maxTime}ms");
 
-                // Check for potential bandwidth limiting (significant variation could indicate throttling)
-                var bandwidthVariation = (maxBandwidth - minBandwidth) / avgBandwidth;
-                if (bandwidthVariation > 0.5)
+                // Check for potential performance issues (significant variation could indicate throttling)
+                var timeVariation = (maxTime - minTime) / avgTime;
+                if (timeVariation > 1.0)
                 {
-                    Console.WriteLine($"⚠ Significant bandwidth variation detected ({bandwidthVariation:P1}) - possible bandwidth limiting");
+                    Console.WriteLine($"⚠ Significant request time variation detected ({timeVariation:P1}) - possible rate limiting or performance issues");
                 }
                 else
                 {
-                    Console.WriteLine($"✓ Consistent bandwidth performance ({bandwidthVariation:P1} variation)");
+                    Console.WriteLine($"✓ Consistent request performance ({timeVariation:P1} variation)");
                 }
             }
 
             if (rateLimitedCount > 0)
             {
                 Console.WriteLine($"\n✓ Rate limiting is working - got {rateLimitedCount} 429 responses");
-                Console.WriteLine("✓ API correctly enforces 5 concurrent downloads per user limit");
+                Console.WriteLine("✓ API correctly enforces 5 concurrent requests per user limit");
             }
             else
             {
@@ -566,14 +554,11 @@ namespace Com.Tradecloud1.SDK.Client
             }
         }
 
-        static async Task<(int requestNumber, int statusCode, long elapsedMs, int contentLength)> DownloadZipConcurrent(
+        static async Task<(int requestNumber, int statusCode, long elapsedMs, string downloadUrl)> RequestZipConcurrent(
             HttpClient httpClient, List<string> objectIds, int requestNumber)
         {
             try
             {
-                var totalWatch = System.Diagnostics.Stopwatch.StartNew();
-
-                // Step 1: Get download URL using the refactored function
                 var fileName = $"concurrent-test-{requestNumber:D2}-{DateTime.Now:HHmmss}";
                 var zipRequest = new
                 {
@@ -584,38 +569,82 @@ namespace Com.Tradecloud1.SDK.Client
                 var json = JsonConvert.SerializeObject(zipRequest);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
+                var requestWatch = System.Diagnostics.Stopwatch.StartNew();
                 var response = await httpClient.PostAsync(downloadZipUrl, content);
+                requestWatch.Stop();
+
                 var statusCode = (int)response.StatusCode;
+                var elapsedMs = requestWatch.ElapsedMilliseconds;
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    totalWatch.Stop();
-                    return (requestNumber, statusCode, totalWatch.ElapsedMilliseconds, 0);
+                    return (requestNumber, statusCode, elapsedMs, string.Empty);
                 }
 
                 // Parse the response to get download URL
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var zipResponse = JsonConvert.DeserializeObject<CreateZipDownloadResponse>(responseJson);
 
-                // Step 2: Download the ZIP file using the provided URL
-                var downloadResponse = await httpClient.GetAsync(zipResponse.DownloadUrl);
-                totalWatch.Stop();
-
-                var downloadStatusCode = (int)downloadResponse.StatusCode;
-                int contentLength = 0;
-
-                if (downloadResponse.IsSuccessStatusCode)
-                {
-                    var zipBytes = await downloadResponse.Content.ReadAsByteArrayAsync();
-                    contentLength = zipBytes.Length;
-                }
-
-                return (requestNumber, downloadStatusCode, totalWatch.ElapsedMilliseconds, contentLength);
+                return (requestNumber, statusCode, elapsedMs, zipResponse.DownloadUrl);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Request {requestNumber} failed with exception: {ex.Message}");
-                return (requestNumber, 0, 0, 0); // 0 indicates exception
+                return (requestNumber, 0, 0, string.Empty); // 0 indicates exception
+            }
+        }
+
+        static string GetFileNameFromResponse(HttpResponseMessage response, string fallbackFileName)
+        {
+            try
+            {
+                // Try to get filename from Content-Disposition header
+                if (response.Content.Headers.ContentDisposition?.FileName != null)
+                {
+                    var fileName = response.Content.Headers.ContentDisposition.FileName;
+                    // Remove quotes if present
+                    fileName = fileName.Trim('"');
+
+                    Console.WriteLine($"Extracted filename from Content-Disposition header: {fileName}");
+                    return fileName;
+                }
+
+                // Try to get filename from Content-Disposition FileNameStar (RFC 5987)
+                if (response.Content.Headers.ContentDisposition?.FileNameStar != null)
+                {
+                    var fileName = response.Content.Headers.ContentDisposition.FileNameStar;
+                    Console.WriteLine($"Extracted filename from Content-Disposition FileNameStar: {fileName}");
+                    return fileName;
+                }
+
+                // Try to extract from the raw Content-Disposition header value
+                if (response.Content.Headers.TryGetValues("Content-Disposition", out var dispositionValues))
+                {
+                    var dispositionHeader = dispositionValues.FirstOrDefault();
+                    if (!string.IsNullOrEmpty(dispositionHeader))
+                    {
+                        // Look for filename= or filename*= in the header
+                        var fileNameMatch = System.Text.RegularExpressions.Regex.Match(
+                            dispositionHeader,
+                            @"filename[*]?=[""']?([^""';]+)[""']?",
+                            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+                        if (fileNameMatch.Success)
+                        {
+                            var fileName = fileNameMatch.Groups[1].Value;
+                            Console.WriteLine($"Extracted filename from Content-Disposition regex: {fileName}");
+                            return fileName;
+                        }
+                    }
+                }
+
+                Console.WriteLine($"No filename found in response headers, using fallback: {fallbackFileName}");
+                return fallbackFileName;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error extracting filename from response: {ex.Message}, using fallback: {fallbackFileName}");
+                return fallbackFileName;
             }
         }
     }
