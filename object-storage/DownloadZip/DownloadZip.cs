@@ -21,8 +21,8 @@ namespace Com.Tradecloud1.SDK.Client
         const string baseUrl = "https://tc-10397-download-zip-gcs-url.d.tradecloud1.com";
 
         // Authentication
-        const string username = "agrifac-integration@tradecloud1.com"; // Fill in mandatory username
-        const string password = "SecretSecret1"; // Fill in mandatory password
+        const string username = ""; // Fill in mandatory username
+        const string password = ""; // Fill in mandatory password
 
         // API URLs - constructed from baseUrl
         static readonly string authenticationUrl = $"{baseUrl}/v2/authentication/";
