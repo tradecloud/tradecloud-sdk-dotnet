@@ -4,3 +4,7 @@ obj
 scratch*
 *.log
 .env
+
+# Cached test documents
+cached-document-*.bin
+order-documents-*.zip

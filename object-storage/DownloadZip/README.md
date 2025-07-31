@@ -1,24 +1,66 @@
-# Download Documents ZIP
+# Download Documents ZIP - 500MB Scale Test
+
+This example demonstrates a comprehensive workflow for working with Tradecloud orders and documents with a 500MB scale test using a clever multiplication strategy:
+
+## ⚡ Quick Setup (Required First)
+
+**IMPORTANT:** Before running the test, you must generate the cached document template on Linux:
+
+```bash
+# Navigate to the DownloadZip directory
+cd object-storage/DownloadZip/
+
+# Generate a 10MB cached document (fast method using /dev/urandom)
+dd if=/dev/urandom of=cached-document-10mb.bin bs=1M count=10
+
+# Verify the file was created
+ls -lh cached-document-10mb.bin
+
+# Expected output: -rw-r--r-- 1 user user 10M [date] cached-document-10mb.bin
+```
+
+**Alternative methods:**
+
+```bash
+# Method 2: Using /dev/zero (creates file with zeros - faster)
+dd if=/dev/zero of=cached-document-10mb.bin bs=1M count=10
+
+# Method 3: Using fallocate (fastest, but may not work on all filesystems)
+fallocate -l 10M cached-document-10mb.bin
+
+# Method 4: Using head + /dev/urandom (more portable)
+head -c 10485760 /dev/urandom > cached-document-10mb.bin
+```
+
+## Test Overview
 
 This example demonstrates a comprehensive workflow for working with Tradecloud orders and documents:
 
-1. **Create Order** - Creates an order with 10 lines
-2. **Upload Documents** - Uploads 11 documents (1 header document + 10 line documents)
-3. **Attach Documents** - Attaches documents to the order (header document to order, line documents to respective lines)
-4. **Request ZIP Download URL** - Requests a download URL for all documents using the new ZIP API
-5. **Download ZIP File** - Downloads the ZIP file using the provided URL
-6. **Test Rate Limiting** - Tests 6 concurrent ZIP URL requests to verify 429 responses when exceeding the 5 concurrent limit per user
+1. **Create Order** - Creates an order with 9 lines
+2. **Load Cached Documents** - Loads pre-generated 10MB template (10 documents total)
+3. **Upload Documents** - Uploads 10 documents (1 header + 9 line documents, 10MB each)
+4. **Attach Documents** - Attaches documents to the order (header document to order, line documents to respective lines)
+5. **Multiply ObjectIds** - Creates ZIP request with each document included 5x (50 total entries)
+6. **Request ZIP Download URL** - Requests a download URL for 50 entries (~500MB) using the ZIP API
+7. **Download ZIP File** - Downloads the ~500MB ZIP file using the provided URL
+8. **Test Rate Limiting** - Tests 6 concurrent ZIP URL requests to verify 429 responses when exceeding the 5 concurrent limit per user
 
 ## Features
 
-- Creates a complete purchase order with 10 order lines
-- Generates sample documents for testing (text files with relevant content)
-- Uploads documents to Tradecloud object storage
+- **500MB Scale Test** - Tests with 10 documents (10MB each) multiplied 5x for exactly 500MB ZIP
+- **Clever Multiplication Strategy** - Upload only 100MB but include each document 5x in ZIP request
+- **High Performance** - Uses pre-generated cached document template for instant startup  
+- **Efficient Upload** - Only uploads ~100MB but tests exactly 500MB ZIP download
+- **Timeout Optimized** - Reduced from 1GB to 500MB to avoid gateway timeouts
+- Creates a complete purchase order with 9 order lines
+- **One document per line** - 1 header document + 1 document per order line (10MB each)
+- Uploads 10 documents (~100MB total) to Tradecloud object storage
 - Attaches documents to the appropriate order/lines
 - **Two-step ZIP download process** - First requests download URL, then downloads the ZIP file
 - **Smart filename extraction** - Extracts filename from Content-Disposition headers when available
+- **Duplicate filename handling** - Tests ZIP suffix handling with controlled duplicate filenames
 - Tests 6 concurrent URL requests to verify 5-concurrent-user rate limiting (429 responses)
-- **Bandwidth monitoring** - Records download time and calculates bandwidth in Mbps
+- **Bandwidth monitoring** - Records download time and calculates bandwidth in Mbps for large files
 - Comprehensive error handling and progress reporting
 
 ## Prerequisites

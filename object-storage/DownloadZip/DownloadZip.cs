@@ -37,7 +37,11 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud comprehensive order with documents and ZIP download example.");
+            Console.WriteLine("Tradecloud 500MB scale test: 10 documents (10MB each) with 5x ZIP multiplication.");
+            Console.WriteLine("📋 Test structure: 1 order with 9 lines, 1 header doc + 9 line docs (10MB each)");
+            Console.WriteLine("🔄 ZIP strategy: Each document included 5x in ZIP request = 50 total entries");
+            Console.WriteLine("💾 Performance: Uses cached 10MB template document (fast on subsequent runs)");
+            Console.WriteLine("📊 Upload: ~100MB, ZIP Download: ~500MB (5x multiplication effect)");
 
             using (HttpClient httpClient = new HttpClient())
             {
@@ -56,9 +60,9 @@ namespace Com.Tradecloud1.SDK.Client
 
                 try
                 {
-                    // Step 1: Create and send order with 10 lines
-                    Console.WriteLine("\n=== Step 1: Creating order with 10 lines ===");
-                    var purchaseOrder = await CreateOrderWith10Lines();
+                    // Step 1: Create and send order with 9 lines
+                    Console.WriteLine("\n=== Step 1: Creating order with 9 lines ===");
+                    var purchaseOrder = await CreateOrderWith9Lines();
                     var orderResponse = await SendOrder(httpClient, purchaseOrder);
 
                     // Step 2: Create sample documents
@@ -73,17 +77,27 @@ namespace Com.Tradecloud1.SDK.Client
                     Console.WriteLine("\n=== Step 4: Attaching documents to order ===");
                     await AttachDocumentsToOrder(httpClient, purchaseOrder.Order.PurchaseOrderNumber, uploadedDocuments);
 
-                    // Step 5: Request ZIP download URL
-                    Console.WriteLine("\n=== Step 5: Requesting ZIP download URL ===");
-                    var downloadUrl = await RequestZipDownloadUrl(httpClient, uploadedDocuments.Select(d => d.ObjectId).ToList());
+                    // Step 5: Request ZIP download URL with 5x multiplication
+                    Console.WriteLine("\n=== Step 5: Requesting ZIP download URL with 5x multiplication ===");
+                    var baseObjectIds = uploadedDocuments.Select(d => d.ObjectId).ToList();
+                    var multipliedObjectIds = new List<string>();
+
+                    // Include each objectId 5 times to create 55 total entries
+                    for (int i = 1; i <= 5; i++)
+                    {
+                        multipliedObjectIds.AddRange(baseObjectIds);
+                    }
+
+                    Console.WriteLine($"Creating ZIP with {baseObjectIds.Count} unique documents × 5 copies = {multipliedObjectIds.Count} total entries");
+                    var downloadUrl = await RequestZipDownloadUrl(httpClient, multipliedObjectIds);
 
                     // Step 6: Download ZIP file using the URL
                     Console.WriteLine("\n=== Step 6: Downloading ZIP file from URL ===");
                     await DownloadZipFile(httpClient, downloadUrl, $"order-documents-{DateTime.Now:yyyyMMdd-HHmmss}.zip");
 
                     // Step 7: Test concurrent requests (rate limiting test)
-                    //Console.WriteLine("\n=== Step 7: Testing concurrent ZIP requests (rate limiting) ===");
-                    //await TestConcurrentZipRequests(httpClient, uploadedDocuments.Select(d => d.ObjectId).ToList());
+                    Console.WriteLine("\n=== Step 7: Testing concurrent ZIP requests (rate limiting) ===");
+                    await TestConcurrentZipRequests(httpClient, multipliedObjectIds);
 
                     Console.WriteLine("\n=== Process completed successfully! ===");
                 }
@@ -95,7 +109,7 @@ namespace Com.Tradecloud1.SDK.Client
             }
         }
 
-        static Task<TradecloudPurchaseOrderRequestModel> CreateOrderWith10Lines()
+        static Task<TradecloudPurchaseOrderRequestModel> CreateOrderWith9Lines()
         {
             string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
             string purchaseOrderNumber = $"PO-ZIP-TEST-{timestamp}";
@@ -107,10 +121,10 @@ namespace Com.Tradecloud1.SDK.Client
                 supplierAccountNumber: supplierAccountNumber,
                 buyerEmail: "buyer@example.com",
                 supplierEmail: "supplier@example.com",
-                description: "Test Order with 10 lines for ZIP download");
+                description: "Test Order with 9 lines and 10 documents total");
 
-            // Add 10 order lines
-            for (int i = 1; i <= 10; i++)
+            // Add 9 order lines
+            for (int i = 1; i <= 9; i++)
             {
                 string position = (i * 10).ToString("D4"); // 0010, 0020, 0030, etc.
 
@@ -118,7 +132,7 @@ namespace Com.Tradecloud1.SDK.Client
                     purchaseOrder,
                     position: position,
                     itemNumber: $"ITEM-{i:D3}",
-                    itemName: $"Test Item {i}",
+                    itemName: $"Test Item {i} - 10MB Document",
                     quantity: i * 2, // 2, 4, 6, 8, etc.
                     deliveryDate: DateTime.Now.AddDays(14 + i).ToString(OrderModelFactory.Defaults.DateFormat),
                     unitOfMeasureIso: "PCE",
@@ -131,112 +145,82 @@ namespace Com.Tradecloud1.SDK.Client
             return Task.FromResult(purchaseOrder);
         }
 
-        static List<(string fileName, byte[] content, string description, bool isHeaderDocument)> CreateSampleDocuments()
+        static List<(string fileName, byte[] content, string description, bool isHeaderDocument, int lineNumber)> CreateSampleDocuments()
         {
-            var documents = new List<(string fileName, byte[] content, string description, bool isHeaderDocument)>();
+            var documents = new List<(string fileName, byte[] content, string description, bool isHeaderDocument, int lineNumber)>();
 
-            Console.WriteLine("Creating large test documents to test bandwidth limiting...");
+            Console.WriteLine("Creating 10 documents total: 1 header document + 9 line documents (10MB each)");
+            Console.WriteLine("Using cached document template for performance...");
 
-            // Header document - make it large (500 KB)
-            var headerContent = CreateLargeDocument("ORDER HEADER DOCUMENT", 500 * 1024); // 500 KB
-            documents.Add(("order-header.txt", headerContent, "Order Header Document", true));
-            Console.WriteLine($"Created header document: {headerContent.Length:N0} bytes");
+            // Load pre-generated cached document content
+            var cachedContent = GetCachedDocument();
+            var contentSizeMB = cachedContent.Length / (1024.0 * 1024.0);
+            Console.WriteLine($"Using cached document: {cachedContent.Length:N0} bytes ({contentSizeMB:F1} MB)");
 
-            // Line documents (one per line) - each 300-800 KB to test bandwidth limiting
-            for (int i = 1; i <= 10; i++)
+            // Create 1 header document using cached content
+            Console.WriteLine("Creating 1 header document...");
+            var headerFileName = "order-header-10mb.txt";
+            documents.Add((headerFileName, cachedContent, "Order Header Document - 10MB", true, 0));
+            Console.WriteLine($"✓ Created header document using cached content");
+
+            // Create 9 line documents (1 per line) using cached content
+            Console.WriteLine("Creating 9 line documents (1 per line)...");
+
+            for (int lineNum = 1; lineNum <= 9; lineNum++)
             {
-                var baseSizeKB = 300 + (i * 50); // 350KB, 400KB, 450KB, etc. up to 800KB
-                var lineContent = CreateLargeDocument($"LINE {i:D2} DOCUMENT", baseSizeKB * 1024);
-
-                // Create duplicate file names for some documents to test ZIP suffix handling
-                string fileName;
-                if (i <= 3)
-                {
-                    // Lines 1-3: Use "specification.txt" (duplicate names)
-                    fileName = "specification.txt";
-                }
-                else if (i <= 6)
-                {
-                    // Lines 4-6: Use "manual.pdf" (duplicate names)  
-                    fileName = "manual.pdf";
-                }
-                else if (i <= 8)
-                {
-                    // Lines 7-8: Use "drawing.dwg" (duplicate names)
-                    fileName = "drawing.dwg";
-                }
-                else
-                {
-                    // Lines 9-10: Unique names
-                    fileName = $"line-{i:D2}-spec.txt";
-                }
-
-                documents.Add((fileName, lineContent, $"Line {i} Specifications", false));
-                Console.WriteLine($"Created line {i} document: {lineContent.Length:N0} bytes");
+                var fileName = $"line-{lineNum:D2}-specification-10mb.txt";
+                documents.Add((fileName, cachedContent, $"Line {lineNum} Specification - 10MB", false, lineNum));
+                Console.WriteLine($"  Created document for line {lineNum}/9");
             }
 
             var totalSize = documents.Sum(d => d.content.Length);
-            Console.WriteLine($"Created {documents.Count} sample documents (1 header + 10 line documents)");
-            Console.WriteLine($"Total size: {totalSize:N0} bytes ({totalSize / 1024.0:F1} KB, {totalSize / (1024.0 * 1024.0):F1} MB)");
-            Console.WriteLine("Duplicate file names created:");
-            Console.WriteLine("- specification.txt (lines 1-3)");
-            Console.WriteLine("- manual.pdf (lines 4-6)");
-            Console.WriteLine("- drawing.dwg (lines 7-8)");
-            Console.WriteLine("- Unique names (lines 9-10)");
+
+            Console.WriteLine($"\n✓ Successfully created {documents.Count} documents using cached template:");
+            Console.WriteLine($"   - 1 header document (10MB)");
+            Console.WriteLine($"   - 9 line documents (10MB each)");
+            Console.WriteLine($"📊 Upload size: {totalSize:N0} bytes ({totalSize / (1024.0 * 1024.0):F0} MB)");
+            Console.WriteLine($"🔄 ZIP strategy: Each document will be included 5x = 50 total entries");
+            Console.WriteLine($"📥 Expected ZIP download: ~{(totalSize * 5) / (1024.0 * 1024.0):F0} MB");
+            Console.WriteLine($"⚡ Performance: Instant creation using cached 10MB template");
+
             return documents;
         }
 
-        static byte[] CreateLargeDocument(string baseText, int targetSizeBytes)
+        static byte[] GetCachedDocument()
         {
-            var content = new List<string>();
-            content.Add($"{baseText}\nCreated: {DateTime.Now}\n");
-            content.Add("=".PadRight(80, '=') + "\n");
+            const string cacheFileName = "cached-document-10mb.bin";
+            const int expectedSizeBytes = 10 * 1024 * 1024; // 10 MB
 
-            // Add structured content to reach target size
-            var random = new Random(42); // Fixed seed for consistent results
-            var currentSize = 0;
-            var lineCount = 0;
-
-            while (currentSize < targetSizeBytes)
+            try
             {
-                lineCount++;
-                var lineText = $"Line {lineCount:D6}: ";
-
-                // Add different types of content
-                switch (lineCount % 5)
+                if (!File.Exists(cacheFileName))
                 {
-                    case 0:
-                        lineText += $"Technical specification: Item weight {random.Next(1, 100)}kg, dimensions {random.Next(10, 200)}x{random.Next(10, 200)}x{random.Next(10, 200)}mm";
-                        break;
-                    case 1:
-                        lineText += $"Quality control data: Batch {Guid.NewGuid()}, tested on {DateTime.Now.AddDays(-random.Next(1, 30)):yyyy-MM-dd}, result: PASS";
-                        break;
-                    case 2:
-                        lineText += $"Manufacturing details: Process temperature {random.Next(200, 500)}°C, pressure {random.Next(1, 10)} bar, duration {random.Next(30, 180)} minutes";
-                        break;
-                    case 3:
-                        lineText += $"Supply chain info: Supplier code SUP-{random.Next(1000, 9999)}, delivery date {DateTime.Now.AddDays(random.Next(1, 60)):yyyy-MM-dd}, priority level {random.Next(1, 5)}";
-                        break;
-                    case 4:
-                        lineText += $"Compliance data: Certificate {Guid.NewGuid()}, valid until {DateTime.Now.AddYears(1):yyyy-MM-dd}, standard ISO-{random.Next(9000, 9999)}";
-                        break;
+                    Console.WriteLine($"❌ Cached document not found: {cacheFileName}");
+                    Console.WriteLine("Please run the setup command to generate the cached document first!");
+                    throw new FileNotFoundException($"Required cached document not found: {cacheFileName}");
                 }
 
-                // Add some random padding to vary line lengths
-                var padding = new string('*', random.Next(0, 50));
-                lineText += $" {padding}\n";
+                var cachedContent = File.ReadAllBytes(cacheFileName);
+                var sizeMB = cachedContent.Length / (1024.0 * 1024.0);
 
-                content.Add(lineText);
-                currentSize = Encoding.UTF8.GetByteCount(string.Join("", content));
+                Console.WriteLine($"✓ Loaded cached document: {cacheFileName} ({cachedContent.Length:N0} bytes, {sizeMB:F1} MB)");
+
+                if (cachedContent.Length < expectedSizeBytes * 0.9) // Allow 10% tolerance
+                {
+                    Console.WriteLine($"⚠ Warning: Cached document is smaller than expected ({sizeMB:F1} MB vs 10.0 MB)");
+                }
+
+                return cachedContent;
             }
-
-            content.Add("\n" + "=".PadRight(80, '=') + "\n");
-            content.Add($"Document end. Total lines: {lineCount}, Final size: {currentSize:N0} bytes\n");
-
-            return Encoding.UTF8.GetBytes(string.Join("", content));
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error loading cached document: {ex.Message}");
+                Console.WriteLine("Please ensure the cached document is properly generated using the setup command.");
+                throw;
+            }
         }
 
-        static async Task<List<UploadedDocument>> UploadDocuments(HttpClient httpClient, List<(string fileName, byte[] content, string description, bool isHeaderDocument)> documents)
+        static async Task<List<UploadedDocument>> UploadDocuments(HttpClient httpClient, List<(string fileName, byte[] content, string description, bool isHeaderDocument, int lineNumber)> documents)
         {
             var uploadedDocuments = new List<UploadedDocument>();
 
@@ -271,7 +255,8 @@ namespace Com.Tradecloud1.SDK.Client
                             ObjectId = objectId,
                             FileName = doc.fileName,
                             Description = doc.description,
-                            IsHeaderDocument = doc.isHeaderDocument
+                            IsHeaderDocument = doc.isHeaderDocument,
+                            LineNumber = doc.lineNumber
                         });
 
                         Console.WriteLine($"Successfully uploaded {doc.fileName} with objectId: {objectId}");
@@ -331,6 +316,11 @@ namespace Com.Tradecloud1.SDK.Client
             var headerDocuments = uploadedDocuments.Where(d => d.IsHeaderDocument).ToList();
             var lineDocuments = uploadedDocuments.Where(d => !d.IsHeaderDocument).ToList();
 
+            Console.WriteLine($"Preparing to attach {headerDocuments.Count} header documents and {lineDocuments.Count} line documents");
+
+            // Group line documents by LineNumber
+            var documentsByLine = lineDocuments.GroupBy(d => d.LineNumber).OrderBy(g => g.Key).ToList();
+
             var attachRequest = new
             {
                 order = new
@@ -346,23 +336,22 @@ namespace Com.Tradecloud1.SDK.Client
                         description = d.Description
                     }).ToArray()
                 },
-                lines = lineDocuments.Select((doc, index) => new
+                lines = documentsByLine.Select(lineGroup => new
                 {
-                    position = ((index + 1) * 10).ToString("D4"), // 0010, 0020, 0030, etc.
-                    documents = new[]
+                    position = (lineGroup.Key * 10).ToString("D4"), // 0010, 0020, 0030, etc.
+                    documents = lineGroup.Select(doc => new
                     {
-                        new
-                        {
-                            code = Guid.NewGuid().ToString(),
-                            revision = "1",
-                            name = doc.FileName,
-                            objectId = doc.ObjectId,
-                            type = "General",
-                            description = doc.Description
-                        }
-                    }
+                        code = Guid.NewGuid().ToString(),
+                        revision = "1",
+                        name = doc.FileName,
+                        objectId = doc.ObjectId,
+                        type = "General",
+                        description = doc.Description
+                    }).ToArray()
                 }).ToArray()
             };
+
+            Console.WriteLine($"Organized documents: {headerDocuments.Count} header + {documentsByLine.Count} lines with multiple documents each");
 
             var json = JsonConvert.SerializeObject(attachRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -401,7 +390,7 @@ namespace Com.Tradecloud1.SDK.Client
             var json = JsonConvert.SerializeObject(zipRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            Console.WriteLine($"Requesting ZIP download URL for {objectIds.Count} documents with filename: {fileName}");
+            Console.WriteLine($"Requesting ZIP download URL for {objectIds.Count} documents with filename: {fileName} containing {objectIds.Count} documents");
             var requestWatch = System.Diagnostics.Stopwatch.StartNew();
             var response = await httpClient.PostAsync(downloadZipUrl, content);
             requestWatch.Stop();
@@ -656,6 +645,7 @@ namespace Com.Tradecloud1.SDK.Client
         public string FileName { get; set; }
         public string Description { get; set; }
         public bool IsHeaderDocument { get; set; }
+        public int LineNumber { get; set; } // 0 for header documents, 1-10 for line documents
     }
 
     public class CreateZipDownloadResponse
