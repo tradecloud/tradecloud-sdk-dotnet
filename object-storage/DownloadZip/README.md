@@ -53,7 +53,7 @@ This example demonstrates a comprehensive workflow for working with Tradecloud o
 - **Efficient Upload** - Only uploads ~100MB but tests exactly 500MB ZIP download
 - **Timeout Optimized** - Reduced from 1GB to 500MB to avoid gateway timeouts
 - Creates a complete purchase order with 9 order lines
-- **One document per line** - 1 header document + 1 document per order line (10MB each)
+- **One document per line** - 1 header document + 9 line documents (1 per order line, 10MB each)
 - Uploads 10 documents (~100MB total) to Tradecloud object storage
 - Attaches documents to the appropriate order/lines
 - **Two-step ZIP download process** - First requests download URL, then downloads the ZIP file
@@ -140,8 +140,8 @@ The example creates the following documents:
 The created order includes:
 
 - **Order Number**: `PO-ZIP-TEST-{timestamp}`
-- **Lines**: 10 lines with positions 0010, 0020, 0030, ..., 0100
-- **Items**: TEST-ITEM-001 through TEST-ITEM-010
+- **Lines**: 9 lines with positions 0010, 0020, 0030, ..., 0090
+- **Items**: TEST-ITEM-001 through TEST-ITEM-009
 - **Quantities**: Progressive quantities (2, 4, 6, 8, ...)
 - **Prices**: Progressive prices (11.50, 12.50, 13.50, ...)
 
@@ -150,7 +150,7 @@ The created order includes:
 The example will:
 
 1. Create and send the order
-2. Upload 11 documents and report their object IDs
+2. Upload 10 documents and report their object IDs
 3. Attach documents to the order/lines
 4. Request a ZIP download URL for all documents
 5. Download a ZIP file using the provided URL (filename extracted from response headers)
@@ -205,66 +205,69 @@ dotnet run
 ## Sample Output
 
 ```text
-Tradecloud comprehensive order with documents and ZIP download example.
+Tradecloud 500MB scale test: 10 documents (10MB each) with 5x ZIP multiplication.
 
-=== Step 1: Creating order with 10 lines ===
-Created order PO-ZIP-TEST-20241225123045 with 10 lines
+=== Step 1: Creating order with 9 lines ===
+Created order PO-ZIP-TEST-20241225123045 with 9 lines
 SendOrder: status=200, elapsed=1250ms
 Order PO-ZIP-TEST-20241225123045 sent successfully
 
 === Step 2: Creating sample documents ===
-Creating large test documents...
-Created header document: 512,000 bytes
-Created line 1 document: 358,400 bytes
-Created line 2 document: 409,600 bytes
-Created line 3 document: 460,800 bytes
-Created line 4 document: 512,000 bytes
-Created line 5 document: 563,200 bytes
-Created line 6 document: 614,400 bytes
-Created line 7 document: 716,800 bytes
-Created line 8 document: 768,000 bytes
-Created line 9 document: 819,200 bytes
-Created line 10 document: 819,200 bytes
-Created 11 sample documents (1 header + 10 line documents)
-Total size: 6,553,600 bytes (6400.0 KB, 6.3 MB)
-Duplicate file names created:
-- specification.txt (lines 1-3)
-- manual.pdf (lines 4-6)
-- drawing.dwg (lines 7-8)
-- Unique names (lines 9-10)
+Creating 10 documents total: 1 header document + 9 line documents (10MB each)
+Using cached document template for performance...
+✓ Loaded cached document: cached-document-10mb.bin (10,485,760 bytes, 10.0 MB)
+Creating 1 header document...
+✓ Created header document using cached content
+Creating 9 line documents (1 per line)...
+  Created document for line 1/9
+  Created document for line 2/9
+  Created document for line 3/9
+  Created document for line 4/9
+  Created document for line 5/9
+  Created document for line 6/9
+  Created document for line 7/9
+  Created document for line 8/9
+  Created document for line 9/9
+
+✓ Successfully created 10 documents using cached template:
+   - 1 header document (10MB)
+   - 9 line documents (10MB each)
+📊 Upload size: 104,857,600 bytes (100 MB)
+🔄 ZIP strategy: Each document will be included 5x = 50 total entries
+📥 Expected ZIP download: ~500 MB
+⚡ Performance: Instant creation using cached 10MB template
 
 === Step 3: Uploading documents ===
-Uploading order-header.txt...
-Upload order-header.txt: status=200, elapsed=450ms
-Successfully uploaded order-header.txt with objectId: a1b2c3d4-...
+Uploading order-header-10mb.txt...
+Upload order-header-10mb.txt: status=200, elapsed=2150ms
+Successfully uploaded order-header-10mb.txt with objectId: a1b2c3d4-...
+Uploading line-01-specification-10mb.txt...
+Upload line-01-specification-10mb.txt: status=200, elapsed=2200ms
+Successfully uploaded line-01-specification-10mb.txt with objectId: b2c3d4e5-...
 ...
+Successfully uploaded 10 out of 10 documents
 
 === Step 4: Attaching documents to order ===
-Attaching 11 documents to order PO-ZIP-TEST-20241225123045...
+Preparing to attach 1 header documents and 9 line documents
+Organized documents: 1 header + 9 lines with multiple documents each
+Attaching 10 documents to order PO-ZIP-TEST-20241225123045...
 AttachDocuments: status=200, elapsed=800ms
-Successfully attached 11 documents to order PO-ZIP-TEST-20241225123045
+Successfully attached 10 documents to order PO-ZIP-TEST-20241225123045
 
-=== Step 5: Requesting ZIP download URL ===
-Requesting ZIP download URL for 11 documents with filename: order-documents-20241225-123045.zip
+=== Step 5: Requesting ZIP download URL with 5x multiplication ===
+Creating ZIP with 10 unique documents × 5 copies = 50 total entries
+Requesting ZIP download URL for 50 documents with filename: order-documents-20241225-123045.zip containing 50 documents
 ZIP URL request: status=200, request time=150ms
 Received download URL: https://storage.googleapis.com/bucket/file.zip?signature=...
 
 === Step 6: Downloading ZIP file from URL ===
 Downloading ZIP file from provided URL (will extract actual filename from response, fallback: order-documents-20241225-123045.zip)
-ZIP download: status=200, download time=2500ms
+ZIP download: status=200, download time=25000ms
 Extracted filename from Content-Disposition header: order-documents-20241225-123045.zip
 Successfully downloaded ZIP file: order-documents-20241225-123045.zip
-File size: 4,234,567 bytes (4135.32 KB, 4.04 MB)
-Download time: 2500ms
-Download bandwidth: 1,693,827 bytes/sec (13.55 Mbps)
+File size: 524,288,000 bytes (512000.00 KB, 500.00 MB)
+Download time: 25000ms
+Download bandwidth: 20,971,520 bytes/sec (167.77 Mbps)
 
 === Process completed successfully! ===
 ```
-
-## Key Changes in This Version
-
-- **Two-step ZIP download process**: The API now returns a download URL instead of directly streaming the file
-- **Smart filename extraction**: Automatically extracts the actual filename from Content-Disposition headers
-- **Separate timing measurements**: Request time and download time are measured separately
-- **Improved bandwidth calculations**: Now displays bandwidth in Mbps for better readability
-- **Enhanced error handling**: Better error messages and fallback filename handling
