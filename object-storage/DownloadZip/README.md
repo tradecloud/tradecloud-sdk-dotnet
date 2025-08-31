@@ -77,10 +77,9 @@ In the source code, update the following constants:
 
 ```csharp
 // Base URL - choose your environment
-// const string baseUrl = "https://branch.d.tradecloud1.com"; // Development
-// const string baseUrl = "https://api.test.tradecloud1.com"; // Test
+const string baseUrl = "https://tc-10397-download-zip-gcs-url.d.tradecloud1.com"; // Development
+const string baseUrl = "https://api.test.tradecloud1.com"; // Test
 const string baseUrl = "https://api.accp.tradecloud1.com"; // Acceptance
-
 
 // Authentication
 const string username = "your-username";

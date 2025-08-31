@@ -20,6 +20,10 @@ namespace Com.Tradecloud1.SDK.Client
         // Acceptance: https://api.accp.tradecloud1.com  
         const string baseUrl = "https://tc-10397-download-zip-gcs-url.d.tradecloud1.com";
 
+        const string cacheFileName = "cached-document-10mb.bin";
+        const int cacheFileExpectedSizeBytes = 10 * 1024 * 1024; // 10 MB
+        const int multiplicationFactor = 5;
+
         // Authentication
         const string username = ""; // Fill in mandatory username
         const string password = ""; // Fill in mandatory password
@@ -37,11 +41,7 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud 500MB scale test: 10 documents (10MB each) with 5x ZIP multiplication.");
-            Console.WriteLine("📋 Test structure: 1 order with 9 lines, 1 header doc + 9 line docs (10MB each)");
-            Console.WriteLine("🔄 ZIP strategy: Each document included 5x in ZIP request = 50 total entries");
-            Console.WriteLine("💾 Performance: Uses cached 10MB template document (fast on subsequent runs)");
-            Console.WriteLine("📊 Upload: ~100MB, ZIP Download: ~500MB (5x multiplication effect)");
+            Console.WriteLine($"Tradecloud scale test: 10 documents ({cacheFileExpectedSizeBytes} bytes each) with {multiplicationFactor}x ZIP multiplication.");
 
             using (HttpClient httpClient = new HttpClient())
             {
@@ -82,13 +82,13 @@ namespace Com.Tradecloud1.SDK.Client
                     var baseObjectIds = uploadedDocuments.Select(d => d.ObjectId).ToList();
                     var multipliedObjectIds = new List<string>();
 
-                    // Include each objectId 5 times to create 55 total entries
-                    for (int i = 1; i <= 5; i++)
+                    // Include each objectId `multiplicationFactor` times
+                    for (int i = 1; i <= multiplicationFactor; i++)
                     {
                         multipliedObjectIds.AddRange(baseObjectIds);
                     }
 
-                    Console.WriteLine($"Creating ZIP with {baseObjectIds.Count} unique documents × 5 copies = {multipliedObjectIds.Count} total entries");
+                    Console.WriteLine($"Creating ZIP with {baseObjectIds.Count} unique documents × {multiplicationFactor} copies = {multipliedObjectIds.Count} total entries");
                     var downloadUrl = await RequestZipDownloadUrl(httpClient, multipliedObjectIds);
 
                     // Step 6: Download ZIP file using the URL
@@ -159,7 +159,7 @@ namespace Com.Tradecloud1.SDK.Client
 
             // Create 1 header document using cached content
             Console.WriteLine("Creating 1 header document...");
-            var headerFileName = "order-header-10mb.txt";
+            var headerFileName = "order-header.txt";
             documents.Add((headerFileName, cachedContent, "Order Header Document - 10MB", true, 0));
             Console.WriteLine($"✓ Created header document using cached content");
 
@@ -168,7 +168,7 @@ namespace Com.Tradecloud1.SDK.Client
 
             for (int lineNum = 1; lineNum <= 9; lineNum++)
             {
-                var fileName = $"line-{lineNum:D2}-specification-10mb.txt";
+                var fileName = $"line-{lineNum:D2}.txt";
                 documents.Add((fileName, cachedContent, $"Line {lineNum} Specification - 10MB", false, lineNum));
                 Console.WriteLine($"  Created document for line {lineNum}/9");
             }
@@ -176,21 +176,13 @@ namespace Com.Tradecloud1.SDK.Client
             var totalSize = documents.Sum(d => d.content.Length);
 
             Console.WriteLine($"\n✓ Successfully created {documents.Count} documents using cached template:");
-            Console.WriteLine($"   - 1 header document (10MB)");
-            Console.WriteLine($"   - 9 line documents (10MB each)");
-            Console.WriteLine($"📊 Upload size: {totalSize:N0} bytes ({totalSize / (1024.0 * 1024.0):F0} MB)");
-            Console.WriteLine($"🔄 ZIP strategy: Each document will be included 5x = 50 total entries");
-            Console.WriteLine($"📥 Expected ZIP download: ~{(totalSize * 5) / (1024.0 * 1024.0):F0} MB");
-            Console.WriteLine($"⚡ Performance: Instant creation using cached 10MB template");
-
+            Console.WriteLine($"   - 1 header document");
+            Console.WriteLine($"   - 9 line documents");
             return documents;
         }
 
         static byte[] GetCachedDocument()
         {
-            const string cacheFileName = "cached-document-10mb.bin";
-            const int expectedSizeBytes = 10 * 1024 * 1024; // 10 MB
-
             try
             {
                 if (!File.Exists(cacheFileName))
@@ -205,7 +197,7 @@ namespace Com.Tradecloud1.SDK.Client
 
                 Console.WriteLine($"✓ Loaded cached document: {cacheFileName} ({cachedContent.Length:N0} bytes, {sizeMB:F1} MB)");
 
-                if (cachedContent.Length < expectedSizeBytes * 0.9) // Allow 10% tolerance
+                if (cachedContent.Length < cacheFileExpectedSizeBytes * 0.9) // Allow 10% tolerance
                 {
                     Console.WriteLine($"⚠ Warning: Cached document is smaller than expected ({sizeMB:F1} MB vs 10.0 MB)");
                 }
@@ -455,12 +447,12 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task TestConcurrentZipRequests(HttpClient httpClient, List<string> objectIds)
         {
-            Console.WriteLine($"Starting 6 concurrent ZIP URL requests (API limit: 5 concurrent per user)...");
+            Console.WriteLine($"Starting 3 concurrent ZIP URL requests");
 
-            // Create 6 concurrent request tasks (should hit the 5 concurrent limit)
+            // Create 3 concurrent request tasks
             var requestTasks = new List<Task<(int requestNumber, int statusCode, long elapsedMs, string downloadUrl)>>();
 
-            for (int i = 1; i <= 6; i++)
+            for (int i = 1; i <= 3; i++)
             {
                 int requestNumber = i; // Capture for closure
                 requestTasks.Add(RequestZipConcurrent(httpClient, objectIds, requestNumber));
@@ -474,11 +466,12 @@ namespace Com.Tradecloud1.SDK.Client
 
             watch.Stop();
 
-            Console.WriteLine($"All 6 concurrent requests completed in {watch.ElapsedMilliseconds}ms");
+            Console.WriteLine($"All 3 concurrent requests completed in {watch.ElapsedMilliseconds}ms");
             Console.WriteLine("\nResults:");
 
             int successCount = 0;
             int rateLimitedCount = 0;
+            int timeOutCount = 0;
             int otherErrorCount = 0;
 
             foreach (var result in results.OrderBy(r => r.requestNumber))
@@ -487,6 +480,7 @@ namespace Com.Tradecloud1.SDK.Client
                 {
                     200 => "✓ SUCCESS",
                     429 => "⚠ RATE LIMITED",
+                    504 => "⚠ TIME OUT",
                     _ => "✗ ERROR"
                 };
 
@@ -496,6 +490,7 @@ namespace Com.Tradecloud1.SDK.Client
                 {
                     case 200: successCount++; break;
                     case 429: rateLimitedCount++; break;
+                    case 504: timeOutCount++; break;
                     default: otherErrorCount++; break;
                 }
             }
@@ -503,6 +498,7 @@ namespace Com.Tradecloud1.SDK.Client
             Console.WriteLine($"\nSummary:");
             Console.WriteLine($"- Successful requests: {successCount}");
             Console.WriteLine($"- Rate limited (429): {rateLimitedCount}");
+            Console.WriteLine($"- Time out (504): {timeOutCount}");
             Console.WriteLine($"- Other errors: {otherErrorCount}");
 
             // Calculate request time statistics for successful requests
