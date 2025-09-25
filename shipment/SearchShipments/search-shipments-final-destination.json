@@ -1,0 +1,11 @@
+{
+  "filters": {
+    "locations": {
+      "finalDestinations": {
+        "tcId": ["-1013234813"]
+      }
+    }
+  },
+  "offset": 0,
+  "limit": 10
+}

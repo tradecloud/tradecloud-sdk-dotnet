@@ -3,13 +3,12 @@ using System.IO;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class SearchUsers
+    class SearchShipmentLocations
     {
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
@@ -19,43 +18,41 @@ namespace Com.Tradecloud1.SDK.Client
         const string password = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/shipment/specs.yaml#/shipment/searchShipmentsRoute
-        const string searchShipmentsUrl = "https://api.accp.tradecloud1.com/v2/shipment/search";
-        static async Task Main(string[] args)
-        {
-            Console.WriteLine("Tradecloud search shipments example.");
+        const string locationSearchUrl = "https://api.accp.tradecloud1.com/v2/shipment/locations/search";
 
-            var jsonContent = File.ReadAllText(@"search-shipment.json");
+        static async Task Main()
+        {
+            Console.WriteLine("Tradecloud search shipment locations search example.");
 
             HttpClient httpClient = new HttpClient();
             var authenticationClient = new Authentication(httpClient, authenticationUrl);
             var (accessToken, _) = await authenticationClient.Login(username, password);
-            await SearchShipments(accessToken);
+            await SearchShipmentLocations(accessToken);
 
-            async Task SearchShipments(string accessToken)
+            async Task SearchShipmentLocations(string accessToken)
             {
                 httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+                var jsonContent = File.ReadAllText(@"search.json");
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                 var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                var response = await httpClient.PostAsync(searchShipmentsUrl, content);
+                var response = await httpClient.PostAsync(locationSearchUrl, content);
                 watch.Stop();
 
                 var statusCode = (int)response.StatusCode;
-                Console.WriteLine("SearchShipments start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
-                if (statusCode == 400)
-                    Console.WriteLine("SearchShipments request body=" + jsonContent);
-
+                Console.WriteLine("SearchShipmentLocations start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                 string responseString = await response.Content.ReadAsStringAsync();
                 if (statusCode == 200)
                 {
                     // Write the response to a JSON file
-                    string fileName = "shipments.json";
+                    string fileName = "shipment_locations.json";
                     File.WriteAllText(fileName, JValue.Parse(responseString).ToString(Formatting.Indented));
-                    Console.WriteLine($"SearchShipments response written to {fileName}");
+                    Console.WriteLine($"SearchShipmentLocations response written to {fileName}");
                 }
                 else
-                    Console.WriteLine("SearchShipments response body=" + responseString);
+                    Console.WriteLine("SearchShipmentLocations response body=" + responseString);
             }
         }
     }

@@ -8,7 +8,7 @@ In the source code:
 
 - set username on Tradecloud
 - set password on Tradecloud
-- set companyId or other filters
+- set companyId or other filters in `search-shipments.json` or `minimal-search-shipments.json`.
 
 ## Run
 
