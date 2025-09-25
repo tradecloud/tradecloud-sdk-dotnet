@@ -19,3 +19,13 @@ cd tradecloud-sdk-dotnet
 git fetch
 git pull
 ```
+
+## To refresh the solution file
+
+```bash
+dotnet sln add (ls -r **/*.csproj)
+```
+
+```zsh
+dotnet sln add $(ls -r **/*.csproj)
+```
