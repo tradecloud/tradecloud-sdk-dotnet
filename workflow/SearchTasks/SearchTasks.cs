@@ -19,7 +19,7 @@ namespace Com.Tradecloud1.SDK.Client
         const string workflowSearchUrl = "https://api.accp.tradecloud1.com/v2/workflow/search";
 
         const string queryTemplateFile = "query-template.json";
-        const int limit = 10;
+        const int limit = 100;
 
         static async Task Main(string[] args)
         {
@@ -90,5 +90,4 @@ public class OrderTasks
 {
     public string orderId { get; set; }
     public IList<string> taskIds { get; set; }
-}
 }

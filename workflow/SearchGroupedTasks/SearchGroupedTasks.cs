@@ -20,7 +20,7 @@ namespace Com.Tradecloud1.SDK.Client
         const string workflowSearchUrl = "https://api.accp.tradecloud1.com/v2/workflow/search/grouped";
 
         const string queryTemplateFile = "query-template.json";
-        const int limit = 10;
+        const int limit = 100;
 
         static async Task Main(string[] args)
         {
@@ -34,51 +34,51 @@ namespace Com.Tradecloud1.SDK.Client
             int offset = 0;
             int total = limit;
             int responseCount = 0;
-            //while (total > offset)
-            //{
-            var queryResult = await SearchWorkflow(httpClient, offset);
-            if (queryResult != null)
+            while (total > offset)
             {
-                total = ((int)queryResult["total"]);
-                Console.WriteLine("total=" + total + " offset=" + offset);
-
-                // Debug: print response structure
-                Console.WriteLine("Response keys: " + string.Join(", ", queryResult.Properties().Select(p => p.Name)));
-
-                // Append each grouped task to the file
-                // The response contains an array of grouped tasks
-                if (queryResult["results"] != null)
+                var queryResult = await SearchWorkflow(httpClient, offset);
+                if (queryResult != null)
                 {
-                    foreach (var groupedTask in queryResult["results"])
+                    total = ((int)queryResult["total"]);
+                    Console.WriteLine("total=" + total + " offset=" + offset);
+
+                    // Debug: print response structure
+                    Console.WriteLine("Response keys: " + string.Join(", ", queryResult.Properties().Select(p => p.Name)));
+
+                    // Append each grouped task to the file
+                    // The response contains an array of grouped tasks
+                    if (queryResult["results"] != null)
+                    {
+                        foreach (var groupedTask in queryResult["results"])
+                        {
+                            responseCount++;
+                            File.AppendAllText(outputFile, groupedTask.ToString() + Environment.NewLine);
+                        }
+                    }
+                    // Fallback: if results is not found, try to iterate over the root if it's an array
+                    else if (queryResult.Type == Newtonsoft.Json.Linq.JTokenType.Array)
+                    {
+                        foreach (var groupedTask in queryResult)
+                        {
+                            responseCount++;
+                            File.AppendAllText(outputFile, groupedTask.ToString() + Environment.NewLine);
+                        }
+                    }
+                    // Fallback: if the response structure is different, save the whole response
+                    else
                     {
                         responseCount++;
-                        File.AppendAllText(outputFile, groupedTask.ToString() + Environment.NewLine);
+                        File.AppendAllText(outputFile, queryResult.ToString() + Environment.NewLine);
                     }
+
+                    offset += limit;
+
                 }
-                // Fallback: if results is not found, try to iterate over the root if it's an array
-                else if (queryResult.Type == Newtonsoft.Json.Linq.JTokenType.Array)
-                {
-                    foreach (var groupedTask in queryResult)
-                    {
-                        responseCount++;
-                        File.AppendAllText(outputFile, groupedTask.ToString() + Environment.NewLine);
-                    }
-                }
-                // Fallback: if the response structure is different, save the whole response
                 else
                 {
-                    responseCount++;
-                    File.AppendAllText(outputFile, queryResult.ToString() + Environment.NewLine);
+                    total = 0;
                 }
-
-                offset += limit;
-
             }
-            else
-            {
-                total = 0;
-            }
-            //}
 
             Console.WriteLine($"Saved {responseCount} responses to {outputFile}");
         }

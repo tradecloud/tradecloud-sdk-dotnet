@@ -1,5 +1,11 @@
 {
-    "filters": {},
-    "offset": "{offset}",
-    "limit": "{limit}"
+  "filters": {
+    "taskStatus": "created",
+    "companyId": "{companyId}",
+    "relatedCompanyIds": [],
+    "assignee": { "includeUnassigned": false, "userIds": ["{contactId}"] },
+    "classification": { "modules": [], "categories": [] }
+  },
+  "offset": {offset},
+  "limit": {limit}
 }
