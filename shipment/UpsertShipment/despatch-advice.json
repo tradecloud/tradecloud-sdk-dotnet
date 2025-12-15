@@ -116,7 +116,8 @@
             "purchaseUnitOfMeasureIso": "PCE"
           },
           "despatchQuantity": 1234.56,
-          "backorderQuantity": 1234.56
+          "backorderQuantity": 1234.56,
+          "backorderDate": "2019-12-31"
         }
       ]
     }
@@ -137,7 +138,8 @@
         "purchaseUnitOfMeasureIso": "PCE"
       },
       "despatchQuantity": 1234.56,
-      "backorderQuantity": 1234.56
+      "backorderQuantity": 1234.56,
+      "backorderDate": "2019-12-31"
     }
   ]
 }
