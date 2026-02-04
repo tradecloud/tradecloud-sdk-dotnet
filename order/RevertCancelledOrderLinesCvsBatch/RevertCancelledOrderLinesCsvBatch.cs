@@ -29,11 +29,11 @@ namespace Com.Tradecloud1.SDK.Client
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
 
-            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";", Encoding = Encoding.UTF8 };
+            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ",", Encoding = Encoding.UTF8 };
 
             var jsonContentTemplate = File.ReadAllText(@body);
             using (var log = new StreamWriter("revert.log", append: true))
-            using (var reader = new StreamReader("2024-07-17 Tradecloud-One-order-lines-export.csv"))
+            using (var reader = new StreamReader("report.csv"))
             using (var csvReader = new CsvReader(reader, csvConfig))
             {
                 csvReader.Context.RegisterClassMap<RevertOrderLineMap>();
