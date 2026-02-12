@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
@@ -16,12 +16,13 @@ namespace Com.Tradecloud1.SDK.Client
     class SendOrderResponseCsvBatch
     {
         const bool dryRun = true;
-        const string delimiter = ";";
+        const string delimiter = ",";
+        const string positionPlaceholder = "00000"; // Also check if the buyer uses a delivery line position, to be set below.
         const string buyerId = "";
-        const string buyerAccountNumber = "";
+        const string buyerAccountNumber = ""; // This must be configured in Tradecloud BEFORE orders are issued.
         const string accessToken = "";
 
-       // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order-line-search/private/specs.yaml#/order-line-search/getByIdRoute
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order-line-search/private/specs.yaml#/order-line-search/getByIdRoute
         const string orderLineSearchUrlTemplate = "https://api.accp.tradecloud1.com/v2/order-line-search/{orderLineId}";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/conversation/private/specs.yaml#/conversation/createOrderConversation
@@ -45,21 +46,29 @@ namespace Com.Tradecloud1.SDK.Client
                 var orderLineResponses = csvReader.GetRecords<OrderLineResponse>();
                 foreach (var orderLineResponse in orderLineResponses)
                 {
-                    var orderLineId = buyerId + "-" + orderLineResponse.purchaseOrderNumber + "-" + orderLineResponse.purchaseOrderLinePosition;
+                    var formattedPosition = orderLineResponse.purchaseOrderLinePosition.PadLeft(positionPlaceholder.Length, '0');
+                    var orderLineId = buyerId + "-" + orderLineResponse.purchaseOrderNumber + "-" + formattedPosition;
                     var queryResult = await FindOrderLineById(orderLineId, log);
                     if (queryResult != null)
                     {
+                        var processStatus = queryResult["status"]?["processStatus"]?.ToString();
+                        if (processStatus != "Issued")
+                        {
+                            await log.WriteLineAsync("Skip order line (processStatus=" + (processStatus ?? "null") + "): " + orderLineId);
+                            continue;
+                        }
                         orderLineResponse.orderLineId = orderLineId;
                         orderLineResponse.companyId = queryResult["supplierOrder"]["companyId"].ToString();
                         orderLineResponse.buyerAccountNumber = buyerAccountNumber;
-                        orderLineResponse.deliveryLinePosition = orderLineResponse.purchaseOrderLinePosition;
+                        orderLineResponse.purchaseOrderLinePosition = formattedPosition;
+                        //orderLineResponse.deliveryLinePosition = formattedPosition;
                         if (orderLineResponse.confirmedDate.Contains("/"))
                         {
                             var confirmedDateTime = DateTime.ParseExact(orderLineResponse.confirmedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                             orderLineResponse.confirmedDate = confirmedDateTime.ToString("yyyy-MM-dd");
                         }
                         orderLineResponse.confirmedNetPrice = orderLineResponse.confirmedNetPrice.Replace(",", ".");
-                        orderLineResponse.currencyIso = queryResult["buyerLine"]["prices"]["netPrice"]["priceInBaseCurrency"]["currencyIso"].ToString();
+                        orderLineResponse.currencyIso = queryResult["buyerLine"]["prices"]["netPrice"]["priceInTransactionCurrency"]["currencyIso"].ToString();
                         orderLineResponse.priceUnitOfMeasureIso = queryResult["buyerLine"]["prices"]["priceUnitOfMeasureIso"].ToString();
                         orderLineResponse.priceUnitQuantity = queryResult["buyerLine"]["prices"]["priceUnitQuantity"].ToString();
 
@@ -70,7 +79,7 @@ namespace Com.Tradecloud1.SDK.Client
             }
 
             async Task<JObject> FindOrderLineById(string orderLineId, StreamWriter log)
-            {                
+            {
                 var orderLineSearchUrl = orderLineSearchUrlTemplate.Replace("{orderLineId}", orderLineId);
 
                 var start = DateTime.Now;
@@ -79,7 +88,7 @@ namespace Com.Tradecloud1.SDK.Client
                 watch.Stop();
 
                 var statusCode = (int)response.StatusCode;
-                await log.WriteLineAsync("FindOrderLineById orderLineId=" + orderLineId + " start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                await log.WriteLineAsync("FindOrderLineById orderLineId=" + orderLineId + " start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                 string responseString = await response.Content.ReadAsStringAsync();
                 if (statusCode == 200)
                 {
@@ -88,13 +97,13 @@ namespace Com.Tradecloud1.SDK.Client
                 }
                 else
                 {
-                    await log.WriteLineAsync("FindOrderLineById orderLineId=" + orderLineId + " response body=" +  responseString);
+                    await log.WriteLineAsync("FindOrderLineById orderLineId=" + orderLineId + " response body=" + responseString);
                     return null;
                 }
             }
 
             async Task SendOrderResponse(OrderLineResponse orderLineResponse, StreamWriter log)
-            {           
+            {
                 var jsonOrderResponse = jsonOrderResponseTemplate
                     .Replace("{companyId}", orderLineResponse.companyId)
                     .Replace("{buyerAccountNumber}", orderLineResponse.buyerAccountNumber)
@@ -107,7 +116,7 @@ namespace Com.Tradecloud1.SDK.Client
                     .Replace("{confirmedNetPriceCurrencyIso}", orderLineResponse.currencyIso)
                     .Replace("{priceUnitOfMeasureIso}", orderLineResponse.priceUnitOfMeasureIso)
                     .Replace("{priceUnitQuantity}", orderLineResponse.priceUnitQuantity);
-                
+
                 if (dryRun)
                 {
                     await log.WriteLineAsync("SendOrderResponse dry run jsonOrderResponse=" + jsonOrderResponse);
@@ -124,10 +133,10 @@ namespace Com.Tradecloud1.SDK.Client
                     var statusCode = (int)response.StatusCode;
                     await log.WriteLineAsync("SendOrderResponse orderLineId=" + orderLineResponse.orderLineId + " start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                     if (statusCode == 400)
-                        await log.WriteLineAsync("SendOrderResponse request body=" + jsonOrderResponse); 
+                        await log.WriteLineAsync("SendOrderResponse request body=" + jsonOrderResponse);
                     string responseString = await response.Content.ReadAsStringAsync();
                     if (statusCode != 200)
-                        await log.WriteLineAsync("SendOrderResponse response body=" +  responseString);
+                        await log.WriteLineAsync("SendOrderResponse response body=" + responseString);
                 }
             }
         }
@@ -139,7 +148,7 @@ namespace Com.Tradecloud1.SDK.Client
         public string companyId { get; set; }
         public string buyerAccountNumber { get; set; }
         public string purchaseOrderNumber { get; set; }
-        public string purchaseOrderLinePosition { get; set; } 
+        public string purchaseOrderLinePosition { get; set; }
         public string deliveryLinePosition { get; set; }
         public string confirmedDate { get; set; }
         public string confirmedQuantity { get; set; }
@@ -155,7 +164,7 @@ namespace Com.Tradecloud1.SDK.Client
         {
             AutoMap(CultureInfo.InvariantCulture);
             Map(m => m.orderLineId).Ignore();
-            Map(m => m.companyId).Ignore();            
+            Map(m => m.companyId).Ignore();
             Map(m => m.buyerAccountNumber).Ignore();
             Map(m => m.deliveryLinePosition).Ignore();
             Map(m => m.currencyIso).Ignore();
