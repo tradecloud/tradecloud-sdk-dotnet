@@ -237,6 +237,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevertCompletedOrderLine", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevertCompletedOrderLinesCsvBatch", "order\RevertCompletedOrderLinesCvsBatch\RevertCompletedOrderLinesCsvBatch.csproj", "{BE21AB49-370A-434E-B617-5357CF40C70E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReassignBuyerContact", "order\ReassignBuyerContact\ReassignBuyerContact.csproj", "{2122AB2E-1510-4993-982D-783D0ECDF352}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -650,6 +652,10 @@ Global
 		{BE21AB49-370A-434E-B617-5357CF40C70E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE21AB49-370A-434E-B617-5357CF40C70E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE21AB49-370A-434E-B617-5357CF40C70E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2122AB2E-1510-4993-982D-783D0ECDF352}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2122AB2E-1510-4993-982D-783D0ECDF352}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2122AB2E-1510-4993-982D-783D0ECDF352}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2122AB2E-1510-4993-982D-783D0ECDF352}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{71C59338-3D86-4166-9AD7-14146C5DC744} = {AE1D2645-65FC-4225-8CC5-85B4216E7E65}
@@ -752,5 +758,6 @@ Global
 		{C278048F-C290-4ACD-82AE-7D4553EF70AE} = {A2796BD8-507E-41F7-8DE1-15131FB8146F}
 		{07720EAA-FA08-4268-9CA3-7436C10C108B} = {A2796BD8-507E-41F7-8DE1-15131FB8146F}
 		{BE21AB49-370A-434E-B617-5357CF40C70E} = {A2796BD8-507E-41F7-8DE1-15131FB8146F}
+		{2122AB2E-1510-4993-982D-783D0ECDF352} = {A2796BD8-507E-41F7-8DE1-15131FB8146F}
 	EndGlobalSection
 EndGlobal
