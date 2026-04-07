@@ -1,6 +1,6 @@
 # Download document
 
-This example downloads a document directly from Amazon AWS S3 using the downloadUrl in GetDocumentMetadata 
+This example downloads a document directly from Amazon AWS S3 using the downloadUrl in GetDocumentMetadata
 
 ## Prerequisites
 
@@ -9,6 +9,7 @@ A Tradecloud user with `buyer` or `supplier` role.
 ## Configure
 
 In the source code:
+
 - amend authenticationUrl if necessary
 - fill in username on Tradecloud
 - fill in password on Tradecloud
@@ -17,7 +18,7 @@ In the source code:
 
 ## Run
 
-```
+```shell
 ➜  DownloadDocumentS3 git:(master) dotnet run
 Tradecloud download document example.
 Login response StatusCode: 200 ElapsedMilliseconds: 418
