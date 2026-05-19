@@ -9,13 +9,15 @@ A Tradecloud user with `supplier` and `integration` roles
 ## Configure
 
 In the source code:
+
 - amend authenticationUrl if necessary
 - fill in username on Tradecloud
 - fill in password on Tradecloud
 - amend sendDespatchAdviceUrl if necessary
 
 Amend despatch-advice.json if necessary:
-- amend the `purchaseOrderNumber` 
+
+- amend the `purchaseOrderNumber`
 
 ## Run
 

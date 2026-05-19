@@ -10,9 +10,9 @@ using Newtonsoft.Json.Linq;
 namespace Com.Tradecloud1.SDK.Client
 {
     class SendDespatchAdvice
-    {   
+    {
         const bool useToken = true;
-         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
+        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
 
         // Fill in mandatory username
@@ -22,7 +22,7 @@ namespace Com.Tradecloud1.SDK.Client
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/supplier-endpoints/sendDespatchAdviceBySupplierRoute
         const string sendDespatchAdviceUrl = "https://api.accp.tradecloud1.com/v2/api-connector/shipment/despatch-advice";
-        
+
         static async Task Main(string[] args)
         {
             Console.WriteLine("Tradecloud send despatch advice by supplier example.");
@@ -34,17 +34,17 @@ namespace Com.Tradecloud1.SDK.Client
             {
                 var authenticationClient = new Authentication(httpClient, authenticationUrl);
                 var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);            
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
             }
             else
             {
                 var base64EncodedUsernamePassword = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
-                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword );
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedUsernamePassword);
             }
             await SendDespatchAdvice();
 
             async Task SendDespatchAdvice()
-            {                
+            {
                 var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
                 var start = DateTime.Now;
@@ -53,14 +53,14 @@ namespace Com.Tradecloud1.SDK.Client
                 watch.Stop();
 
                 var statusCode = (int)response.StatusCode;
-                Console.WriteLine("SendDespatchAdvice start=" + start +  " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
+                Console.WriteLine("SendDespatchAdvice start=" + start + " elapsed=" + watch.ElapsedMilliseconds + "ms status=" + statusCode + " reason=" + response.ReasonPhrase);
                 if (statusCode == 400)
-                     Console.WriteLine("SendDespatchAdvice request body=" + jsonContent); 
+                    Console.WriteLine("SendDespatchAdvice request body=" + jsonContent);
                 string responseString = await response.Content.ReadAsStringAsync();
                 if (statusCode == 200)
-                    Console.WriteLine("SendDespatchAdvice response body=" +  JValue.Parse(responseString).ToString(Formatting.Indented));
+                    Console.WriteLine("SendDespatchAdvice response body=" + JValue.Parse(responseString).ToString(Formatting.Indented));
                 else
-                    Console.WriteLine("SendDespatchAdvice response body=" +  responseString);
+                    Console.WriteLine("SendDespatchAdvice response body=" + responseString);
             }
         }
     }
