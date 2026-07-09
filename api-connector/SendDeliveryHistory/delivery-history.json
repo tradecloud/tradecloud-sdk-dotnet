@@ -1,0 +1,26 @@
+{
+  "order": {
+    "purchaseOrderNumber": "PO0123456789"
+  },
+  "lines": [
+    {
+      "position": "0001",
+      "deliveryHistory": [
+        {
+          "position": "01",
+          "date": "2026-12-24",
+          "quantity": 41.5
+        },
+        {
+          "position": "02",
+          "date": "2026-12-25",
+          "quantity": 41.5
+        }
+      ]
+    }
+  ],
+  "erpLastChangeDateTime": "2019-12-31T10:11:12",
+  "erpLastChangedBy": {
+    "email": "contact@yourcompany.com"
+  }
+}
