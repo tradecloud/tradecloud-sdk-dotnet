@@ -1,0 +1,7 @@
+{
+  "kind": "savedView",
+  "scope": "purchase",
+  "name": "Overdue NL orders",
+  "payloadVersion": 1,
+  "payload": "{\"viewMode\":\"orders\",\"params\":{\"processStatus\":[\"confirmed\"],\"deliveryOverdue\":true,\"sort\":{\"field\":\"firstDeliveryDate\",\"direction\":\"asc\"}},\"widget\":{\"type\":\"byProcessStatus\"}}"
+}
