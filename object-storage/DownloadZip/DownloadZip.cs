@@ -18,7 +18,7 @@ namespace Com.Tradecloud1.SDK.Client
         // Development: https://branch.d.tradecloud1.com
         // Test: https://api.test.tradecloud1.com  
         // Acceptance: https://api.accp.tradecloud1.com  
-        const string baseUrl = "https://tc-10397-download-zip-gcs-url.d.tradecloud1.com";
+        const string baseUrl = "https://api.accp.tradecloud1.com";
 
         const string cacheFileName = "cached-document-10mb.bin";
         const int cacheFileExpectedSizeBytes = 10 * 1024 * 1024; // 10 MB
@@ -48,6 +48,7 @@ namespace Com.Tradecloud1.SDK.Client
                 // Authenticate
                 if (useToken)
                 {
+                    Console.WriteLine($"Login: GET {authenticationUrl}login");
                     var authenticationClient = new Authentication(httpClient, authenticationUrl);
                     var (accessToken, refreshToken) = await authenticationClient.Login(username, password);
                     httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
@@ -220,7 +221,7 @@ namespace Com.Tradecloud1.SDK.Client
             {
                 try
                 {
-                    Console.WriteLine($"Uploading {doc.fileName}...");
+                    Console.WriteLine($"Uploading {doc.fileName} to {uploadDocumentUrl}...");
 
                     var multipartContent = new MultipartFormDataContent();
                     var fileContent = new ByteArrayContent(doc.content);
@@ -235,7 +236,7 @@ namespace Com.Tradecloud1.SDK.Client
                     var statusCode = (int)response.StatusCode;
                     var responseString = await response.Content.ReadAsStringAsync();
 
-                    Console.WriteLine($"Upload {doc.fileName}: status={statusCode}, elapsed={watch.ElapsedMilliseconds}ms");
+                    Console.WriteLine($"Upload {doc.fileName}: POST {uploadDocumentUrl} status={statusCode}, elapsed={watch.ElapsedMilliseconds}ms");
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -279,7 +280,7 @@ namespace Com.Tradecloud1.SDK.Client
 
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            Console.WriteLine($"Sending order {purchaseOrder.Order.PurchaseOrderNumber}...");
+            Console.WriteLine($"Sending order {purchaseOrder.Order.PurchaseOrderNumber} to {sendOrderUrl}...");
             var start = DateTime.Now;
             var watch = System.Diagnostics.Stopwatch.StartNew();
             var response = await httpClient.PostAsync(sendOrderUrl, content);
@@ -288,7 +289,7 @@ namespace Com.Tradecloud1.SDK.Client
             var statusCode = (int)response.StatusCode;
             var responseString = await response.Content.ReadAsStringAsync();
 
-            Console.WriteLine($"SendOrder: status={statusCode}, elapsed={watch.ElapsedMilliseconds}ms");
+            Console.WriteLine($"SendOrder: POST {sendOrderUrl} status={statusCode}, elapsed={watch.ElapsedMilliseconds}ms");
 
             if (response.IsSuccessStatusCode)
             {
@@ -348,7 +349,7 @@ namespace Com.Tradecloud1.SDK.Client
             var json = JsonConvert.SerializeObject(attachRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            Console.WriteLine($"Attaching {uploadedDocuments.Count} documents to order {purchaseOrderNumber}...");
+            Console.WriteLine($"Attaching {uploadedDocuments.Count} documents to order {purchaseOrderNumber} via {attachOrderDocumentsUrl}...");
             var start = DateTime.Now;
             var watch = System.Diagnostics.Stopwatch.StartNew();
             var response = await httpClient.PostAsync(attachOrderDocumentsUrl, content);
@@ -357,7 +358,7 @@ namespace Com.Tradecloud1.SDK.Client
             var statusCode = (int)response.StatusCode;
             var responseString = await response.Content.ReadAsStringAsync();
 
-            Console.WriteLine($"AttachDocuments: status={statusCode}, elapsed={watch.ElapsedMilliseconds}ms");
+            Console.WriteLine($"AttachDocuments: POST {attachOrderDocumentsUrl} status={statusCode}, elapsed={watch.ElapsedMilliseconds}ms");
 
             if (response.IsSuccessStatusCode)
             {
@@ -382,47 +383,47 @@ namespace Com.Tradecloud1.SDK.Client
             var json = JsonConvert.SerializeObject(zipRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            Console.WriteLine($"Requesting ZIP download URL for {objectIds.Count} documents with filename: {fileName} containing {objectIds.Count} documents");
+            Console.WriteLine($"Requesting ZIP download URL: POST {downloadZipUrl} for {objectIds.Count} documents, filename: {fileName}");
             var requestWatch = System.Diagnostics.Stopwatch.StartNew();
             var response = await httpClient.PostAsync(downloadZipUrl, content);
             requestWatch.Stop();
 
             var statusCode = (int)response.StatusCode;
             var requestTime = requestWatch.ElapsedMilliseconds;
-            Console.WriteLine($"ZIP URL request: status={statusCode}, request time={requestTime}ms");
+            Console.WriteLine($"ZIP URL request: POST {downloadZipUrl} status={statusCode}, request time={requestTime}ms");
 
             if (!response.IsSuccessStatusCode)
             {
                 var responseString = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Failed to get ZIP download URL: {responseString}");
-                throw new Exception($"Failed to get ZIP download URL: {response.StatusCode} - {responseString}");
+                Console.WriteLine($"Failed to get ZIP download URL from {downloadZipUrl}: {responseString}");
+                throw new Exception($"Failed to get ZIP download URL from {downloadZipUrl}: {response.StatusCode} - {responseString}");
             }
 
             // Parse the response to get download URL
             var responseJson = await response.Content.ReadAsStringAsync();
             var zipResponse = JsonConvert.DeserializeObject<CreateZipDownloadResponse>(responseJson);
 
-            Console.WriteLine($"Received download URL: {zipResponse.DownloadUrl}");
+            Console.WriteLine($"Received GCS download URL: {zipResponse.DownloadUrl}");
 
             return zipResponse.DownloadUrl;
         }
 
         static async Task DownloadZipFile(HttpClient httpClient, string downloadUrl, string fileName)
         {
-            Console.WriteLine($"Downloading ZIP file from provided URL (will extract actual filename from response, fallback: {fileName})");
+            Console.WriteLine($"Downloading ZIP file: GET {downloadUrl} (fallback filename: {fileName})");
             var downloadWatch = System.Diagnostics.Stopwatch.StartNew();
             var downloadResponse = await httpClient.GetAsync(downloadUrl);
             downloadWatch.Stop();
 
             var downloadStatusCode = (int)downloadResponse.StatusCode;
             var downloadTime = downloadWatch.ElapsedMilliseconds;
-            Console.WriteLine($"ZIP download: status={downloadStatusCode}, download time={downloadTime}ms");
+            Console.WriteLine($"ZIP download: GET {downloadUrl} status={downloadStatusCode}, download time={downloadTime}ms");
 
             if (!downloadResponse.IsSuccessStatusCode)
             {
                 var downloadResponseString = await downloadResponse.Content.ReadAsStringAsync();
-                Console.WriteLine($"Failed to download ZIP file: {downloadResponseString}");
-                throw new Exception($"Failed to download ZIP file: {downloadResponse.StatusCode} - {downloadResponseString}");
+                Console.WriteLine($"Failed to download ZIP file from {downloadUrl}: {downloadResponseString}");
+                throw new Exception($"Failed to download ZIP file from {downloadUrl}: {downloadResponse.StatusCode} - {downloadResponseString}");
             }
 
             var zipBytes = await downloadResponse.Content.ReadAsByteArrayAsync();
@@ -555,6 +556,7 @@ namespace Com.Tradecloud1.SDK.Client
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var requestWatch = System.Diagnostics.Stopwatch.StartNew();
+                Console.WriteLine($"Request {requestNumber}: POST {downloadZipUrl}");
                 var response = await httpClient.PostAsync(downloadZipUrl, content);
                 requestWatch.Stop();
 
@@ -563,6 +565,7 @@ namespace Com.Tradecloud1.SDK.Client
 
                 if (!response.IsSuccessStatusCode)
                 {
+                    Console.WriteLine($"Request {requestNumber}: POST {downloadZipUrl} status={statusCode}, elapsed={elapsedMs}ms");
                     return (requestNumber, statusCode, elapsedMs, string.Empty);
                 }
 
@@ -570,6 +573,7 @@ namespace Com.Tradecloud1.SDK.Client
                 var responseJson = await response.Content.ReadAsStringAsync();
                 var zipResponse = JsonConvert.DeserializeObject<CreateZipDownloadResponse>(responseJson);
 
+                Console.WriteLine($"Request {requestNumber}: POST {downloadZipUrl} status={statusCode}, elapsed={elapsedMs}ms, GCS URL={zipResponse.DownloadUrl}");
                 return (requestNumber, statusCode, elapsedMs, zipResponse.DownloadUrl);
             }
             catch (Exception ex)
