@@ -12,7 +12,6 @@ namespace Com.Tradecloud1.SDK.Client
         const bool dryRun = true;
         const string buyerId = "";
         const string supplierId = "";
-        const string accessToken = "";
         const int limit = 100;
         const string esUrlTemplate = "http://localhost:9200/prod-order-line/_doc/{buyerId}-{purchaseOrderNumber}-{linePosition}";
         // Fill in mandatory username
@@ -46,6 +45,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud clean order lines based on order lines search.");
             
             HttpClient httpClient = new HttpClient();

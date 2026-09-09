@@ -9,13 +9,15 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class ReindexAllShipments
     {
-        const string accessToken = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/shipment/private/specs.yaml#/shipment/reindexAll
         const string reindexAllShipmentsUrl = "https://api.accp.tradecloud1.com/v2/shipment/reindex/all";
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud reindex all shipments example.");
 
             HttpClient httpClient = new HttpClient();

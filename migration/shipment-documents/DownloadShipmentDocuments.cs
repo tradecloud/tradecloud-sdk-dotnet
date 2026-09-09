@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-using DotNetEnv;
 
 namespace Com.Tradecloud1.SDK.Client
 {
@@ -33,15 +32,15 @@ namespace Com.Tradecloud1.SDK.Client
             Console.WriteLine("Tradecloud shipment documents downloader");
 
             // Load environment variables from .env file
-            Env.Load();
+            EnvFile.Load();
 
             // Load configuration from environment variables
-            legacyUsername = Environment.GetEnvironmentVariable("LEGACY_USERNAME");
-            legacyPassword = Environment.GetEnvironmentVariable("LEGACY_PASSWORD");
+            legacyUsername = EnvFile.Get("LEGACY_USERNAME");
+            legacyPassword = EnvFile.Get("LEGACY_PASSWORD");
 
             if (string.IsNullOrEmpty(legacyUsername) || string.IsNullOrEmpty(legacyPassword))
             {
-                Console.WriteLine("Error: LEGACY_USERNAME and LEGACY_PASSWORD must be set in .env file");
+                Console.WriteLine("ERROR: LEGACY_USERNAME and LEGACY_PASSWORD are not set. Copy .env.template to .env and fill them in.");
                 return;
             }
 

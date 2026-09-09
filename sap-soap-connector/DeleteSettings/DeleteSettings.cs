@@ -10,15 +10,16 @@ namespace Com.Tradecloud1.SDK.Client
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://tc-7853-sap-soap-config.t.tradecloud1.com/v2/authentication/";
 
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/sap-soap-connector/private/specs.yaml#/sap-soap-connector/deleteSapSettings
         const string settingsUrl = "https://tc-7853-sap-soap-config.t.tradecloud1.com/v2/sap-soap-connector/company/<companyId>/settings";   
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryUsernamePassword(out var username, out var password))
+                return;
+
             Console.WriteLine("Tradecloud SAP SOAP Connector delete settings example.");
             HttpClient httpClient = new HttpClient();
             var authenticationClient = new Authentication(httpClient, authenticationUrl);

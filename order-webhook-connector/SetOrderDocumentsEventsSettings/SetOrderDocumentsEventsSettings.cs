@@ -13,15 +13,16 @@ namespace Com.Tradecloud1.SDK.Client
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
     
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
 
         // https://swagger-ui.test.tradecloud1.com/?url=https://tc-9116-webhook-xml-request.t.tradecloud1.com/v2/order-webhook-connector/private/specs.yaml#/order-webhook-connector/upsertCompanyOrderDocumentsEventIntegrationSettings
         const string settingsUrlTemplate = "https://api.accp.tradecloud1.com/v2/order-webhook-connector/company/{companyId}/settings/orderDocumentsEvents";           
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryUsernamePassword(out var username, out var password))
+                return;
+
             Console.WriteLine("Tradecloud Order Webhook Connector set order documents events settings example.");
 
             var jsonContent = File.ReadAllText(@"order-documents-events-settings.json");

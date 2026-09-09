@@ -12,16 +12,15 @@ namespace Com.Tradecloud1.SDK.Client
     {
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
-        // Fill in mandatory username
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/shipment/specs.yaml#/shipment/searchShipmentsRoute
         const string locationSearchUrl = "https://api.accp.tradecloud1.com/v2/shipment/locations/search";
 
         static async Task Main()
         {
+            EnvFile.Load();
+            if (!EnvFile.TryUsernamePassword(out var username, out var password))
+                return;
+
             Console.WriteLine("Tradecloud search shipment locations search example.");
 
             HttpClient httpClient = new HttpClient();

@@ -9,8 +9,7 @@ Super powers
 ## Configure
 
 In the source code:
-- fill in username
-- fill in password
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - fill in fields
 
 ## Run

@@ -10,7 +10,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class RefetchOrders
     {
-        const string accessToken = "";
         const string companyId = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order-search/specs.yaml#/order-search
@@ -41,6 +40,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud refetch orders.");
 
             HttpClient httpClient = new HttpClient();

@@ -10,17 +10,16 @@ namespace Com.Tradecloud1.SDK.Client
     {   
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
-        // Fill in mandatory username
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/conversation/private/specs.yaml#/conversation/getConversationById
         // Fill in manadatory user id
         const string getConversationByIdUrl = "https://api.accp.tradecloud1.com/v2/conversation/order/f56aa4ce-8ec8-5197-bc26-77716a58add7-PO-05-%2351388860";
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryUsernamePassword(out var username, out var password))
+                return;
+
             Console.WriteLine("Tradecloud get conversation by id example.");
             
             HttpClient httpClient = new HttpClient();

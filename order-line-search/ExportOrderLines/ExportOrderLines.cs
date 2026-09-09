@@ -12,7 +12,7 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class ExportOrderLines
     {
-        const string accessToken = "";
+        static string accessToken;
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order-line-search/private/specs.yaml#/order-line-search/searchRoute
         const string orderLineSearchUrl = "https://api.accp.tradecloud1.com/v2/order-line-search/search";
@@ -21,6 +21,9 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            if (!EnvFile.TryAccessToken(out accessToken))
+                return;
+
             Console.WriteLine("Tradecloud export order lines example.");
 
             HttpClient httpClient = new HttpClient();

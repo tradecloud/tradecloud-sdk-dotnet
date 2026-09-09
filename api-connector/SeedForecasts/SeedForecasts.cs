@@ -12,13 +12,15 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class SendOrder
     {   
-        const string accessToken = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendForecastByBuyerRoute
         const string sendForecastUrl = "https://api.accp.tradecloud1.com/v2/api-connector/forecast";
         
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud seed forecasts.");
 
             var jsonForecastTemplate = File.ReadAllText(@"forecast.json");

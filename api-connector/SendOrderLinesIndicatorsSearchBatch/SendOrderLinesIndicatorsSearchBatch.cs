@@ -11,7 +11,6 @@ namespace Com.Tradecloud1.SDK.Client
     class SendOrderLinesIndicatorsSearchBatch
     {
         const bool dryRun = true;
-        const string accessToken = "";
         const string buyerId = "";
         const string supplierId = "";
 
@@ -47,6 +46,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud send order lines indicators search batch.");
             var jsonOrderLinesIndicatorsTemplate = File.ReadAllText(@"order-lines-indicators-template.json");
 

@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-using DotNetEnv;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -68,13 +67,8 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
-            LoadEnvFile();
-            var accessToken = Environment.GetEnvironmentVariable("ACCESS_TOKEN");
-            if (string.IsNullOrWhiteSpace(accessToken))
-            {
-                Console.WriteLine("Error: ACCESS_TOKEN is not set. Copy .env.example to .env in this project folder and set ACCESS_TOKEN to your API bearer token.");
+            if (!EnvFile.TryAccessToken(out var accessToken))
                 return;
-            }
 
             Console.WriteLine("Tradecloud reassign buyer contact." + (dryRun ? " (DRY RUN)" : "") + (restrictSearchToActiveProcessStatuses ? " [active process statuses only]" : " [all process statuses]"));
 
@@ -187,21 +181,5 @@ namespace Com.Tradecloud1.SDK.Client
             }
         }
 
-        /// <summary>Loads .env from the project directory (next to the .csproj) when running via dotnet run, or from the current directory.</summary>
-        static void LoadEnvFile()
-        {
-            var nextToProject = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".env"));
-            if (File.Exists(nextToProject))
-            {
-                Env.Load(nextToProject);
-                return;
-            }
-
-            var cwdEnv = Path.Combine(Directory.GetCurrentDirectory(), ".env");
-            if (File.Exists(cwdEnv))
-            {
-                Env.Load(cwdEnv);
-            }
-        }
     }
 }

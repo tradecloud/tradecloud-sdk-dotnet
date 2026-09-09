@@ -15,8 +15,6 @@ namespace Com.Tradecloud1.SDK.Client
     class CloseOrderTasksSearchBatch
     {
         const bool dryRun = true;
-        static string accessToken = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/workflow/private/specs.yaml#/workflow/searchWorkflowTasksRoute
         const string workflowSearchUrl = "https://api.accp.tradecloud1.com/v2/workflow/search";
 
@@ -44,6 +42,10 @@ namespace Com.Tradecloud1.SDK.Client
         const int limit = 100;
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Close orders batch.");
 
             HttpClient httpClient = new HttpClient();

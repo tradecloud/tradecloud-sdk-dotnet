@@ -10,7 +10,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class GetSettings
     {
-        const string accessToken = "";
         const string companyId = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/shipment-webhook-connector/private/specs.yaml#/shipment-webhook-connector/getCompanyIntegrationSettings
@@ -18,6 +17,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud Shipment Webhook Connector get settings example.");
             HttpClient httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);

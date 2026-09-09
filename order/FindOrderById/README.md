@@ -6,8 +6,7 @@ This example finds an order by Tradecloud id from the order service
 
 In the source code:
 
-- username on Tradecloud
-- password on Tradecloud
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - orderId on Tradecloud
 
 ## Run

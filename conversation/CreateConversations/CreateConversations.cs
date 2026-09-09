@@ -14,8 +14,6 @@ namespace Com.Tradecloud1.SDK.Client
     {
         const bool dryRun = true;
         const string orderId = "";
-        const string accessToken = "";
-
        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order/specs.yaml#/order/getOrderByIdRoute
         const string orderSearchUrl = "https://api.accp.tradecloud1.com/v2/order/";
 
@@ -24,6 +22,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud create conversations.");
 
             var jsonConversationTemplate = File.ReadAllText(@"conversation-template.json");

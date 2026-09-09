@@ -8,7 +8,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class SetOrderEventsSettings
     {
-        const string accessToken = ";
         const string companyId = "";
         const string body = "order-events-settings.json";
 
@@ -17,6 +16,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud Order Webhook Connector set order events settings example.");
 
             var settingsUrl = settingsUrlTemplate.Replace("{companyId}", companyId);

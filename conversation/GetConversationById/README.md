@@ -6,8 +6,7 @@ This example gets a conversation based on entity type and id in the conversation
 
 In the source code:
 
-- `username` on Tradecloud
-- `password` on Tradecloud
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - `entityType` and `entityId` in the `getConversationByIdUrl`
 
 ## Run

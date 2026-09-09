@@ -23,13 +23,12 @@ namespace Com.Tradecloud1.SDK.Client
         /// </summary>
         const string testFileOverride = "";
 
-        // Fill in mandatory username
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
-
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryUsernamePassword(out var username, out var password))
+                return;
+
             Console.WriteLine("=== Tradecloud Object Storage Caching Test (TC-10937) ===");
             Console.WriteLine();
 

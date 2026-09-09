@@ -10,15 +10,15 @@ namespace Com.Tradecloud1.SDK.Client
     {
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
-        // Fill in mandatory username
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
         // Add user add url
         const string upsertViewSettingsUrl = "https://api.accp.tradecloud1.com/v2/user/view-settings";
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryUsernamePassword(out var username, out var password))
+                return;
+
             Console.WriteLine("Tradecloud upsert view settings example.");
 
             var jsonContent = File.ReadAllText(@"view-settings.json");

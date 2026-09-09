@@ -11,9 +11,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class PublishActiveTasks
     {
-        // Fill in mandatory super user token
-        const string token = "";
-
         // Fill in mandatory companyId
         const string companyId = "";
 
@@ -23,6 +20,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var token))
+                return;
+
             Console.WriteLine("Tradecloud publish active tasks.");
 
             var jsonContentTemplate = File.ReadAllText(@"publish-active-tasks.json");

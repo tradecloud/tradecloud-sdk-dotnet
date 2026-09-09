@@ -4,7 +4,6 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using DotNetEnv;
 
 namespace Com.Tradecloud1.SDK.Client
 {
@@ -41,15 +40,8 @@ namespace Com.Tradecloud1.SDK.Client
             Console.WriteLine("=== Tradecloud Object Storage Upload Limit Probe ===");
             Console.WriteLine();
 
-            LoadEnvFile();
-            var username = Environment.GetEnvironmentVariable("TRADECLOUD_USERNAME");
-            var password = Environment.GetEnvironmentVariable("TRADECLOUD_PASSWORD");
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-            {
-                Console.WriteLine("ERROR: TRADECLOUD_USERNAME and TRADECLOUD_PASSWORD are not set.");
-                Console.WriteLine("       Copy .env.example to .env in this project folder and fill them in.");
+            if (!EnvFile.TryUsernamePassword(out var username, out var password))
                 return 1;
-            }
 
             if (uploadLimitBytes <= 0)
             {
@@ -277,21 +269,5 @@ namespace Com.Tradecloud1.SDK.Client
             public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
         }
 
-        /// <summary>Loads .env from the project directory (next to the .csproj) when running via dotnet run, or from the current directory.</summary>
-        static void LoadEnvFile()
-        {
-            var nextToProject = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", ".env"));
-            if (File.Exists(nextToProject))
-            {
-                Env.Load(nextToProject);
-                return;
-            }
-
-            var cwdEnv = Path.Combine(Directory.GetCurrentDirectory(), ".env");
-            if (File.Exists(cwdEnv))
-            {
-                Env.Load(cwdEnv);
-            }
-        }
     }
 }

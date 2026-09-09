@@ -14,10 +14,6 @@ namespace Com.Tradecloud1.SDK.Client
         static readonly string loginUrl = $"{baseUrl}/v2/authentication/login";
         static readonly string orderUrlPrefix = $"{baseUrl}/v2/order/";
 
-        // Fill in mandatory username
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
         // Fill in order id used to probe Authorization header casing (GET /v2/order/{orderId})
         const string orderId = "";
 
@@ -57,13 +53,15 @@ namespace Com.Tradecloud1.SDK.Client
             Console.WriteLine("=== Tradecloud login HTTP header case test ===");
             Console.WriteLine();
 
-            var user = args.Length >= 2 ? args[0] : username;
-            var pass = args.Length >= 2 ? args[1] : password;
+            EnvFile.Load();
+            var user = args.Length >= 2 ? args[0] : EnvFile.Get("TRADECLOUD_USERNAME");
+            var pass = args.Length >= 2 ? args[1] : EnvFile.Get("TRADECLOUD_PASSWORD");
             var configuredOrderId = args.Length >= 3 ? args[2] : orderId;
 
             if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(pass))
             {
-                Console.WriteLine("ERROR: Fill in username and password in TestLoginHeaderCase.cs, or pass them as arguments:");
+                Console.WriteLine("ERROR: TRADECLOUD_USERNAME and TRADECLOUD_PASSWORD are not set.");
+                Console.WriteLine("       Copy .env.template to .env, or pass them as arguments:");
                 Console.WriteLine("       dotnet run -- <username> <password> [orderId]");
                 return 1;
             }

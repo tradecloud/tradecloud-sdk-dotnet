@@ -9,8 +9,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class FindOrdersByNumber
     {
-        const string accessToken = "";
-
         // Prepend companyId and dash to each purchase order number from the file to form the Tradecloud order id.
         const string companyId = "";
         const string dash = "-";
@@ -22,6 +20,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud find orders by purchase order number.");
 
             HttpClient httpClient = new HttpClient();

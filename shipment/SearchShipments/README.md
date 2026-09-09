@@ -6,8 +6,7 @@ This example will search shipments by companyId
 
 In the source code:
 
-- set username on Tradecloud
-- set password on Tradecloud
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - set companyId or other filters in `search-shipments.json` or `minimal-search-shipments.json`.
 
 ## Run

@@ -20,8 +20,6 @@ namespace Com.Tradecloud1.SDK.Client
         const string positionPlaceholder = "00000"; // Also check if the buyer uses a delivery line position, to be set below.
         const string buyerId = "";
         const string buyerAccountNumber = ""; // This must be configured in Tradecloud BEFORE orders are issued.
-        const string accessToken = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order-line-search/private/specs.yaml#/order-line-search/getByIdRoute
         const string orderLineSearchUrlTemplate = "https://api.accp.tradecloud1.com/v2/order-line-search/{orderLineId}";
 
@@ -30,6 +28,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud order response batch.");
 
             var jsonOrderResponseTemplate = File.ReadAllText(@"order-response-template.json");

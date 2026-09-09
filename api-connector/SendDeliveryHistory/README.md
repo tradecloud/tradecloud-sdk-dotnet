@@ -13,8 +13,7 @@ The existing `deliveryHistory` of an order line is *replaced* by the list you se
 
 In the source code:
 
-- fill in username on Tradecloud
-- fill in password on Tradecloud
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - amend sendDeliveryHistoryUrl if necessary
 
 Amend delivery-history.json if necessary:

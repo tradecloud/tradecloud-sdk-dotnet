@@ -11,8 +11,7 @@ A Tradecloud user with `buyer` and `integration` roles
 
 In the source code:
 - amend authenticationUrl if necessary
-- fill in username on Tradecloud
-- fill in password on Tradecloud
+- copy `.env.template` to `.env` and fill in `ACCESS_TOKEN`
 - amend sendForecastUrl if necessary
 
 Amend forecast.json or line.json if necessary.

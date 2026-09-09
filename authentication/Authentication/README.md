@@ -6,9 +6,7 @@ The `Authentication` library is re-used in other examples.
 
 ## Configure
 
-Enter in the source code:
-- username on Tradecloud
-- password on Tradecloud
+Copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`.
 
 ## Run
 

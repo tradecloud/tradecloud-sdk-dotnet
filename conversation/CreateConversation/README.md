@@ -12,7 +12,7 @@ Super powers
   - always fill in `{orderId}`
   - fill in `{orderLineId}` if you want to create an order line conversation, else an order conversation will be created
   - always fill in the `members`, the `buyerId` and `suppplierId`   
-- fill in `accessToken` in the source code
+- copy `.env.template` to `.env` and fill in `ACCESS_TOKEN`
 
 ## Run
 

@@ -21,7 +21,8 @@ namespace Com.Tradecloud1.SDK.Client
             Console.WriteLine("Tradecloud reindex user example.");
 
             HttpClient httpClient = new HttpClient();
-            var accessToken = "";
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
             await ReindexUser(accessToken);
 
             async Task ReindexUser(string accessToken)

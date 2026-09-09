@@ -12,7 +12,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class BulkApproveRejectRequests
     {
-        const string accessToken = "";
         const string orderId = "";
 
         // Set to "approve" or "reject"
@@ -30,6 +29,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud bulk approve or reject requests as buyer example.");
 
             HttpClient httpClient = new HttpClient();

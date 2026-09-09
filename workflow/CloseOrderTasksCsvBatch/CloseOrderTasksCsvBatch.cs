@@ -13,8 +13,8 @@ namespace Com.Tradecloud1.SDK.Client
     class CloseOrderTasksCsvBatch
     {
         const bool dryRun = true;
-        static string accessToken = ""; // required when not setting a refresh token
-        static string refreshToken = ""; // required when the script is expected to take > 10 mins.
+        static string accessToken = null;
+        static string refreshToken = null;
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.tradecloud1.com/v2/authentication/";
@@ -24,6 +24,16 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            accessToken = EnvFile.Get("ACCESS_TOKEN");
+            refreshToken = EnvFile.Get("REFRESH_TOKEN");
+            if (string.IsNullOrWhiteSpace(accessToken) && string.IsNullOrWhiteSpace(refreshToken))
+            {
+                Console.WriteLine("ERROR: ACCESS_TOKEN and/or REFRESH_TOKEN are not set.");
+                Console.WriteLine("       Copy .env.template to .env in this project folder and fill them in.");
+                return;
+            }
+
             Console.WriteLine("Close orders batch.");
 
             HttpClient httpClient = new HttpClient();

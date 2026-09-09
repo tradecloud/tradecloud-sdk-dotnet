@@ -12,10 +12,12 @@ namespace Com.Tradecloud1.SDK.Client
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/private/specs.yaml#/authentication/add
         const string addIdentityUrl = "https://api.accp.tradecloud1.com/v2/authentication/add";
 
-        const string accessToken = "";
-                        
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud add identity example.");
             
             var jsonContent = File.ReadAllText(@"identity.json");

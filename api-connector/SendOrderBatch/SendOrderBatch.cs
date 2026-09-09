@@ -16,7 +16,6 @@ namespace Com.Tradecloud1.SDK.Client
     class SendOrderBatch
     {   
         const bool dryRun = true;
-        const string accessToken = "";
         const int ordersPerCompany = 10;
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderByBuyerRoute
@@ -38,6 +37,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud send order batch.");
 
             var orderJsonContentTemplate = File.ReadAllText("order.json");            

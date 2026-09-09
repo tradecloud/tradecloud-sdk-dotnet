@@ -6,9 +6,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class DeleteDocument
     {
-        // Bearer access token (Authorization header). Obtain via authentication/login or your token flow.
-        const string token = "";
-
         // Document id (UUID) to delete.
         const string documentId = "";
 
@@ -17,13 +14,11 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Tradecloud delete document example.");
-
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                Console.WriteLine("Error: set `token` at the top of DeleteDocument.cs.");
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var token))
                 return;
-            }
+
+            Console.WriteLine("Tradecloud delete document example.");
 
             if (string.IsNullOrWhiteSpace(documentId))
             {

@@ -12,9 +12,6 @@ namespace Com.Tradecloud1.SDK.Client
     class PublishActiveOrder
     {
 
-        // Fill in mandatory token
-        const string token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJuYW1lIjoibWFyY2VsQHRyYWRlY2xvdWQxLmNvbSIsInVzZXJJZCI6ImYxY2YzNDA0LTMxMTktNDllYi05NGNlLTkxYWU0ZTY1NTc5ZCIsInVzZXJSb2xlcyI6WyJzdXBwb3J0Il0sImNvbXBhbnlSb2xlcyI6W10sImF1dGhvcml6ZWRDb21wYW55SWRzIjpbXSwiY29tcGFueUlkIjoiMDY4OTNiYmEtZTEzMS00MjY4LTg3YzktN2ZhZTY0ZTE2ZWU5IiwidHdvRkFFbmFibGVkIjp0cnVlLCJ0d29GQUVuZm9yY2VkIjp0cnVlLCJzdGF0dXMiOiJhdXRoZW50aWNhdGVkIiwiaWRlbnRpdHlQcm92aWRlciI6InRyYWRlY2xvdWQifSwiZXhwIjoxNzMyMTEyMTc4fQ.E2En4_BVAHVt_Z7LmpSMKSQDeEN66Fws-GEFEO3zEjc";
-
         // Fill in mandatory orderId
         const string orderId = "902a8f50-b7da-11e5-a837-0800200c9a66-90065931";
 
@@ -23,6 +20,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var token))
+                return;
+
             Console.WriteLine("Tradecloud publish active order example.");
 
             var jsonContentTemplate = File.ReadAllText(@"publish-active-order.json");

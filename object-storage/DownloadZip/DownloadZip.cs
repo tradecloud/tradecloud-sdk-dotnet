@@ -25,9 +25,6 @@ namespace Com.Tradecloud1.SDK.Client
         const int multiplicationFactor = 5;
 
         // Authentication
-        const string username = ""; // Fill in mandatory username
-        const string password = ""; // Fill in mandatory password
-
         // API URLs - constructed from baseUrl
         static readonly string authenticationUrl = $"{baseUrl}/v2/authentication/";
         static readonly string sendOrderUrl = $"{baseUrl}/v2/api-connector/order";
@@ -41,6 +38,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryUsernamePassword(out var username, out var password))
+                return;
+
             Console.WriteLine($"Tradecloud scale test: 10 documents ({cacheFileExpectedSizeBytes} bytes each) with {multiplicationFactor}x ZIP multiplication.");
 
             using (HttpClient httpClient = new HttpClient())

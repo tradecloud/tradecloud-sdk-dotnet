@@ -10,13 +10,14 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
+using Com.Tradecloud1.SDK.Client;
+
 // WARN: this script will confirm order lines, which cannot be reverted. 
 class SendOrderResponseSearchBatch
 {
     const bool dryRun = true;
     const string buyerId = "";
     const string buyerAccountNumber = "";
-    const string accessToken = "";
     const string orderLineSearchUrl = "https://api.accp.tradecloud1.com/v2/order-line-search/search";
     const string sendOrderResponseUrl = "https://api.accp.tradecloud1.com/v2/api-connector/order-response";
 
@@ -40,6 +41,10 @@ class SendOrderResponseSearchBatch
 
     static async Task Main(string[] args)
     {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
         Console.WriteLine("Tradecloud order response, order line search based batch.");
 
         HttpClient httpClient = new HttpClient();

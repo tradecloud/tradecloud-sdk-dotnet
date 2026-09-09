@@ -12,7 +12,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class CloseOrderTasksInES
     {   
-        const string accessToken = "";
         const string companyId = "{companyId}"; // Close tasks for this buyer or supplier.  
         const string orderIdToClose = "{buyerId}-{purchaseOrderNumber}"; // Close all tasks related to this `orderId` for above buyer or supplier.
 
@@ -37,6 +36,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Close order workflow tasks in ES.");
 
             var orderTasksToClose = new OrderTasks

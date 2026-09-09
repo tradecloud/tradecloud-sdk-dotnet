@@ -12,7 +12,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class RevertCompletedOrderLine
     {
-        const string accessToken = "";
         const string orderId = "";
         const string body = "revert.json";
 
@@ -21,6 +20,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud revert completed order line example.");
 
             var jsonContent = File.ReadAllText(@body);

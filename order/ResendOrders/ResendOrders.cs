@@ -13,13 +13,15 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class ResendOrders
     {
-        const string accessToken = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order/private/specs.yaml#/order/buyerResendOrderRoute
         const string resendOrderUrlTemplate = "https://api.accp.tradecloud1.com/v2/order/{orderId}/buyer/resend";
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud resend orders.");
 
             HttpClient httpClient = new HttpClient();
