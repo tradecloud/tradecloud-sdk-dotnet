@@ -11,17 +11,16 @@ namespace Com.Tradecloud1.SDK.Client
     {           
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
-        // Fill in mandatory username
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
-
         // https://swagger-ui.s.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/shipment/specs.yaml#/shipment/resendShipment
         // Fill in manadatory shipment id
         const string resendShipmentUrl = "https://api.accp.tradecloud1.com/v2/shipment/<shipmentId>/resend";
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryUsernamePassword(out var username, out var password))
+                return;
+
             Console.WriteLine("Tradecloud resend shipment example.");
             
             HttpClient httpClient = new HttpClient();

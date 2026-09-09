@@ -13,13 +13,15 @@ namespace Com.Tradecloud1.SDK.Client
     {   
         const string orderId = "";
         const string orderLinePosition = "";
-        const string accessToken = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order/private/specs.yaml#/order/updateOrderLineDeliverySchedule
         const string setDeliveryScheduleUrlTemplate = "https://api.accp.tradecloud1.com/v2/order/{id}/line/{position}/deliverySchedule";
         
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud set delivery schedule as supplier example.");
             
             var jsonContent = File.ReadAllText(@"delivery-schedule.json");

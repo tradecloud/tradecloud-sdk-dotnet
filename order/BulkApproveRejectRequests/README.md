@@ -12,7 +12,7 @@ See the [order API specs](https://swagger-ui.accp.tradecloud1.com/?url=https://a
 ## Configuration
 
 Edit `BulkApproveRejectRequests.cs` and set:
-- `accessToken`: Your API access token
+- copy `.env.template` to `.env` and fill in `ACCESS_TOKEN`
 - `orderId`: The order ID
 - `action`: Set to `"approve"` or `"reject"`
 

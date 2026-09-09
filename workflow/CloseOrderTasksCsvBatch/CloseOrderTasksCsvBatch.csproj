@@ -3,7 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\authentication\Authentication\authentication.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>

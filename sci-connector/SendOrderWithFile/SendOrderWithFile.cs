@@ -9,15 +9,16 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class SendOrder
     {   
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/sci-connector/specs.yaml#/sci-connector/sendOrderByBuyerRoute
         const string sendOrderUrl = "https://api.accp.tradecloud1.com/v2/sci-connector/order";
         
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryUsernamePassword(out var username, out var password))
+                return;
+
             Console.WriteLine("Tradecloud send SCSN order with embedded file using Isah SCI Connector example.");
             
             XmlDocument order = new XmlDocument();

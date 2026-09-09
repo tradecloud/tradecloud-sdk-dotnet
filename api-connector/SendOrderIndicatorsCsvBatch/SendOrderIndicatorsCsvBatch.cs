@@ -14,13 +14,15 @@ namespace Com.Tradecloud1.SDK.Client
     class SendOrderIndicatorsCsvBatch
     {
         const bool dryRun = true;
-        const string accessToken = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderIndicatorsByBuyerRoute
         const string sendOrderIndicatorsUrl = "https://api.test.tradecloud1.com/v2/api-connector/order/indicators";
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud send order indicators CVS batch.");
 
             var orderIndicatorsJsonTemplate = File.ReadAllText(@"order-line-indicators-cancelled.json");

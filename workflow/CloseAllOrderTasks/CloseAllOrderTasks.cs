@@ -19,10 +19,12 @@ namespace Com.Tradecloud1.SDK.Client
             'orderId': ''
         }";
 
-        const string accessToken = "";
-
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Close all order tasks.");
             
             HttpClient httpClient = new HttpClient();

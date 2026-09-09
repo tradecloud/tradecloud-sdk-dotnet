@@ -12,8 +12,7 @@ This example sends an order document to Tradecloud using the API Connector
 
 In the source code:
 - amend authenticationUrl if necessary
-- username on Tradecloud
-- password on Tradecloud
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - amend sendOrderDocumentsUrl if necessary
 
 Amend order-documents.json if necessary:

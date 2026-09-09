@@ -50,10 +50,10 @@ The migration tool uses environment variables for configuration. Before running 
 
 ### Setup Configuration
 
-1. **Copy the example file**: Copy `.env.example` to `.env`:
+1. **Copy the example file**: Copy `.env.template` to `.env`:
 
    ```bash
-   cp .env.example .env
+   cp .env.template .env
    ```
 
 2. **Edit the `.env` file** with your actual credentials and configuration:

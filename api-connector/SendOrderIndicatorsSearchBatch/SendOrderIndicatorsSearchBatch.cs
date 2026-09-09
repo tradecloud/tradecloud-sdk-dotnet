@@ -11,7 +11,6 @@ namespace Com.Tradecloud1.SDK.Client
     class SendOrderIndicatorsSearchBatch
     {
         const bool dryRun = true;
-        const string accessToken = "";
         const string buyerId = "";
         const string supplierId = "";
 
@@ -47,6 +46,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud send indicators batch.");
              var jsonOrderIndicatorsTemplate = File.ReadAllText(@"order-indicators-template.json");
 
@@ -73,7 +76,7 @@ namespace Com.Tradecloud1.SDK.Client
                             string logisticsStatus = order["status"]["logisticsStatus"].ToString();
                             string deliveryOverdue = order["indicators"]["deliveryOverdue"].ToString();
 
-                            if (!position.StartsWith("0") && processStatus == "Completed" && logisticsStatus == "Open")
+                            if (processStatus == "Completed" && logisticsStatus == "Open")
                             {                                
                                 if (dryRun) 
                                 {
@@ -103,7 +106,7 @@ namespace Com.Tradecloud1.SDK.Client
 
                     var start = DateTime.Now;
                     var watch = System.Diagnostics.Stopwatch.StartNew();
-                    var response = await httpClient.PostAsync(orderSearchUrl, content);
+                    var response = await httpClient.PostAsync(orderLineSearchUrl, content);
                     watch.Stop();
 
                     var statusCode = (int)response.StatusCode;

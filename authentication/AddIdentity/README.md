@@ -10,7 +10,7 @@ Super powers
 
 In the source code:
 - amend `addIdentityUrl`
-- fill in your `accessToken`
+- copy `.env.template` to `.env` and fill in `ACCESS_TOKEN`
 
 Amend `identity.json`
 

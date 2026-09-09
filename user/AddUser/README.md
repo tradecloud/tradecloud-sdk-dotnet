@@ -10,7 +10,7 @@ Super powers
 
 In the source code:
 - amend `addUserUrl`
-- fill in your `accessToken`
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 
 Amend `user.json`
 

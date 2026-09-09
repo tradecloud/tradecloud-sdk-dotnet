@@ -9,7 +9,6 @@ using System.Threading;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using DotNetEnv;
 
 namespace Com.Tradecloud1.SDK.Client
 {
@@ -115,17 +114,17 @@ namespace Com.Tradecloud1.SDK.Client
             Console.WriteLine("Tradecloud document migration example");
 
             // Load environment variables from .env file
-            Env.Load();
+            EnvFile.Load();
 
             // Load configuration from environment variables
-            legacyUsername = Environment.GetEnvironmentVariable("LEGACY_USERNAME");
-            legacyPassword = Environment.GetEnvironmentVariable("LEGACY_PASSWORD");
-            accessToken = Environment.GetEnvironmentVariable("ACCESS_TOKEN");
-            refreshToken = Environment.GetEnvironmentVariable("REFRESH_TOKEN"); // Add refresh token support
-            buyerCompanyId = Environment.GetEnvironmentVariable("BUYER_COMPANY_ID");
+            legacyUsername = EnvFile.Get("LEGACY_USERNAME");
+            legacyPassword = EnvFile.Get("LEGACY_PASSWORD");
+            accessToken = EnvFile.Get("ACCESS_TOKEN");
+            refreshToken = EnvFile.Get("REFRESH_TOKEN"); // Add refresh token support
+            buyerCompanyId = EnvFile.Get("BUYER_COMPANY_ID");
 
             // Parse DRY_RUN as boolean, default to true for safety
-            var raw = Environment.GetEnvironmentVariable("DRY_RUN");
+            var raw = EnvFile.Get("DRY_RUN");
             dryRun = string.IsNullOrEmpty(raw) || raw.Equals("true", StringComparison.OrdinalIgnoreCase);
 
             // Validate required configuration
@@ -134,7 +133,7 @@ namespace Com.Tradecloud1.SDK.Client
                 string.IsNullOrEmpty(accessToken) ||
                 string.IsNullOrEmpty(buyerCompanyId))
             {
-                Console.WriteLine("Error: Missing required environment variables. Please check your .env file.");
+                Console.WriteLine("ERROR: Missing required environment variables. Copy .env.template to .env and fill it in.");
                 Console.WriteLine("Required variables: LEGACY_USERNAME, LEGACY_PASSWORD, ACCESS_TOKEN, BUYER_COMPANY_ID");
                 Console.WriteLine("Optional variables: REFRESH_TOKEN (recommended for long-running migrations)");
                 Environment.Exit(1);

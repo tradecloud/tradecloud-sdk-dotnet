@@ -6,8 +6,7 @@ This example finds an identity based on email in the authentication service
 
 In the source code:
 
-- username on Tradecloud
-- password on Tradecloud
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - user email
 
 ## Run

@@ -11,13 +11,15 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class CreateConversation
     {   
-        const string accessToken = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/conversation/private/specs.yaml#/conversation/createOrderConversation
         const string createConversationUrl = "https://api.accp.tradecloud1.com/v2/conversation/order/create";
         
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud create conversation.");
 
             var jsonContent = File.ReadAllText(@"conversation.json");

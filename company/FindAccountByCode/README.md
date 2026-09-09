@@ -6,8 +6,7 @@ This example finds an account based on companyId and account number
 
 In the source code:
 
-- username on Tradecloud
-- password on Tradecloud
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - fill in the companyId and accountCode in the findAccountByCodeUrl
 
 ## Run

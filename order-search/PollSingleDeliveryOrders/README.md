@@ -6,8 +6,7 @@ This example polls single delivery orders using the order-search service
 
 In the source code:
 
-- username on Tradecloud
-- password on Tradecloud
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - fill in the search query
 
 ## Run

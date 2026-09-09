@@ -12,8 +12,6 @@ namespace Com.Tradecloud1.SDK.Client
     {
         const bool dryRun = true;
         const string buyerId = "";
-        const string accessToken = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/order-line-search/private/specs.yaml#/order-line-search/getByIdRoute
         const string getOrderLineUrlTemplate = "https://api.accp.tradecloud1.com/v2/order-line-search/{id}";    
 
@@ -38,6 +36,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud complete order lines.");
 
             HttpClient httpClient = new HttpClient();

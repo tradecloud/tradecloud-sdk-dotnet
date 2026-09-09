@@ -12,7 +12,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class SendOrderModel
     {
-        const string accessToken = "";
         static readonly HttpClient httpClient = new HttpClient();
 
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderByBuyerRoute
@@ -53,6 +52,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud send order model example.");
 
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);

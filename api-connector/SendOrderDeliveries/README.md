@@ -11,8 +11,7 @@ This example sends order deliveries to Tradecloud using the API Connector
 
 In the source code:
 
-- fill in username on Tradecloud
-- fill in password on Tradecloud
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - amend sendOrderUrl in necessary
 - amend order/lines fields
 

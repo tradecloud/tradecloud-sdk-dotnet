@@ -11,7 +11,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class SearchTasks
     {
-        const string accessToken = "";
         const string assigneeCompanyId = "{companyId}"; // Tasks assigned to this buyer or supplier.
         const string assigneeContactId = "{contactId}"; // Tasks assigned to this user of above buyer or supplier.
 
@@ -23,6 +22,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Search workflow tasks.");
 
             string outputFile = "task_responses.json";

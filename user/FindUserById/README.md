@@ -6,8 +6,7 @@ This example finds a user based on id in the user service (the transaction servi
 
 In the source code:
 
-- username on Tradecloud
-- password on Tradecloud
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - user email
 
 ## Run

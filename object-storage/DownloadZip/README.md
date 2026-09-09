@@ -82,8 +82,7 @@ const string baseUrl = "https://api.test.tradecloud1.com"; // Test
 const string baseUrl = "https://api.accp.tradecloud1.com"; // Acceptance
 
 // Authentication
-const string username = "your-username";
-const string password = "your-password";
+// Credentials: copy .env.template to .env
 
 // Company settings (update if needed)
 const string companyId = "your-company-id";

@@ -12,17 +12,15 @@ namespace Com.Tradecloud1.SDK.Client
          // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/
         const string authenticationUrl = "https://api.accp.tradecloud1.com/v2/authentication/";
 
-        // Fill in mandatory username
-
-        const string username = "";
-        // Fill in mandatory password
-        const string password = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/api-connector/specs.yaml#/buyer-endpoints/sendOrderByBuyerRoute
         const string fetchPurchaseOrderUrl = "https://api.accp.tradecloud1.com/v2/sap-soap-connector/company/{companyId}/order/{purchaseOrderNumber}/fetch";
         
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryUsernamePassword(out var username, out var password))
+                return;
+
             Console.WriteLine("Tradecloud fetch purchase order example.");
 
             HttpClient httpClient = new HttpClient();

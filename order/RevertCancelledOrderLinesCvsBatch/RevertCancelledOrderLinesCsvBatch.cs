@@ -15,7 +15,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class RevertCancelledOrderLinesCsvBatch
     {
-        const string accessToken = "";
         const string companyId = "";
         const string body = "revert.json";
 
@@ -24,6 +23,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud revert cancelled order lines CSV batch.");
 
             HttpClient httpClient = new HttpClient();

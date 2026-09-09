@@ -10,8 +10,7 @@ A Tradecloud user with `supplier` and `integration` roles
 
 In the source code:
 - amend authenticationUrl if necessary
-- fill in username on Tradecloud
-- fill in password on Tradecloud
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - amend sendOrderResponseUrl in necessary
 
 Amend order-indicators.json if necessary:

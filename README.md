@@ -29,3 +29,15 @@ dotnet sln add (ls -r **/*.csproj)
 ```zsh
 dotnet sln add $(ls -r **/*.csproj)
 ```
+
+## Credentials
+
+Each sample that talks to the API has a `.env.template` next to the `.csproj`. Copy it to `.env` in the same folder and fill in the values it asks for. `.env` is gitignored.
+
+| Sample uses | Variables |
+| --- | --- |
+| Login (username / password) | `TRADECLOUD_USERNAME`, `TRADECLOUD_PASSWORD` |
+| Bearer token | `ACCESS_TOKEN` |
+| Long-running token refresh | `ACCESS_TOKEN` and/or `REFRESH_TOKEN` |
+
+Do not commit `.env` or put credentials in source.

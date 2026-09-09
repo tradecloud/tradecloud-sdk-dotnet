@@ -27,7 +27,7 @@ Waits 16 minutes (TTL = 15 min) and requests metadata a 3rd time.
 
 ## Prerequisites
 
-Fill in `username` and `password` in `TestCaching.cs`.
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 
 ## Run
 

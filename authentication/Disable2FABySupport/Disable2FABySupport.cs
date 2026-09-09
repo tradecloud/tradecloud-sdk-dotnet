@@ -10,8 +10,6 @@ namespace Com.Tradecloud1.SDK.Client
     class Disable2FABySupport
     {
         // Support or superuser role required
-        const string accessToken = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/private/specs.yaml#/authentication/disable2FABySupport
         const string disable2FABySupportURL = "https://api.accp.tradecloud1.com/v2/authentication/2fa/disable/support";
 
@@ -22,6 +20,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud disable 2FA by support.");
 
             HttpClient httpClient = new HttpClient();

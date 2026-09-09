@@ -10,7 +10,6 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class ExportConnections
     {
-        const string accessToken = "";
         const string companyId = "";
         const string fileName = "connections-export.csv";
 
@@ -21,6 +20,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud export connections example.");
 
             var jsonContentTemplate = File.ReadAllText(@"connections-search-template.json");

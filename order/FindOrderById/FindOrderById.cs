@@ -13,9 +13,6 @@ namespace Com.Tradecloud1.SDK.Client
         const string orderId = "";
 
         // Fill in username and password
-        const string username = "";
-        const string password = "";       
-        
         // Use token?
         const bool useToken = true;  
          
@@ -28,6 +25,10 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryUsernamePassword(out var username, out var password))
+                return;
+
             Console.WriteLine("Tradecloud find order by id example.");
             
             HttpClient httpClient = new HttpClient();

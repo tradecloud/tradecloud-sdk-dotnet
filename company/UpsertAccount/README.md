@@ -11,8 +11,7 @@ Admin role
 In the source code:
 
 - amend authenticationUrl
-- fill in username
-- fill in password
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - amend `account.json`
 
 ## Run

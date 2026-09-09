@@ -31,7 +31,7 @@ A disconnect on the oversize probe is the Envoy failure mode this exists to catc
 
 ## Configure
 
-Copy `.env.example` to `.env` in this folder and set:
+Copy `.env.template` to `.env` in this folder and set:
 
 ```
 TRADECLOUD_USERNAME=you@example.com
@@ -59,7 +59,7 @@ The HTTP client timeout is 10 minutes, longer than the 300s Envoy object-storage
 ## Run
 
 ```shell
-cp .env.example .env
+cp .env.template .env
 # edit .env
 dotnet run
 ```

@@ -12,8 +12,7 @@ This example sends order indicators to Tradecloud using the API Connector
 In the source code:
 
 - amend authenticationUrl
-- fill in username
-- fill in password
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - amend sendOrderIndicatorsUrl
 
 Amend order-indicators.json if necessary:

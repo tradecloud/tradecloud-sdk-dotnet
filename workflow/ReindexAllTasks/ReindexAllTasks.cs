@@ -9,13 +9,15 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class ReindexAllTasks
     {
-        const string accessToken = "";
-
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/workflow/private/specs.yaml#/workflow/reindexAll
         const string reindexAllTasksUrl = "https://api.accp.tradecloud1.com/v2/workflow/reindex/all";
 
         static async Task Main(string[] args)
         {
+            EnvFile.Load();
+            if (!EnvFile.TryAccessToken(out var accessToken))
+                return;
+
             Console.WriteLine("Tradecloud reindex all tasks example.");
 
             HttpClient httpClient = new HttpClient();

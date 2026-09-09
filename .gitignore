@@ -3,6 +3,7 @@ obj
 .vscode/
 scratch*
 *.log
+# Per-sample secrets (copy .env.template to .env). Never commit .env.
 .env
 
 # Cached test documents

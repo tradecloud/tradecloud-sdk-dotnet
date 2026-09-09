@@ -6,8 +6,7 @@ This example finds a shipment by Tradecloud id from the shipment service
 
 In the source code:
 
-- username on Tradecloud
-- password on Tradecloud
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - shipmentId on Tradecloud
 
 ## Run

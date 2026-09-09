@@ -52,7 +52,7 @@ Groups are printed in that order, and an empty group is left out.
 
 ## Prerequisites
 
-Fill in `username` and `password` in `TestLoginHeaderCase.cs`, or pass them as arguments.
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD` (CLI args still override: `dotnet run -- <username> <password> [orderId]`)
 
 Fill in `orderId` in the same file, or pass it as the third argument, to run the Authorization casing probes. Without an order id those cases are skipped.
 

@@ -4,8 +4,7 @@ This example gets the document meta data from the Tradecloud object storage.
 ## Configure
 
 In the source code:
-- set Tradecloud username
-- set Tradecloud password
+- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
 - set the objectId
 
 ## Run
