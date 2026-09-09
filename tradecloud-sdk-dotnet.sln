@@ -251,6 +251,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchTasks", "workflow\Sea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadShipmentDocuments", "migration\shipment-documents\DownloadShipmentDocuments.csproj", "{C5F8B6F9-BCC4-4FF3-B770-1A9F0A680D51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUploadLimit", "object-storage\TestUploadLimit\TestUploadLimit.csproj", "{B404BAD8-6A9E-43B2-936E-ABE8725A5EF4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -692,6 +694,10 @@ Global
 		{C5F8B6F9-BCC4-4FF3-B770-1A9F0A680D51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5F8B6F9-BCC4-4FF3-B770-1A9F0A680D51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5F8B6F9-BCC4-4FF3-B770-1A9F0A680D51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B404BAD8-6A9E-43B2-936E-ABE8725A5EF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B404BAD8-6A9E-43B2-936E-ABE8725A5EF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B404BAD8-6A9E-43B2-936E-ABE8725A5EF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B404BAD8-6A9E-43B2-936E-ABE8725A5EF4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{71C59338-3D86-4166-9AD7-14146C5DC744} = {AE1D2645-65FC-4225-8CC5-85B4216E7E65}
@@ -801,5 +807,6 @@ Global
 		{5F29FBE1-06A9-4EAD-BEA6-C9B020119987} = {AE1D2645-65FC-4225-8CC5-85B4216E7E65}
 		{3EA2DA4C-7F34-469D-B314-1D9E67EC35D8} = {AE1D2645-65FC-4225-8CC5-85B4216E7E65}
 		{C5F8B6F9-BCC4-4FF3-B770-1A9F0A680D51} = {118ECC69-3B2B-449D-B221-6BC50969A692}
+		{B404BAD8-6A9E-43B2-936E-ABE8725A5EF4} = {34E42477-FC33-4CB9-B8E0-70D1C4F08368}
 	EndGlobalSection
 EndGlobal
