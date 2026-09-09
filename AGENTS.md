@@ -19,13 +19,12 @@ No `Makefile`; refresh the solution with
 ## Entry Points
 
 - `tradecloud-sdk-dotnet.sln` -- solution
-- 17 top-level dirs (one per domain / connector / utility):
+- 16 top-level dirs (one per domain / connector / utility):
   `api-connector/`, `authentication/`, `company/`, `conversation/`,
-  `forecast/`, `migration/`, `object-storage/`, `order/`,
-  `order-line-search/`, `order-search/`, `order-webhook-connector/`,
-  `sap-soap-connector/`, `sci-connector/`, `shipment/`,
-  `shipment-webhook-connector/`, `user/`, `workflow/`
-- `migration/` -- legacy SDK migration helpers
+  `forecast/`, `object-storage/`, `order/`, `order-line-search/`,
+  `order-search/`, `order-webhook-connector/`, `sap-soap-connector/`,
+  `sci-connector/`, `shipment/`, `shipment-webhook-connector/`,
+  `user/`, `workflow/`
 - Per-operation `README.md` files inside each domain dir document
   the sample's purpose
 
