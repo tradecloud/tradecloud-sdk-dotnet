@@ -1,6 +1,6 @@
-# Test Upload Limit
+# Test Doc Upload Limit
 
-Black-box probe for the object-storage upload size limit of a configured environment.
+Black-box probe for the object-storage **document** upload size limit of a configured environment. For the image endpoint see [TestImageUploadLimit](../TestImageUploadLimit/README.md).
 
 Uploads a generated payload a bit under, exactly equal to, and a bit over a **configured** limit. Each probe must complete with HTTP **200** or **413**. A disconnect or timeout is a failure: the env should reject oversize bodies cleanly, not drop the connection.
 
@@ -38,7 +38,7 @@ TRADECLOUD_USERNAME=you@example.com
 TRADECLOUD_PASSWORD=...
 ```
 
-`.env` is gitignored. Then in `TestUploadLimit.cs`:
+`.env` is gitignored. Then in `TestDocUploadLimit.cs`:
 
 - set `uploadLimitBytes` to the limit you want to discover (must be greater than 0)
 - amend `baseUrl` if necessary
@@ -52,7 +52,7 @@ Known env limits (set `uploadLimitBytes` to the one you are probing):
 
 On accp, Envoy has no request-size guard, so this must match object-storage `DOCUMENT_SIZE_LIMIT`. Accp object-storage `BackendTrafficPolicy` is `requestTimeout` 300s / `streamIdleTimeout` 60s.
 
-The default in `TestUploadLimit.cs` is 256 MiB (accp). Switch to `512L * 1024 * 1024` to probe prod.
+The default in `TestDocUploadLimit.cs` is 256 MiB (accp). Switch to `512L * 1024 * 1024` to probe prod.
 
 The HTTP client timeout is 10 minutes, longer than the 300s Envoy object-storage `requestTimeout`, so a gateway timeout shows up as HTTP 504 rather than a client cancel.
 
@@ -67,7 +67,7 @@ dotnet run
 ## Expected output
 
 ```shell
-=== Tradecloud Object Storage Upload Limit Probe ===
+=== Tradecloud Object Storage Document Upload Limit Probe ===
 
 Configured limit: 268,435,456 bytes (256 MiB)
 Probes:           under=...  equal=...  over=...
