@@ -6,16 +6,14 @@ This example finds a user based on id in the user service (the transaction servi
 
 In the source code:
 
-- copy `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` and `TRADECLOUD_PASSWORD`
-- user email
+- copy `.env.template` to `.env` and fill in `ACCESS_TOKEN`
+- user id
 
 ## Run
 
 ``` json
 ➜  FindUserById git:(master) ✗ dotnet run
-Tradecloud find user by email example.
-Login response StatusCode: 200 ElapsedMilliseconds: 944
-Login response Content: ...
+Tradecloud find user by id example.
 FindUserById StatusCode: 200
 FindUserById Content: {
   "id": "...",

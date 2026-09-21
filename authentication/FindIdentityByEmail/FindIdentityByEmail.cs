@@ -9,10 +9,8 @@ namespace Com.Tradecloud1.SDK.Client
 {
     class FindIdentityByEmail
     {   
-        // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/specs.yaml#/authentication/login
-        const string authenticationUrl = "https://api.tradecloud1.com/v2/authentication/";
         // https://swagger-ui.accp.tradecloud1.com/?url=https://api.accp.tradecloud1.com/v2/authentication/internal/specs.yaml#/authentication/findIdentityByEmail
-        const string getUserByEmailUrl = "https://api.tradecloud1.com/v2/authentication/find";
+        const string findIdentityByEmailUrl = "https://api.accp.tradecloud1.com/v2/authentication/find";
 
         const string jsonContentWithSingleQuotes = 
             @"{
@@ -22,14 +20,12 @@ namespace Com.Tradecloud1.SDK.Client
         static async Task Main(string[] args)
         {
             EnvFile.Load();
-            if (!EnvFile.TryUsernamePassword(out var username, out var password))
+            if (!EnvFile.TryAccessToken(out var accessToken))
                 return;
 
             Console.WriteLine("Tradecloud find identity by email example.");
             
             HttpClient httpClient = new HttpClient();
-            var authenticationClient = new Authentication(httpClient, authenticationUrl);
-            var (accessToken, refreshToken)  = await authenticationClient.Login(username, password);
             await FindIdentityByEmailRequest(accessToken);
 
             async Task FindIdentityByEmailRequest(string accessToken)
@@ -40,7 +36,7 @@ namespace Com.Tradecloud1.SDK.Client
 
                 var start = DateTime.Now;
                 var watch = System.Diagnostics.Stopwatch.StartNew();
-                var response = await httpClient.PostAsync(getUserByEmailUrl, content);
+                var response = await httpClient.PostAsync(findIdentityByEmailUrl, content);
                 watch.Stop();
 
                 var statusCode = (int)response.StatusCode;
