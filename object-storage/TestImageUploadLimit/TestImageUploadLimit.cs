@@ -7,27 +7,33 @@ using System.Threading.Tasks;
 
 namespace Com.Tradecloud1.SDK.Client
 {
-    class TestUploadLimit
+    class TestImageUploadLimit
     {
         /// <summary>API root including <c>/v2</c> (e.g. accp or a feature host).</summary>
         const string baseUrl = "https://api.accp.tradecloud1.com/v2";
 
         const string authenticationUrl = baseUrl + "/authentication/";
-        const string uploadDocumentUrl = baseUrl + "/object-storage/document";
+        const string uploadImageUrl = baseUrl + "/object-storage/image";
 
         /// <summary>
-        /// Configured env upload limit in bytes. Must be set before running.
-        /// Non-prod (accp and others): 256 MiB = 256L * 1024 * 1024 = 268_435_456.
-        /// Prod: already 512 MiB = 512L * 1024 * 1024 = 536_870_912.
-        /// Envoy has no request-size guard (maxRequestBytes was removed: rejecting on
-        /// Content-Length at the edge RSTs the client instead of returning 413), so the
-        /// service DOCUMENT_SIZE_LIMIT is the one to probe. Accp object-storage
-        /// BackendTrafficPolicy is requestTimeout 300s / streamIdleTimeout 60s.
+        /// Image upload limit in bytes: 8 MiB = 8L * 1024 * 1024 = 8_388_608.
+        /// Unlike the document route there is no DOCUMENT_SIZE_LIMIT equivalent and no
+        /// withSizeLimit on this route, so the cap is the Pekko
+        /// pekko.http.server.parsing.max-content-length default, which object-storage does
+        /// not override. It is the same 8 MiB the published spec documents on the 413.
+        /// Envoy has no request-size guard, so this service-side cap is the only one.
         /// </summary>
-        static readonly long uploadLimitBytes = 256L * 1024 * 1024;
+        static readonly long uploadLimitBytes = 8L * 1024 * 1024;
 
         /// <summary>How far under/over the configured limit to probe.</summary>
         static readonly long probeDeltaBytes = 1L * 1024 * 1024;
+
+        /// <summary>
+        /// Content type of the uploaded part. Nothing decodes the bytes: object-storage
+        /// streams them straight to the images bucket and stores this string as-is, so a
+        /// zero-filled payload is enough to probe the size boundary.
+        /// </summary>
+        const string imageContentType = "image/png";
 
         /// <summary>
         /// Longer than the accp object-storage Envoy requestTimeout (300s) so a gateway
@@ -37,7 +43,7 @@ namespace Com.Tradecloud1.SDK.Client
 
         static async Task<int> Main()
         {
-            Console.WriteLine("=== Tradecloud Object Storage Upload Limit Probe ===");
+            Console.WriteLine("=== Tradecloud Object Storage Image Upload Limit Probe ===");
             Console.WriteLine();
 
             if (!EnvFile.TryUsernamePassword(out var username, out var password))
@@ -45,8 +51,8 @@ namespace Com.Tradecloud1.SDK.Client
 
             if (uploadLimitBytes <= 0)
             {
-                Console.WriteLine("ERROR: Set uploadLimitBytes in TestUploadLimit.cs to the env limit you want to probe.");
-                Console.WriteLine("       Non-prod: 256L * 1024 * 1024 (256 MiB). Prod: 512L * 1024 * 1024 (512 MiB).");
+                Console.WriteLine("ERROR: Set uploadLimitBytes in TestImageUploadLimit.cs to the env limit you want to probe.");
+                Console.WriteLine("       Default: 8L * 1024 * 1024 (8 MiB, the Pekko max-content-length default).");
                 return 1;
             }
 
@@ -111,10 +117,10 @@ namespace Com.Tradecloud1.SDK.Client
 
             using var fileStream = new SizedStream(fileBytes);
             using var streamContent = new StreamContent(fileStream);
-            streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue(imageContentType);
 
             using var multipart = new MultipartFormDataContent();
-            multipart.Add(streamContent, "file", $"upload-limit-{label}.bin");
+            multipart.Add(streamContent, "file", $"image-upload-limit-{label}.png");
 
             var contentLength = multipart.Headers.ContentLength;
             if (contentLength.HasValue)
@@ -123,7 +129,7 @@ namespace Com.Tradecloud1.SDK.Client
             var watch = Stopwatch.StartNew();
             try
             {
-                using var response = await httpClient.PostAsync(uploadDocumentUrl, multipart);
+                using var response = await httpClient.PostAsync(uploadImageUrl, multipart);
                 watch.Stop();
 
                 var statusCode = (int)response.StatusCode;
