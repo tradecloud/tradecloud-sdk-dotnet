@@ -161,7 +161,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "authentication", "authentic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindIdentityByEmail", "authentication\FindIdentityByEmail\FindIdentityByEmail.csproj", "{B6D6E35F-A7EE-4EDC-A797-7BFCD312FD50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Disable2FABySupport", "authentication\Disable2FABySupport\Disable2FABySupport.csproj", "{4BE100D1-12C7-4C7C-AB96-F018B19732DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Disable2FAByOther", "authentication\Disable2FAByOther\Disable2FAByOther.csproj", "{4BE100D1-12C7-4C7C-AB96-F018B19732DE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "authentication", "authentication\Authentication\authentication.csproj", "{3050B5E1-C220-484E-B457-A6405BC6A528}"
 EndProject
