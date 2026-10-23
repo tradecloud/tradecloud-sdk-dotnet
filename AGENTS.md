@@ -31,7 +31,7 @@ No `Makefile`; refresh the solution with
 ## Notes
 
 - Mirrors the TC1 REST API surface; align changes with
-  `tradecloud-docs-api-v2`.
+  `tradecloud-docs-api-manual`.
 - Sample credentials live in a per-project `.env` (gitignored). Copy
   `.env.template` to `.env` and fill in `TRADECLOUD_USERNAME` /
   `TRADECLOUD_PASSWORD` and/or `ACCESS_TOKEN`, depending on what the
