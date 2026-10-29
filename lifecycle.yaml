@@ -1,0 +1,14 @@
+schema_version: 1
+component: tradecloud-sdk-dotnet
+system: client-sdk
+kind: library
+owner: backend
+state: active
+design_born: 2020-03-29
+ttl_years: 3
+last_review: null
+last_outcome: null
+last_outcome_ref: null
+adr_links: []
+watched_eols:
+  - dotnet@8
