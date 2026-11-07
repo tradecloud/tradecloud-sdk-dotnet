@@ -4,7 +4,7 @@ The .NET SDK can help you to develop a Tradecloud API v2 client and webhook serv
 
 ## Prerequisites
 
-Download and install [.NET 10.0 (either Runtime or SDK)](https://dotnet.microsoft.com/download/dotnet/10.0)
+Download and install the [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 
 ## Clone the repository
 
