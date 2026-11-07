@@ -66,7 +66,8 @@ namespace Com.Tradecloud1.SDK.Client
                 return 1;
             }
 
-            // Required for HTTP/3 on .NET 8 (also needs libmsquic on Linux).
+            // HTTP/3 is on by default; set it anyway so a runtimeconfig that turns it
+            // off cannot silently skip the HTTP/3 check. Linux also needs libmsquic.
             AppContext.SetSwitch("System.Net.SocketsHttpHandler.Http3Support", true);
 
             var http11 = await LoginAndCheckHeaderCase(

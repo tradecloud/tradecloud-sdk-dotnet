@@ -8,8 +8,8 @@ or connector, each containing per-operation .csproj samples
 
 ## Module / Stack
 
-C# / .NET 8.0. Single solution: `tradecloud-sdk-dotnet.sln`.
-No `Makefile`; refresh the solution with
+C# / .NET 10 (`net10.0`). Single solution: `tradecloud-sdk-dotnet.sln`,
+listing every project. No `Makefile`; refresh the solution with
 `dotnet sln add $(ls -r **/*.csproj)`.
 
 ## Build
