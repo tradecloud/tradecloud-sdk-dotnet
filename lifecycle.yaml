@@ -6,9 +6,9 @@ owner: backend
 state: active
 design_born: 2020-03-29
 ttl_years: 3
-last_review: null
-last_outcome: null
-last_outcome_ref: null
+last_review: 2026-11-17
+last_outcome: refactor
+last_outcome_ref: https://tradecloud.atlassian.net/browse/TC-11229
 adr_links: []
 watched_eols:
   - dotnet@10
